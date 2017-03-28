@@ -1,0 +1,15 @@
+<VirtualHost *:80>
+	ServerName {{ item.value.name }}.{{ env_prefix }}.monarc.lc1.conostix.com
+	DocumentRoot {{ www_directory | default('/var/lib/monarc/fo/')}}/public
+
+	<Directory {{ www_directory | default('/var/lib/monarc/fo/')}}/public>
+		require all granted
+	</Directory>
+
+	SetEnv "APP_CONF_DIR" /var/www/{{item.value.name}}/config
+	SetEnv "APP_DATA_DIR" /var/www/{{item.value.name}}/data
+
+	CustomLog /var/log/apache2/{{ env_prefix }}{{ item.value.name }}-access.log combined
+	ErrorLog /var/log/apache2/{{ env_prefix }}{{ item.value.name }}-error.log
+</VirtualHost>
+

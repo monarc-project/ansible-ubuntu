@@ -1,0 +1,9 @@
+- hosts: rpx
+  strategy: debug
+
+  roles:
+    - monarcrpx
+
+  environment:
+    http_proxy: http://proxy.lc1.conostix.com:3128
+    https_proxy: http://proxy.lc1.conostix.com:3128

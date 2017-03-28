@@ -1,0 +1,10 @@
+---
+
+- name: proxy pass apache configuration
+  template:  src=clients_redirection.j2 dest=/etc/apache2/client_redirection
+  become: True
+
+- name: hostfile
+  template: src=hosts.j2 dest=/etc/hosts
+  become: True
+

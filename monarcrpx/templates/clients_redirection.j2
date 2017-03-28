@@ -1,0 +1,7 @@
+{% for server in groups['dev'] %}
+{% set hostname = hostvars[server]['inventory_hostname'] %}
+{% for key,client in hostvars[server]['clients'].iteritems() %}
+ProxyPass /{{client.name}}{{ '-' + hostvars[server].env_prefix if hostvars[server].env_prefix else '' }} {{ client.name }}.dev.monarc.lc1.conostix.com
+ProxyPassReverse /{{client.name}}{{ '-' + hostvars[server].env_prefix if hostvars[server].env_prefix else '' }} {{ client.name }}.dev.monarc.lc1.conostix.com
+{% endfor %}
+{% endfor %}

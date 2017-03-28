@@ -1,0 +1,55 @@
+---
+
+- name: HTTPS for apt
+  apt: name=apt-transport-https
+  become: True
+
+- name: install php7 repository
+  apt_repository:
+    repo: deb http://packages.dotdeb.org jessie all
+    state: present
+    filename: 'dotdeb'
+  become: True
+
+- name: install nodejs repository
+  apt_repository:
+    repo: deb https://deb.nodesource.com/node_6.x jessie main
+    state: present
+    filename: 'nodejs'
+  become: True
+
+- name: copy dotdeb key
+  copy: src=dotdeb.gpg dest=/tmp/dotdeb.gpg mode=0444
+
+- name: copy nodejs key
+  copy: src=nodesource.gpg.key dest=/tmp/nodesource.gpg.key mode=0444
+
+- name: install dotdeb gpg key
+  apt_key: file=/tmp/dotdeb.gpg
+  become: True
+        
+- name: install nodejs gpg key
+  apt_key: file=/tmp/nodesource.gpg.key
+  become: True
+
+- name: install php7 and nodejs packages
+  apt:
+    name: "{{ item }}"
+    update_cache: True
+  become: True
+  with_items:
+    - apache2
+    - mariadb-server
+    - php7.0
+    - php7.0-mbstring
+    - php7.0-xml
+    - php7.0-mysql
+    - php7.0-zip
+    - php7.0-mcrypt
+    - php7.0-intl
+    - php7.0-imagick
+    - nodejs
+    - python-mysqldb
+
+- name: monarc directory
+  file: name=/var/lib/monarc state=directory

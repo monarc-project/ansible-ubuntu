@@ -1,0 +1,112 @@
+---
+
+- name: checkout repository
+  git:
+    repo: https://github.com/CASES-LU/MonarcAppFO
+    dest: /var/lib/monarc/fo
+    version: master
+  register: appfo_pull
+
+- name: install composer
+  copy:
+    src: "composer.phar"
+    dest: "/usr/local/bin/composer"
+    mode: 0755
+  become: True
+
+
+- name: composer install
+  shell: composer install
+  args:
+    chdir: /var/lib/monarc/fo 
+  when: appfo_pull.before == None
+
+- name: update-all
+  shell: "scripts/update-all.sh -b"
+  args:
+    chdir: /var/lib/monarc/fo
+  when: appfo_pull.before != appfo_pull.after
+
+- name: apache log dirs
+  file:
+    name: "/var/log/apache2/{{ env_prefix}}{{ item.value.name}}"
+    state: directory
+  with_dict: "{{ clients }}"
+  become: True
+
+- name: client apache configuration
+  template:
+    src: client_apache.conf.j2
+    dest: "/etc/apache2/sites-available/{{ item.value.name }}.conf"
+    owner: root
+  with_dict: "{{ clients }}"
+  become: True
+
+- name: enable apache conf
+  command: "/usr/sbin/a2ensite {{item.value.name}}.conf"
+  with_dict: "{{ clients }}"
+  become: True
+
+- name: logrotate conf
+  template:  src=logrotate_apache.j2 dest=/etc/logrotate.d/apache2
+  become: True
+
+- name: create client dir
+  file:
+    name: "/var/www/{{item.value.name}}"
+    state: directory
+  with_dict: "{{ clients }}"
+  become: True
+
+- name: create client config dir
+  file:
+    name: "/var/www/{{item.value.name}}/config"
+    state: directory
+  with_dict: "{{ clients }}"
+  become: True
+
+- name: client config file
+  template: 
+    src: client_config.php.j2
+    dest: "/var/www/{{item.value.name}}/config/local.php"
+  with_dict: "{{ clients }}"
+  become: True
+
+- name: create client data dir
+  file:
+    name: "/var/www/{{item.value.name}}/data"
+    state: directory
+    owner: www-data
+  with_dict: "{{ clients }}"
+  become: True
+
+- name: client cache upgrade
+  file:
+    name: "/var/www/{{item.value.name}}/data/upgrade"
+    owner: www-data
+    state: touch
+  with_dict: "{{ clients }}"
+  become: True
+  when: appfo_pull.before != appfo_pull.after
+
+- name: client database creation
+  mysql_db:
+    name: "{{ item.value.name }}" 
+    config_file: /etc/mysql/debian.cnf
+  with_dict: "{{ clients }}"
+  become: True
+
+- name: client database user creation
+  mysql_user: 
+    name: "{{ item.value.name }}"
+    password: "{{ item.value.mysql_password }}"
+    priv: "{{ item.value.name }}.*:ALL"
+    config_file: /etc/mysql/debian.cnf
+  with_dict: "{{ clients }}"
+  become: True
+
+- name: client db migration
+  shell: "scripts/client-upgrade-db.sh MonarcFO localhost {{ item.value.name }} {{ item.value.mysql_password }} {{ item.value.name }}"
+  args:
+    chdir: /var/lib/monarc/fo
+  with_dict: "{{ clients }}"
