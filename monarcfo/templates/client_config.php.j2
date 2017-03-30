@@ -25,9 +25,9 @@ return array(
             'orm_cli' => array(
                 'params' => array(
                     'host' => 'localhost',
-                    'user' => 'test_client',
-                    'password' => 'foobar42',
-                    'dbname' => 'test_client',
+                    'user' => '{{ item.value.name }}',
+                    'password' => '{{ item.value.mysql_password }}',
+                    'dbname' => '{{ item.value.name }}',
                 ),
             ),
         ),
