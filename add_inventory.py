@@ -22,11 +22,13 @@ def get_rnd_string(length):
 
 def run():
     """ Main function """
-    newdata = json.loads(sys.stdin.read())
+    stdin = sys.stdin.read()
 
-    if newdata:
+    if stdin:
+        newdata = json.loads(stdin)
 
-        with open('%s/host_vars/%s/generated.yaml' % (INVENTORY, newdata['server']), 'r+') as stream:
+        with open('%s/host_vars/%s/generated.yaml' % (INVENTORY, newdata['server']),
+                  'r+') as stream:
             try:
                 ymldata = yaml.load(stream)
                 client_list = ymldata['clients']

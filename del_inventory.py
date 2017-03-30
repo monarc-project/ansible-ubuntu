@@ -14,17 +14,15 @@ INVENTORY = '/var/lib/ansible/inventory'
 
 #{"serveur":"client2.prod.dims.lc1.conostix.com","client":"sesluxbg"}
 
-def get_rnd_string(length):
-    """Get random string"""
-    return ''.join(random.choice(
-        string.ascii_uppercase + string.digits) for _ in range(length))
-
 def run():
     """ Main function """
-    newdata = json.loads(sys.stdin.read())
+    stdin = sys.stdin.read()
 
-    if newdata:
-        with open('%s/host_vars/%s/generated.yaml' % (INVENTORY, newdata['server']), 'r+') as stream:
+    if stdin:
+        newdata = json.loads(stdin)
+
+        with open('%s/host_vars/%s/generated.yaml' % (INVENTORY, newdata['server']),
+                  'r+') as stream:
             try:
                 ymldata = yaml.load(stream)
                 client_list = ymldata['clients']
