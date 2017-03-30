@@ -4,7 +4,7 @@
 {% for server in groups['dev'] %}
 {% set hostname = hostvars[server]['inventory_hostname'] %}
 {% for key,client in hostvars[server]['clients'].iteritems() %}
-172.18.13.62	{{client.name}}.dev.monarc.lc2.conostix.com
+172.18.13.62	{{client.name}}.dev.monarc.lc1.conostix.com
 {% endfor %}
 {% endfor %}
 
