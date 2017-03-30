@@ -106,6 +106,9 @@
     config_file: /etc/mysql/debian.cnf
   with_dict: "{{ clients }}"
   become: True
+  register: dbcreated
+  notify:
+    - initial db query
 
 - name: client db migration
   shell: "scripts/client-upgrade-db.sh MonarcFO localhost {{ item.value.name }} {{ item.value.mysql_password }} {{ item.value.name }}"
