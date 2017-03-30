@@ -40,6 +40,8 @@
     dest: "/etc/apache2/sites-available/{{ item.value.name }}.conf"
     owner: root
   with_dict: "{{ clients }}"
+  notify:
+    - reload apache
   become: True
 
 - name: enable apache conf
