@@ -37,6 +37,7 @@ def run():
                 client_list[client_name]['name'] = client_name
                 client_list[client_name]['mysql_password'] = get_rnd_string(16)
                 client_list[client_name]['salt'] = get_rnd_string(64)
+                client_list[client_name]['sql_bootstrap'] = newdata['sql_bootstrap']
 
                 yaml.dump(ymldata)
             except yaml.YAMLError as exc:
