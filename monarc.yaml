@@ -1,6 +1,6 @@
 - name: clients
   hosts: dev
-  strategy: debug
+  #strategy: debug
   roles:
     - monarcfo
   environment:
@@ -9,7 +9,7 @@
 
 - name: master
   hosts: master
-  strategy: debug
+  #strategy: debug
   roles:
     - monarcbo
   environment:
@@ -18,7 +18,7 @@
 
 - name: rpx
   hosts: rpx
-  strategy: debug
+  #strategy: debug
   roles:
     - monarcrpx
   environment:
