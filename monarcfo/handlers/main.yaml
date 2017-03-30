@@ -1,8 +1,10 @@
 ---
 - name: reload apache
   service: name=apache2 state=reloaded
+  become: True
 
 - name: initial db query
   shell: echo "{{ item.item.values.sql_bootstrap }}" |  mysql --defaults-file=/etc/mysql/debian.cnf "{{ item.item.values.name }}"
   when: item.changed
   with_items: dbcreated.results
+  become: True
