@@ -16,3 +16,17 @@
   #with_dict:
   #with_items:
   #- "{{ data| json_query(hostvars.client1.dev.monarc.lc1.conostix.com']['clients'] }}"
+
+- name: create spool directory
+  file: name=/var/spool/monarc owner=www-data state=directory
+  become: True
+
+- name: create temp directory for parsing new clients
+  file: name=/var/tmp/monarc/create recurse=True state=directory
+
+- name: create temp directory for parsing deleted clients
+  file: name=/var/tmp/monarc/delete recurse=True state=directory
+
+- name: install cat script
+  copy: src=new_monarc_clients.sh dest=/usr/local/bin/new_monarc_clients.sh
+  become: True
