@@ -22,11 +22,17 @@
   become: True
 
 - name: create temp directory for parsing new clients
-  file: name=/var/tmp/monarc/create recurse=True state=directory
+  file: name=/var/tmp/monarc/created recurse=True state=directory owner=www-data
+  become: True
 
 - name: create temp directory for parsing deleted clients
-  file: name=/var/tmp/monarc/delete recurse=True state=directory
+  file: name=/var/tmp/monarc/deleted recurse=True state=directory owner=www-data
+  become: True
 
-- name: install cat script
-  copy: src=new_monarc_clients.sh dest=/usr/local/bin/new_monarc_clients.sh
+- name: install cat script for new clients
+  copy: src=new_monarc_clients.sh dest=/usr/local/bin/new_monarc_clients.sh mode=0755
+  become: True
+
+- name: install cat script for deleted clients
+  copy: src=del_monarc_clients.sh dest=/usr/local/bin/del_monarc_clients.sh mode=0755
   become: True

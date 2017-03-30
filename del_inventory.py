@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Add an attribute for the ansible inventory
+Delete an attribute from the ansible inventory
 """
 
 import json
@@ -10,10 +10,9 @@ import string
 import sys
 import yaml
 
-INVENTORY = '/var/lib/ansible/inventory/'
+INVENTORY = '/var/lib/ansible/inventory'
 
-#{"server":"client4.prod.dims.lc1.conostix.com","client":"grclux","salt":"zG@0q1EI",
-#"jabber_account":"grclux@jabber.cases.lu","sql_bootstrap":
+#{"serveur":"client2.prod.dims.lc1.conostix.com","client":"sesluxbg"}
 
 def get_rnd_string(length):
     """Get random string"""
@@ -25,16 +24,12 @@ def run():
     newdata = json.loads(sys.stdin.read())
 
     if newdata:
-
         with open('%s/host_vars/%s/generated.yaml' % (INVENTORY, newdata['server']), 'r+') as stream:
             try:
                 ymldata = yaml.load(stream)
                 client_list = ymldata['clients']
                 client_name = newdata['client']
-                client_list[client_name] = {}
-                client_list[client_name]['name'] = client_name
-                client_list[client_name]['mysql_password'] = get_rnd_string(16)
-                client_list[client_name]['salt'] = get_rnd_string(64)
+                del client_list[client_name]
 
                 yaml.dump(ymldata)
             except yaml.YAMLError as exc:
