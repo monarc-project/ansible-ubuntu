@@ -62,15 +62,18 @@
 
 - name: create client config dir
   file:
-    name: "/var/www/{{item.value.name}}/config"
+    name: "/var/www/{{item.value.name}}/config/autoload"
     state: directory
+    recurse: True
   with_dict: "{{ clients }}"
   become: True
 
 - name: client config file
   template: 
     src: client_config.php.j2
-    dest: "/var/www/{{item.value.name}}/config/local.php"
+    dest: "/var/www/{{item.value.name}}/config/autoload/local.php"
+    owner: www-data
+    mode: 0600
   with_dict: "{{ clients }}"
   become: True
 
