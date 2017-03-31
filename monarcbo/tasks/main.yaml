@@ -1,5 +1,31 @@
 ---
 
+- name: checkout repository
+  git:
+    repo: https://github.com/CASES-LU/MonarcAppBO
+    dest: /var/lib/monarc/bo/MonarcAppBO/
+    version: master
+  register: appbo_pull
+
+- name: install composer
+  copy:
+    src: "composer.phar"
+    dest: "/usr/local/bin/composer"
+    mode: 0755
+  become: True
+
+- name: composer install
+  shell: composer install
+  args:
+    chdir: /var/lib/monarc/bo/MonarcAppBO/
+  when: appbo_pull.before == None
+
+- name: update-all
+  shell: "scripts/update-all.sh"
+  args:
+    chdir: /var/lib/monarc/bo/MonarcAppBO/
+  when: appbo_pull.before != appbo_pull.after
+
 - name: required packages
   apt:
     name: python-mysqldb
