@@ -53,3 +53,7 @@
 
 - name: monarc directory
   file: name=/var/lib/monarc state=directory
+
+- name: install grunt
+  command: "npm install -g grunt-cli"
+  become: True
