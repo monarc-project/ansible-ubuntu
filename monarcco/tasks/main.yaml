@@ -50,6 +50,7 @@
     - php7.0-imagick
     - nodejs
     - python-mysqldb
+    - gettext
 
 - name: monarc directory
   file: name=/var/lib/monarc state=directory
