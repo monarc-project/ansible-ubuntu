@@ -62,3 +62,17 @@
 - name: install cat script for deleted clients
   copy: src=del_monarc_clients.sh dest=/usr/local/bin/del_monarc_clients.sh mode=0755
   become: True
+
+- name: rewrite apache module
+  apache2_module:
+    state: present
+    name: rewrite
+  become: True
+  notify:
+    - restart apache
+
+- name: apache vhost configuration
+  template: name=apache_vhost_conf.j2 dest=/etc/apache2/sites-available/{{ ansible_fqdn }}
+  become: True
+  notfiy:
+    - reload apache
