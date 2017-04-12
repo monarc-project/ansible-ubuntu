@@ -27,6 +27,12 @@
     chdir: /var/lib/monarc/fo
   when: appfo_pull.before != appfo_pull.after
 
+- name: apache mod rewrite
+  apache2_module:
+    name: rewrite
+  notify:
+    - restart apache
+
 - name: apache log dirs
   file:
     name: "/var/log/apache2/{{ env_prefix}}{{ item.value.name}}"
