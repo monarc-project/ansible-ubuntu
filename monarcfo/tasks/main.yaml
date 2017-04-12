@@ -30,6 +30,7 @@
 - name: apache mod rewrite
   apache2_module:
     name: rewrite
+  become: True
   notify:
     - restart apache
 
@@ -37,6 +38,8 @@
   file:
     name: "/var/log/apache2/{{ env_prefix}}{{ item.value.name}}"
     state: directory
+    owner: root
+    group: adm
   with_dict: "{{ clients }}"
   become: True
 
