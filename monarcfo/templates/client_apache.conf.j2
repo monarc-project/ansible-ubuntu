@@ -24,7 +24,7 @@
 	# fits all solution.
 	RewriteCond %{REQUEST_URI}::$1 ^(/.+)(.+)::\2$
 	RewriteRule ^(.*) - [E=BASE:%1]
-	RewriteRule ^(.*)$ %{ENV:BASE}index.php [NC,L]
+	RewriteRule ^(.*)$ /%{ENV:BASE}index.php [NC,L]
 
 	CustomLog /var/log/apache2/{{ env_prefix }}{{ item.value.name }}/access.log combined
 	ErrorLog /var/log/apache2/{{ env_prefix }}{{ item.value.name }}/error.log
