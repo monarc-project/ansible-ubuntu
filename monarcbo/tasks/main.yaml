@@ -72,7 +72,7 @@
     - restart apache
 
 - name: apache vhost configuration
-  template: src=apache_vhost_conf.j2 dest=/etc/apache2/sites-available/{{ ansible_fqdn }}
+  template: src=apache_vhost_conf.j2 dest=/etc/apache2/sites-available/{{ ansible_fqdn }}.conf
   become: True
   notify:
     - reload apache
