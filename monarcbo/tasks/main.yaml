@@ -74,5 +74,5 @@
 - name: apache vhost configuration
   template: name=apache_vhost_conf.j2 dest=/etc/apache2/sites-available/{{ ansible_fqdn }}
   become: True
-  notfiy:
+  notify:
     - reload apache
