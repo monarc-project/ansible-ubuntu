@@ -6,8 +6,7 @@
 		require all granted
 	</Directory>
 
-	SetEnv "APP_CONF_DIR" /var/www/{{item.value.name}}/config
-	SetEnv "APP_DATA_DIR" /var/www/{{item.value.name}}/data
+	SetEnv "APP_CONF_DIR" /var/www/{{item.value.name}}/
 
 	#Rules from .htaccess
 	RewriteEngine On
