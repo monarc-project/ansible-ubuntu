@@ -32,7 +32,7 @@ def run():
             try:
                 ymldata = yaml.load(stream)
                 client_list = ymldata['clients']
-                client_name = newdata['client']
+                client_name = newdata['proxy_alias']
                 client_list[client_name] = {}
                 client_list[client_name]['name'] = client_name
                 client_list[client_name]['mysql_password'] = get_rnd_string(16)
