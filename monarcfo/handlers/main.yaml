@@ -8,7 +8,9 @@
   become: True
 
 - name: initial db query
-  shell: echo "{{ item.item.values.sql_bootstrap }}" |  mysql --defaults-file=/etc/mysql/debian.cnf "{{ item.item.values.name }}"
+  shell: "scripts/client-upgrade-db.sh MonarcFO localhost {{ item.value.name }} {{ item.value.mysql_password }} {{ item.value.name }}" && echo "{{ item.item.values.sql_bootstrap }}" |  mysql --defaults-file=/etc/mysql/debian.cnf "{{ item.item.values.name }}"
+  args:
+    chdir: /var/lib/monarc/fo
   when: item.changed
   with_items: dbcreated.results
   become: True
