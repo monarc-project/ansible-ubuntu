@@ -39,7 +39,7 @@ def run():
                 client_list[client_name]['salt'] = get_rnd_string(64)
                 client_list[client_name]['sql_bootstrap'] = newdata['sql_bootstrap']
 
-                yaml.dump(ymldata)
+                yaml.dump(ymldata, stream)
             except yaml.YAMLError as exc:
                 print exc
                 exit(1)
