@@ -34,7 +34,7 @@
 - name: create readonly acess to monarc common
   mysql_user:
     name: "{{ item.value.name }}"
-    host: %
+    host: "%"
     password: "{{ item.value.mysql_password }}"
     priv: "monarc_common.*:SELECT"
     config_file: /etc/mysql/debian.cnf
