@@ -110,12 +110,16 @@
     config_file: /etc/mysql/debian.cnf
   with_dict: "{{ clients }}"
   become: True
-  register: dbcreated
-  notify:
-    - initial db query
 
 - name: client db migration
   shell: "scripts/client-upgrade-db.sh MonarcFO localhost {{ item.value.name }} {{ item.value.mysql_password }} {{ item.value.name }}"
   args:
     chdir: /var/lib/monarc/fo
   with_dict: "{{ clients }}"
+
+- name: initialize client db
+  shell: "if [ $( echo 'select count(id) from users;' | mysql --defaults-file=/etc/mysql/debian.cnf ) > 0  ] ; then echo '{{ item.item.values.sql_bootstrap }}' |  mysql --defaults-file=/etc/mysql/debian.cnf {{ item.values.name }}"
+  args:
+    chdir: /var/lib/monarc/fo
+  with_dict: "{{ clients }}"
+  become: True
