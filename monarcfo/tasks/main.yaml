@@ -124,7 +124,7 @@
   with_dict: "{{ clients }}"
 
 - name: initialize client db
-  shell: "if [ $( echo 'select count(id) from users;' | mysql --defaults-file=/etc/mysql/debian.cnf -N {{ item.value.name }} ) > 0  ] ; then mysql --defaults-file=/etc/mysql/debian.cnf {{ item.value.name }} < /tmp/bootstrap_{{ item.value.name }}.sql ;  fi"
+  shell: "if [ $( echo 'select count(id) from users;' | mysql --defaults-file=/etc/mysql/debian.cnf -N {{ item.value.name }} ) -eq 0  ] ; then mysql --defaults-file=/etc/mysql/debian.cnf {{ item.value.name }} < /tmp/bootstrap_{{ item.value.name }}.sql ;  fi"
   args:
     chdir: /var/lib/monarc/fo
   with_dict: "{{ clients }}"
