@@ -1,6 +1,6 @@
 #!/bin/sh
 
-spool_dir="/var/spool/monarc/created"
+spool_dir="/var/lib/monarc/bo/MonarcAppBO/data/json/create/"
 
 if [ "$(ls -A $spool_dir)" ] ; then
 	for file in "$spool_dir"/* ; do
