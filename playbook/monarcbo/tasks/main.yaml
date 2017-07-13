@@ -6,6 +6,7 @@
     dest: /var/lib/monarc/bo/MonarcAppBO/
     version: master
   register: appbo_pull
+  become: True
 
 - name: install composer
   copy:
@@ -19,27 +20,30 @@
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
   when: appbo_pull.before == None
+  become: True
 
 - name: update-all
   shell: "scripts/update-all.sh"
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
   when: appbo_pull.before != appbo_pull.after
+  become: True
 
 - name: required packages
   apt:
     name: python-mysqldb
   become: True
 
-- name: create readonly acess to monarc common
-  mysql_user:
-    name: "{{ item.value.name }}"
-    host: "%"
-    password: "{{ item.value.mysql_password }}"
-    priv: "monarc_common.*:SELECT"
-    config_file: /etc/mysql/debian.cnf
-  with_dict: "{{ dict(groups['dev'] | map('extract',hostvars,'clients') | map('dictsort') | sum(start=[]) | list) }}"
-  become: True
+#- name: create readonly acess to monarc common
+#  mysql_user:
+#    name: "{{ item.value.name }}"
+#    host: "%"
+#    password: "{{ item.value.mysql_password }}"
+#    priv: "monarc_common.*:SELECT"
+#    config_file: /etc/mysql/debian.cnf
+#  with_dict: "{{ dict(groups['dev'] | map('extract',hostvars,'clients') | map('dictsort') | sum(start=[]) | list) }}"
+#  when: "{{ groups['dev'] | selectattr('clients') }}"
+#  become: True
   #with_dict:
   #with_items:
   #- "{{ data| json_query(hostvars.client1.dev.monarc.lc1.conostix.com']['clients'] }}"

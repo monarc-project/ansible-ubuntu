@@ -6,6 +6,7 @@
     dest: /var/lib/monarc/fo
     version: master
   register: appfo_pull
+  become: True
 
 - name: install composer
   copy:
@@ -41,6 +42,7 @@
     owner: root
     group: adm
   with_dict: "{{ clients }}"
+  when: clients is defined
   become: True
 
 - name: client apache configuration
@@ -49,6 +51,7 @@
     dest: "/etc/apache2/sites-available/{{ item.value.name }}.conf"
     owner: root
   with_dict: "{{ clients }}"
+  when: clients is defined
   notify:
     - reload apache
   become: True
@@ -56,6 +59,7 @@
 - name: enable apache conf
   command: "/usr/sbin/a2ensite {{item.value.name}}.conf"
   with_dict: "{{ clients }}"
+  when: clients is defined
   become: True
 
 - name: logrotate conf
@@ -67,6 +71,7 @@
     name: "/var/www/{{item.value.name}}"
     state: directory
   with_dict: "{{ clients }}"
+  when: clients is defined
   become: True
 
 - name: client config file
@@ -76,6 +81,7 @@
     owner: www-data
     mode: 0600
   with_dict: "{{ clients }}"
+  when: clients is defined
   become: True
 
 - name: create client data dir
@@ -84,6 +90,7 @@
     state: directory
     owner: www-data
   with_dict: "{{ clients }}"
+  when: clients is defined
   become: True
 
 - name: client cache upgrade
@@ -92,6 +99,7 @@
     owner: www-data
     state: touch
   with_dict: "{{ clients }}"
+  when: clients is defined
   become: True
   when: appfo_pull.before != appfo_pull.after
 
@@ -100,6 +108,7 @@
     name: "{{ item.value.name }}" 
     config_file: /etc/mysql/debian.cnf
   with_dict: "{{ clients }}"
+  when: clients is defined
   become: True
 
 - name: client database user creation
@@ -109,6 +118,7 @@
     priv: "{{ item.value.name }}.*:ALL"
     config_file: /etc/mysql/debian.cnf
   with_dict: "{{ clients }}"
+  when: clients is defined
   become: True
 
 - name: client db migration
@@ -116,16 +126,19 @@
   args:
     chdir: /var/lib/monarc/fo
   with_dict: "{{ clients }}"
+  when: clients is defined
 
 - name: bootstrap file
   template:
     src: client_bootstrap.j2
     dest: "/tmp/bootstrap_{{ item.value.name }}.sql"
   with_dict: "{{ clients }}"
+  when: clients is defined
 
 - name: initialize client db
   shell: "if [ $( echo 'select count(id) from users;' | mysql --defaults-file=/etc/mysql/debian.cnf -N {{ item.value.name }} ) -eq 0  ] ; then mysql --defaults-file=/etc/mysql/debian.cnf {{ item.value.name }} < /tmp/bootstrap_{{ item.value.name }}.sql ;  fi"
   args:
     chdir: /var/lib/monarc/fo
   with_dict: "{{ clients }}"
+  when: clients is defined
   become: True

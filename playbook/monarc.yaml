@@ -1,0 +1,22 @@
+- name: clients
+  hosts: dev
+  #strategy: debug
+  roles:
+    - monarcfo
+
+- name: master
+  hosts: master
+  #strategy: debug
+  roles:
+    - monarcbo
+
+- name: rpx
+  hosts: rpx
+  #strategy: debug
+  roles:
+    - monarcrpx
+
+- name: all monarc
+  hosts: monarc
+  roles:
+    - sshaccess

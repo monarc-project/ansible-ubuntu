@@ -1,0 +1,31 @@
+---
+
+- name: install php7 and nodejs packages
+  apt:
+    name: "{{ item }}"
+    update_cache: True
+  become: True
+  with_items:
+    - apache2
+    - mariadb-server
+    - php
+    - php-cli
+    - php-mbstring
+    - php-xml
+    - php-mysql
+    - php-zip
+    - php-mcrypt
+    - php-intl
+    - php-imagick
+    - nodejs
+    - npm
+    - python-mysqldb
+    - gettext
+
+- name: monarc directory
+  file: name=/var/lib/monarc state=directory
+  become: True
+
+- name: install grunt
+  command: "npm install -g grunt-cli"
+  become: True
