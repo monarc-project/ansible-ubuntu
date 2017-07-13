@@ -8,8 +8,9 @@ This playbook is used to deploy MONARC installation.
 
 ## Usage
 
+    $ sudo apt-get install ansible
     $ git clone https://github.com/monarc-project/ansible-ubuntu.git
-    $ cd ansible-ubuntu/
+    $ cd ansible-ubuntu/playbook
     $ ansible-playbook -i ../inventory/ monarc.yaml -u monarc -k -K
 
 
