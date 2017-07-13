@@ -1,6 +1,21 @@
 # Ansible playbook for MONARC deployement
 
-This playbook is used to deploy monarc installation. There is three roles describe below.
+This playbook is used to deploy MONARC installation.
+
+## Requirements
+
+* install Python 2 in all virtual machines;
+
+## Usage
+
+    $ git clone https://github.com/monarc-project/ansible-ubuntu.git
+    $ cd ansible-ubuntu/
+    $ ansible-playbook -i ../inventory/ monarc.yaml -u monarc -k -K
+
+
+
+There are three roles, described below.
+
 
 ## monarcco
 
