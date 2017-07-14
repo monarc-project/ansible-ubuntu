@@ -1,6 +1,10 @@
 [dev]
 172.16.102.107
 
+[dev:vars]
+master= "172.16.102.105" # ip/domain du bo
+publicHost= "172.16.102.62" # ip/domain du rpx
+
 
 [master]
 172.16.102.105
@@ -14,3 +18,7 @@
 rpx
 master
 dev
+
+
+[monarc:vars]
+env_prefix=""

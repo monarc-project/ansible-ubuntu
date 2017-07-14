@@ -6,11 +6,12 @@ Add an attribute for the ansible inventory
 import json
 import random
 import string
+import os
 
 import sys
 import yaml
 
-INVENTORY = '/var/lib/ansible/inventory/'
+INVENTORY = '/home/cedric/ansible-ubuntu/inventory/'
 
 #{"server":"client4.prod.dims.lc1.conostix.com","client":"grclux","salt":"zG@0q1EI",
 #"jabber_account":"grclux@jabber.cases.lu","sql_bootstrap":
@@ -27,10 +28,14 @@ def run():
     if stdin:
         newdata = json.loads(stdin)
 
-        with open('%s/host_vars/%s/generated.yaml' % (INVENTORY, newdata['server']),
-                  'r+') as stream:
+        generated_file = '%s/host_vars/%s/generated.yaml' % (INVENTORY, newdata['server'])
+        #os.system('mkdir "%s"' % generated_file)
+        with open(generated_file, 'r+') as stream:
             try:
                 ymldata = yaml.load(stream)
+                if ymldata == None:
+                    ymldata = {}
+                    ymldata['clients'] = {}
                 client_list = ymldata['clients']
                 client_name = newdata['proxy_alias']
                 client_list[client_name] = {}

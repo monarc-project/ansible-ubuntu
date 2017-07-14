@@ -34,19 +34,16 @@
     name: python-mysqldb
   become: True
 
-#- name: create readonly acess to monarc common
-#  mysql_user:
-#    name: "{{ item.value.name }}"
-#    host: "%"
-#    password: "{{ item.value.mysql_password }}"
-#    priv: "monarc_common.*:SELECT"
-#    config_file: /etc/mysql/debian.cnf
-#  with_dict: "{{ dict(groups['dev'] | map('extract',hostvars,'clients') | map('dictsort') | sum(start=[]) | list) }}"
-#  when: "{{ groups['dev'] | selectattr('clients') }}"
-#  become: True
-  #with_dict:
-  #with_items:
-  #- "{{ data| json_query(hostvars.client1.dev.monarc.lc1.conostix.com']['clients'] }}"
+- name: create readonly acess to monarc common
+  mysql_user:
+    name: "{{ item.value.name }}"
+    host: "%"
+    password: "{{ item.value.mysql_password }}"
+    priv: "monarc_common.*:SELECT"
+    config_file: /etc/mysql/debian.cnf
+  with_dict: "{{ dict(groups['dev'] | map('extract',hostvars,'clients') | map('dictsort') | sum(start=[]) | list) }}"
+  when: item is defined
+  become: True
 
 - name: create spool directory
   file: name=/var/spool/monarc owner=www-data state=directory
