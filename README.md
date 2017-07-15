@@ -2,9 +2,12 @@
 
 This playbook is used to deploy MONARC installation.
 
+
 ## Requirements
 
-* install Python 2 in all virtual machines;
+* install Python 2 on all servers;
+* ansible must be installed on the configuration server.
+
 
 ## Usage
 
@@ -13,25 +16,33 @@ This playbook is used to deploy MONARC installation.
     $ cd ansible-ubuntu/playbook
     $ ansible-playbook -i ../inventory/ monarc.yaml -u monarc -k -K
 
+*-k -K* forces the SSH authentication by simple password. In this case
+*sshpass* must be installed on the configuration server.
 
+However, it is recommended to use a SSH key associated to a user dedicated to
+ansible. The *ansible* user must be created on each servers.
+
+
+## Roles
 
 There are three roles, described below.
 
+### monarcco
 
-## monarcco
+Common tasks for the front and the back-office.
 
-Common tasks for front and backoffice
+### monarcbo
 
-## monarcbo
+[Backoffice](https://github.com/monarc-project/MonarcAppBO).
+Only one per environment (dev, preprod, prod...).
 
-[Backoffice](https://github.com/CASES-LU/MonarcAppBO). Only one per environment (dev, preprod, prod...). 
+### monarcfo
 
-## monarcfo
-
-[Frontoffice](https://github.com/CASES-LU/MonarcAppFO). Can be multiple installation per environment to balance to the load.
+[Frontoffice](https://github.com/monarc-project/MonarcAppFO).
+Can be multiple installation per environment to balance to the load.
 
 
 ## Python scripts
 
-The `add_inventory.py` and `del_inventory.py` files are used to
-dynamically edit the inventory files
+The `add_inventory.py` and `del_inventory.py` scripts are used to dynamically
+edit the inventory files.
