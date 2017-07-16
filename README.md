@@ -23,6 +23,14 @@ However, it is recommended to use a SSH key associated to a user dedicated to
 ansible. The *ansible* user must be created on each servers.
 
 
+### Notes
+
+Add an attribute for the ansible inventory:
+
+    $ ssh monarc@172.16.102.105 sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./ansible-ubuntu/playbook/add_inventory.py
+
+
+
 ## Roles
 
 There are three roles, described below.

@@ -7,11 +7,15 @@ import json
 import random
 import string
 import os
+import sys
 
 import sys
 import yaml
 
-INVENTORY = '/home/cedric/ansible-ubuntu/inventory/'
+if len(sys.argv) > 1:
+    INVENTORY = sys.argv[1]
+else:
+    INVENTORY = './inventory/'
 
 #{"server":"client4.prod.dims.lc1.conostix.com","client":"grclux","salt":"zG@0q1EI",
 #"jabber_account":"grclux@jabber.cases.lu","sql_bootstrap":
@@ -28,8 +32,12 @@ def run():
     if stdin:
         newdata = json.loads(stdin)
 
-        generated_file = '%s/host_vars/%s/generated.yaml' % (INVENTORY, newdata['server'])
-        #os.system('mkdir "%s"' % generated_file)
+        path = os.path.join(os.path.abspath(INVENTORY), 'host_vars/',
+                                                            newdata['server'])
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        generated_file = os.path.join(path, 'generated.yaml')
         with open(generated_file, 'r+') as stream:
             try:
                 ymldata = yaml.load(stream)
@@ -43,7 +51,6 @@ def run():
                 client_list[client_name]['mysql_password'] = get_rnd_string(16)
                 client_list[client_name]['salt'] = get_rnd_string(64)
                 client_list[client_name]['sql_bootstrap'] = newdata['sql_bootstrap']
-
                 yaml.dump(ymldata, stream)
             except yaml.YAMLError as exc:
                 print exc
