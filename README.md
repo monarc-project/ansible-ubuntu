@@ -38,7 +38,7 @@ ansible. The *ansible* user must be created on each servers.
 
     $ ssh monarc@<IP-OF-THE-BO> sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./ansible-ubuntu/playbook/add_inventory.py
 
-The command above should be launched with cron.
+The command above should be launched on the configuration server with cron.
 
 
 
@@ -64,4 +64,4 @@ Can be multiple installation per environment to balance to the load.
 ## Python scripts
 
 The `add_inventory.py` and `del_inventory.py` scripts are used to dynamically
-edit the inventory files.
+edit the inventory files of the configuration server.
