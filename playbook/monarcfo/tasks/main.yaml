@@ -6,7 +6,6 @@
     dest: /var/lib/monarc/fo
     version: master
   register: appfo_pull
-  become: True
 
 - name: install composer
   copy:
@@ -15,11 +14,10 @@
     mode: 0755
   become: True
 
-
 - name: composer install
   shell: composer install
   args:
-    chdir: /var/lib/monarc/fo 
+    chdir: /var/lib/monarc/fo
   when: appfo_pull.before == None
 
 - name: update-all
@@ -75,7 +73,7 @@
   become: True
 
 - name: client config file
-  template: 
+  template:
     src: client_config.php.j2
     dest: "/var/www/{{item.value.name}}/local.php"
     owner: www-data
@@ -105,14 +103,14 @@
 
 - name: client database creation
   mysql_db:
-    name: "{{ item.value.name }}" 
+    name: "{{ item.value.name }}"
     config_file: /etc/mysql/debian.cnf
   with_dict: "{{ clients }}"
   when: clients is defined
   become: True
 
 - name: client database user creation
-  mysql_user: 
+  mysql_user:
     name: "{{ item.value.name }}"
     password: "{{ item.value.mysql_password }}"
     priv: "{{ item.value.name }}.*:ALL"
