@@ -3,10 +3,12 @@
 This playbook is used to deploy MONARC installation.
 
 
+
 ## Requirements
 
 * install Python 2 on all servers;
 * ansible must be installed on the configuration server.
+
 
 
 ## Usage
@@ -25,16 +27,19 @@ ansible. The *ansible* user must be created on each servers.
 
 ### Notes
 
-1. Add an attribute for the ansible inventory:
-
-    $ ssh monarc@172.16.102.105 sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./ansible-ubuntu/playbook/add_inventory.py
-
-2. In the file inventory/hosts:
+1. In the file __inventory/hosts__:
 
 * the section *dev* is for the FO;
-* the section *master* is for the BO
-* master in the section *dev:vars* is the ip/domain of the BO
-* publicHost in the section *dev:vars* is the ip/domain of the RPX
+* the section *master* is for the BO;
+* master in the section *dev:vars* is the ip/domain of the BO;
+* publicHost in the section *dev:vars* is the ip/domain of the RPX.
+
+2. Add an attribute for the ansible inventory:
+
+    $ ssh monarc@<IP-OF-THE-BO> sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./ansible-ubuntu/playbook/add_inventory.py
+
+The command above should be launched with cron.
+
 
 
 ## Roles
