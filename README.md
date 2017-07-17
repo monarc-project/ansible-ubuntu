@@ -1,6 +1,6 @@
 # Ansible playbook for MONARC deployement
 
-This playbook is used to deploy MONARC.
+This playbook is used to deploy the whole MONARC architecture.
 
 
 ![MONARC architecture](images/monarc-architecture.png "MONARC architecture")
@@ -38,7 +38,7 @@ ansible. The *ansible* user must be created on each servers.
 
 2. Add an attribute for the ansible inventory:
 
-    $ ssh monarc@<IP-OF-THE-BO> sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./ansible-ubuntu/playbook/add_inventory.py
+    $ ssh monarc@IP-OF-THE-BO sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./ansible-ubuntu/playbook/add_inventory.py
 
 The command above should be launched on the configuration server with cron.
 
