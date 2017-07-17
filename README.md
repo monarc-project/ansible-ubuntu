@@ -1,7 +1,9 @@
 # Ansible playbook for MONARC deployement
 
-This playbook is used to deploy MONARC installation.
+This playbook is used to deploy MONARC.
 
+
+![MONARC architecture](images/monarc-architecture.png "MONARC architecture")
 
 
 ## Requirements
