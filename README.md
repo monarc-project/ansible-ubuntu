@@ -1,15 +1,17 @@
 # Ansible playbook for MONARC deployement
 
-This playbook is used to deploy the whole MONARC architecture.
+This playbook is used to deploy the whole MONARC architecture in accordance to
+the figure below.
 
 ![MONARC architecture](images/monarc-architecture.png "MONARC architecture")
 
 
 ## Requirements
 
-* install Python 2 on all servers;
+* install Python 2 on all servers. Actually ansible 2.2 features only a tech
+  preview of Python 3 support;
 * [ansible](https://www.ansible.com/) must be installed on the configuration
-  server.
+  server. We have tested with version 2.2.1.0 of ansible.
 
 
 ## Usage
@@ -35,7 +37,7 @@ ansible. The *ansible* user must be created on each servers.
 * master in the section *dev:vars* is the ip/domain of the BO;
 * publicHost in the section *dev:vars* is the ip/domain of the RPX.
 
-2. Add an attribute for the ansible inventory:
+2. Adding an attribute for the ansible inventory is done with the command:
 
     $ ssh monarc@IP-OF-THE-BO sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./ansible-ubuntu/playbook/add_inventory.py
 
