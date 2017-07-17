@@ -2,15 +2,14 @@
 
 This playbook is used to deploy the whole MONARC architecture.
 
-
 ![MONARC architecture](images/monarc-architecture.png "MONARC architecture")
 
 
 ## Requirements
 
 * install Python 2 on all servers;
-* ansible must be installed on the configuration server.
-
+* [ansible](https://www.ansible.com/) must be installed on the configuration
+  server.
 
 
 ## Usage
@@ -41,7 +40,6 @@ ansible. The *ansible* user must be created on each servers.
     $ ssh monarc@IP-OF-THE-BO sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./ansible-ubuntu/playbook/add_inventory.py
 
 The command above should be launched on the configuration server with cron.
-
 
 
 ## Roles
