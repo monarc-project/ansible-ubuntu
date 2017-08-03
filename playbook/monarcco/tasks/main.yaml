@@ -4,7 +4,6 @@
   apt:
     name: "{{ item }}"
     update_cache: True
-  become: True
   with_items:
     - apache2
     - libapache2-mod-php
@@ -22,9 +21,16 @@
     - npm
     - python-mysqldb
     - gettext
+  become: True
 
 - name: monarc directory
-  file: name=/var/lib/monarc state=directory
+  file:
+    path: /var/lib/monarc
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: 0775
+  become: True
 
 - name: install grunt
   command: "npm install -g grunt-cli"
