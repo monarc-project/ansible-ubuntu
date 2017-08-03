@@ -37,8 +37,8 @@ In this case, run the following command:
 * from the configuration server: ssh-copy-id ansible@IP-OF-BO/FO/RPX
 * add the IP of the BO,FO,RPX in the file /etc/hosts of the configuration server;
 * add the *ansible* user in the groups:
- * sudo: _sudo usermod -aG sudo ansible_
- * www-data: _sudo usermod -aG www-data ansible_
+  * sudo: _sudo usermod -aG sudo ansible_
+  * www-data: _sudo usermod -aG www-data ansible_
 
 
 ### Notes
