@@ -19,13 +19,26 @@ the figure below.
     $ sudo apt-get install ansible
     $ git clone https://github.com/monarc-project/ansible-ubuntu.git
     $ cd ansible-ubuntu/playbook
-    $ ansible-playbook -i ../inventory/ monarc.yaml -u monarc -k -K
+    $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible -k -K
 
 *-k -K* forces the SSH authentication by simple password. In this case
 *sshpass* must be installed on the configuration server.
 
-However, it is recommended to use a SSH key associated to a user dedicated to
-ansible. The *ansible* user must be created on each servers.
+However, it is strongly recommended to use a SSH key associated to a user
+dedicated to ansible. The *ansible* user must be created on each servers.
+In this case, run the following command:
+
+    $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible --ask-sudo-pass
+
+
+### Tips
+
+* create an user named *ansible* on each server;
+* from the configuration server: ssh-copy-id ansible@IP-OF-BO/FO/RPX
+* add the IP of the BO,FO,RPX in the file /etc/hosts of the configuration server;
+* add the *ansible* user in the groups:
+ * sudo: _sudo usermod -aG sudo ansible_
+ * www-data: _sudo usermod -aG www-data ansible_
 
 
 ### Notes
