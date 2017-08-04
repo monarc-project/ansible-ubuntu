@@ -16,7 +16,7 @@ the figure below.
 
 ## Usage
 
-Install ansible and get the ansible configuration repository:
+Install ansible and get the playbook for MONARC:
 
     $ sudo apt-get install ansible
     $ git clone https://github.com/monarc-project/ansible-ubuntu.git
@@ -55,11 +55,11 @@ Then launch ansible:
     $ cd playbook/
     $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible -k -K
 
-*-k -K* forces the SSH authentication by simple password. In this case
+``-k -K`` forces the SSH authentication by simple password. In this case
 *sshpass* must be installed on the configuration server.
 
 However, it is strongly recommended to use a SSH key associated to a user
-dedicated to ansible. The *ansible* user must be created on each servers.
+dedicated to ansible. The user *ansible* must be created on each servers.
 In this case, run the following command:
 
     $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible --ask-sudo-pass
@@ -68,11 +68,11 @@ In this case, run the following command:
 ### Tips
 
 * create a user named *ansible* on each server;
-* add the *ansible* user in the groups:
-  * **sudo**: _sudo usermod -aG sudo ansible_
-  * **www-data**: _sudo usermod -aG www-data ansible_
-* from the configuration server: _ssh-copy-id ansible@IP-OF-BO/FO/RPX_
-* add the IP of the BO, FO and RPX in the file _/etc/hosts_ of the
+* add the user *ansible* in the groups:
+  * **sudo**: ``sudo usermod -aG sudo ansible``
+  * **www-data**: ``sudo usermod -aG www-data ansible``
+* from the configuration server: ``ssh-copy-id ansible@IP-OF-BO/FO/RPX``
+* add the IP of the BO, FO and RPX in the file */etc/hosts* of the
   configuration server;
 
 
