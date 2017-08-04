@@ -35,3 +35,10 @@
 - name: install grunt
   command: "npm install -g grunt-cli"
   become: True
+
+- name: create symlink to /usr/bin/node
+  file:
+    path: /usr/bin/nodejs
+    dest: /usr/bin/node
+    state: link
+  become: True
