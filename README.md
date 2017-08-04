@@ -52,7 +52,7 @@ Create a file _inventory/hosts_:
 
 Then launch ansible:
 
-    $ cd ansible-ubuntu/playbook
+    $ cd playbook/
     $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible -k -K
 
 *-k -K* forces the SSH authentication by simple password. In this case
@@ -69,10 +69,10 @@ In this case, run the following command:
 
 * create a user named *ansible* on each server;
 * add the *ansible* user in the groups:
-  * **sudo**: __sudo usermod -aG sudo ansible__
-  * **www-data**: __sudo usermod -aG www-data ansible__
-* from the configuration server: __ssh-copy-id ansible@IP-OF-BO/FO/RPX__
-* add the IP of the BO, FO and RPX in the file __/etc/hosts__ of the
+  * **sudo**: _sudo usermod -aG sudo ansible_
+  * **www-data**: _sudo usermod -aG www-data ansible_
+* from the configuration server: _ssh-copy-id ansible@IP-OF-BO/FO/RPX_
+* add the IP of the BO, FO and RPX in the file _/etc/hosts_ of the
   configuration server;
 
 
