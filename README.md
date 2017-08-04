@@ -33,7 +33,7 @@ Create a file _inventory/hosts_:
 
 
     [master]
-    IP-OF-THE-FO
+    IP-OF-THE-BO
 
 
     [rpx]
