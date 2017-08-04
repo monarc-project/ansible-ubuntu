@@ -38,7 +38,7 @@
 
 - name: create symlink to /usr/bin/node
   file:
-    path: /usr/bin/nodejs
+    src: /usr/bin/nodejs
     dest: /usr/bin/node
     state: link
   become: True

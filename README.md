@@ -68,13 +68,12 @@ In this case, run the following command:
 ### Tips
 
 * create a user named *ansible* on each server;
+* add the IP of the BO, FO and RPX in the file */etc/hosts* of the
+  configuration server;
+* from the configuration server: ``ssh-copy-id ansible@BO/FO/RPX``
 * add the user *ansible* in the groups:
   * **sudo**: ``sudo usermod -aG sudo ansible``
   * **www-data**: ``sudo usermod -aG www-data ansible``
-* from the configuration server: ``ssh-copy-id ansible@IP-OF-BO/FO/RPX``
-* add the IP of the BO, FO and RPX in the file */etc/hosts* of the
-  configuration server;
-
 
 ### Notes
 
