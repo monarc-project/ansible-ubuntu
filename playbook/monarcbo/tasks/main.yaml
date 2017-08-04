@@ -19,7 +19,6 @@
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
   when: appbo_pull.before == None
-  become: True
 
 - name: update-all
   shell: "scripts/update-all.sh"
