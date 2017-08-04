@@ -32,7 +32,7 @@
     name: python-mysqldb
   become: True
 
-- name: create readonly acess to monarc common
+- name: create readonly access to monarc common
   mysql_user:
     name: "{{ item.value.name }}"
     host: "%"
