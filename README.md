@@ -16,8 +16,42 @@ the figure below.
 
 ## Usage
 
+Install ansible and get the ansible configuration repository:
+
     $ sudo apt-get install ansible
     $ git clone https://github.com/monarc-project/ansible-ubuntu.git
+    $ cd ansible-ubuntu/
+
+Create a file _inventory/hosts_:
+
+    [dev]
+    IP-OF-THE-FO
+
+    [dev:vars]
+    master= "IP/DOMAIN of the BO"
+    publicHost= "IP/DOMAIN of the RPX"
+
+
+    [master]
+    IP-OF-THE-FO
+
+
+    [rpx]
+    IP-OF-THE-RPX
+
+
+    [monarc:children]
+    rpx
+    master
+    dev
+
+
+    [monarc:vars]
+    env_prefix=""
+
+
+Then launch ansible:
+
     $ cd ansible-ubuntu/playbook
     $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible -k -K
 
@@ -33,24 +67,18 @@ In this case, run the following command:
 
 ### Tips
 
-* create an user named *ansible* on each server;
-* from the configuration server: ssh-copy-id ansible@IP-OF-BO/FO/RPX
-* add the IP of the BO,FO,RPX in the file /etc/hosts of the configuration server;
+* create a user named *ansible* on each server;
 * add the *ansible* user in the groups:
-  * sudo: _sudo usermod -aG sudo ansible_
-  * www-data: _sudo usermod -aG www-data ansible_
+  * **sudo**: __sudo usermod -aG sudo ansible__
+  * **www-data**: __sudo usermod -aG www-data ansible__
+* from the configuration server: __ssh-copy-id ansible@IP-OF-BO/FO/RPX__
+* add the IP of the BO, FO and RPX in the file __/etc/hosts__ of the
+  configuration server;
 
 
 ### Notes
 
-1. In the file __inventory/hosts__:
-
-* the section *dev* is for the FO;
-* the section *master* is for the BO;
-* master in the section *dev:vars* is the ip/domain of the BO;
-* publicHost in the section *dev:vars* is the ip/domain of the RPX.
-
-2. Adding an attribute for the ansible inventory is done with the command:
+1. Adding an attribute for the ansible inventory is done with the command:
 
     $ ssh monarc@IP-OF-THE-BO sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./ansible-ubuntu/playbook/add_inventory.py
 
