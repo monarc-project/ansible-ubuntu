@@ -27,9 +27,8 @@
   file:
     path: /var/lib/monarc
     state: directory
-    owner: www-data
-    group: www-data
-    mode: 0775
+    owner: "{{ ansible_user }}"
+    mode: 0755
   become: True
 
 - name: install grunt
