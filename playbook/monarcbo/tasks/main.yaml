@@ -20,6 +20,34 @@
     chdir: /var/lib/monarc/bo/MonarcAppBO/
   when: appbo_pull.before == None
 
+- name: create monarc bo database
+  mysql_db:
+    name: monarc_master
+    config_file: /etc/mysql/debian.cnf
+  become: True
+
+- name: create monarc common database1
+  mysql_db:
+    name: monarc_common
+    config_file: /etc/mysql/debian.cnf
+  become: True
+
+- name: create monarc bo sql user
+  mysql_user:
+    name: monarc
+    password: "{{ monarc_sql_password }}"
+    priv: "monarc_common.*:ALL/monarc_master.*:ALL"
+    config_file: /etc/mysql/debian.cnf
+  become: True
+
+- name: configuration template
+  template:
+    src: local.php.j2
+    dest: /var/lib/monarc/bo/MonarcAppBO/config/autoload/local.php
+    mode: 0400
+    owner: www-data
+  become: True
+
 - name: update-all
   shell: "scripts/update-all.sh"
   args:
