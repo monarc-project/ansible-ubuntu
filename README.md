@@ -25,7 +25,7 @@ Install ansible and get the playbook for MONARC:
 Create a file _inventory/hosts_:
 
     [dev]
-    IP-OF-THE-FO
+    IP-OF-THE-FO 
 
     [dev:vars]
     master= "IP/DOMAIN of the BO"
@@ -33,7 +33,7 @@ Create a file _inventory/hosts_:
 
 
     [master]
-    IP-OF-THE-BO
+    IP-OF-THE-BO monarc_sql_password="<password>"
 
 
     [rpx]
@@ -49,6 +49,8 @@ Create a file _inventory/hosts_:
     [monarc:vars]
     env_prefix=""
 
+The variable monarc\_sql\_password is the password for the SQL database
+on the BO
 
 Then launch ansible:
 
