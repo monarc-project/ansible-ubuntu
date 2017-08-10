@@ -27,13 +27,12 @@
   file:
     path: /var/lib/monarc
     state: directory
-    owner: www-data
-    group: www-data
-    mode: 0775
+    owner: "{{ ansible_user }}"
+    mode: 0755
   become: True
 
 - name: install grunt
-  command: "npm install -g grunt-cli"
+  command: npm install -g grunt-cli creates=/usr/local/bin/grunt
   become: True
 
 - name: create symlink to /usr/bin/node

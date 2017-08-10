@@ -7,6 +7,23 @@
     version: master
   register: appbo_pull
 
+- name: create module dir
+  file:
+    path: /var/lib/monarc/bo/MonarcAppBO/modules
+    state: directory
+
+- name: MonarcCore link
+  file:
+    src: /var/lib/monarc/bo/MonarcAppBO/vendor/monarc/core
+    path: /var/lib/monarc/bo/MonarcAppBO/modules/MonarcCore
+    state: link
+
+- name: backoffice link
+  file:
+    src: /var/lib/monarc/bo/MonarcAppBO/vendor/monarc/backoffice
+    path: /var/lib/monarc/bo/MonarcAppBO/modules/MonarcBO
+    state: link
+
 - name: install composer
   copy:
     src: "composer.phar"
