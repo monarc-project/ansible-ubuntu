@@ -38,7 +38,7 @@ def run():
             os.makedirs(path)
 
         generated_file = os.path.join(path, 'generated.yaml')
-        with open(generated_file, 'r+') as stream:
+        with open(generated_file, 'w+') as stream:
             try:
                 ymldata = yaml.load(stream)
                 if ymldata == None:
