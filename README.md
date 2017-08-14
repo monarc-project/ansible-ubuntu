@@ -65,29 +65,19 @@ Install ansible on the configuration server and get the playbook for MONARC:
   on the BO.
 
 
-* Finally, launch ansible:
+* finally, launch ansible:
 
-    $ cd playbook/
-    $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible -k -K
-
-``-k -K`` forces the SSH authentication by simple password. In this case
-*sshpass* must be installed on the configuration server.
-
-However, it is strongly recommended to use a SSH key associated to a user
-dedicated to ansible. The user *ansible* must be created on each servers.
-In this case, run the following command:
-
-    $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
-
+        $ cd playbook/
+        $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
 
 
 ### Notes
 
 1. Adding an attribute for the ansible inventory is done with the command:
 
-    $ ssh ansible@BO sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./ansible-ubuntu/playbook/add_inventory.py
+        $ ssh ansible@BO sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./ansible-ubuntu/playbook/add_inventory.py
 
-The command above should be launched on the configuration server with cron.
+The command above should be launched on the configuration server with ``cron``.
 
 
 ## Roles
