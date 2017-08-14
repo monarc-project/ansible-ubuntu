@@ -57,6 +57,11 @@
     config_file: /etc/mysql/debian.cnf
   become: True
 
+- name: initializes the database
+  command: gunzip -k db-bootstrap/monarc-common.sql.gz ; mysql -u monarc -p{{ monarc_sql_password }} monarc_common < db-bootstrap/monarc-common.sql
+  args:
+    chdir: /var/lib/monarc/bo/MonarcAppBO/
+
 - name: configuration template
   template:
     src: local.php.j2
