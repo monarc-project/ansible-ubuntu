@@ -121,6 +121,12 @@
   notify:
     - reload apache
 
+- name: deactivates the default virtualhost
+  command: a2dissite 000-default.conf
+  become: True
+  notify:
+    - reload apache
+
 - name: activates the virtualhost
   command: a2ensite {{ ansible_fqdn }}
   become: True
