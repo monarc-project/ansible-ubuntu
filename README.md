@@ -32,9 +32,8 @@ Install ansible on the configuration server and get the playbook for MONARC:
 * add the user *ansible* in the *sudo* group:
   * ``sudo usermod -aG sudo ansible``
 * give the permission to ansible to use sudo without password:
-  * ``ansible  ALL=(ALL:ALL) NOPASSWD:ALL`` in the file */etc/sudoers*
-
-Create a file _inventory/hosts_:
+  * add ``ansible  ALL=(ALL:ALL) NOPASSWD:ALL`` in the file */etc/sudoers*
+* create a file _inventory/hosts_:
 
     [dev]
     FQDN-FO
@@ -62,11 +61,11 @@ Create a file _inventory/hosts_:
     [monarc:vars]
     env_prefix=""
 
-The variable *monarc\_sql\_password* is the password for the SQL database
-on the BO.
+  The variable *monarc\_sql\_password* is the password for the SQL database
+  on the BO.
 
 
-Finally, launch ansible:
+* Finally, launch ansible:
 
     $ cd playbook/
     $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible -k -K
