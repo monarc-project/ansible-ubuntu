@@ -16,28 +16,41 @@ the figure below.
 
 ## Usage
 
-Install ansible and get the playbook for MONARC:
+
+Install ansible on the configuration server and get the playbook for MONARC:
 
     $ sudo apt-get install ansible
     $ git clone https://github.com/monarc-project/ansible-ubuntu.git
     $ cd ansible-ubuntu/
 
+### Configuration
+
+* create a user named *ansible* on each server;
+* add the IP of the BO, FO and RPX in the file */etc/hosts* of the
+  configuration server;
+* from the configuration server: ``ssh-copy-id ansible@BO/FO/RPX``
+* add the user *ansible* in the *sudo* group:
+  * ``sudo usermod -aG sudo ansible``
+* give the permission to ansible to use sudo without password:
+  * ``ansible  ALL=(ALL:ALL) NOPASSWD:ALL`` in the file */etc/sudoers*
+
 Create a file _inventory/hosts_:
 
     [dev]
-    IP-OF-THE-FO
+    FQDN-FO
 
     [dev:vars]
-    master= "IP/DOMAIN of the BO"
-    publicHost= "IP/DOMAIN of the RPX"
+    master= "FQDN-BO"
+    publicHost= "FQDN-RPX"
+    clientDomain= ""
 
 
     [master]
-    IP-OF-THE-BO monarc_sql_password="<password>"
+    FQDN-BO monarc_sql_password="<password>"
 
 
     [rpx]
-    IP-OF-THE-RPX
+    FQDN-RPX
 
 
     [monarc:children]
@@ -49,10 +62,11 @@ Create a file _inventory/hosts_:
     [monarc:vars]
     env_prefix=""
 
-The variable monarc\_sql\_password is the password for the SQL database
-on the BO
+The variable *monarc\_sql\_password* is the password for the SQL database
+on the BO.
 
-Then launch ansible:
+
+Finally, launch ansible:
 
     $ cd playbook/
     $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible -k -K
@@ -64,23 +78,15 @@ However, it is strongly recommended to use a SSH key associated to a user
 dedicated to ansible. The user *ansible* must be created on each servers.
 In this case, run the following command:
 
-    $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible --ask-sudo-pass
+    $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
 
 
-### Tips
-
-* create a user named *ansible* on each server;
-* add the IP of the BO, FO and RPX in the file */etc/hosts* of the
-  configuration server;
-* from the configuration server: ``ssh-copy-id ansible@BO/FO/RPX``
-* add the user *ansible* in the *sudo* group:
-  * ``sudo usermod -aG sudo ansible``
 
 ### Notes
 
 1. Adding an attribute for the ansible inventory is done with the command:
 
-    $ ssh monarc@IP-OF-THE-BO sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./ansible-ubuntu/playbook/add_inventory.py
+    $ ssh ansible@BO sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./ansible-ubuntu/playbook/add_inventory.py
 
 The command above should be launched on the configuration server with cron.
 
