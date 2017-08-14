@@ -76,6 +76,7 @@ Install ansible on the configuration server and get the playbook for MONARC:
 1. Adding an attribute for the ansible inventory is done with the command:
 
         $ ssh ansible@BO sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./ansible-ubuntu/playbook/add_inventory.py
+        $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
 
 The command above should be launched on the configuration server with ``cron``.
 
