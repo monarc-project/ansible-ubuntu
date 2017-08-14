@@ -35,31 +35,31 @@ Install ansible on the configuration server and get the playbook for MONARC:
   * add ``ansible  ALL=(ALL:ALL) NOPASSWD:ALL`` in the file */etc/sudoers*
 * create a file _inventory/hosts_:
 
-    [dev]
-    FQDN-FO
+        [dev]
+        FQDN-FO
 
-    [dev:vars]
-    master= "FQDN-BO"
-    publicHost= "FQDN-RPX"
-    clientDomain= ""
-
-
-    [master]
-    FQDN-BO monarc_sql_password="<password>"
+        [dev:vars]
+        master= "FQDN-BO"
+        publicHost= "FQDN-RPX"
+        clientDomain= ""
 
 
-    [rpx]
-    FQDN-RPX
+        [master]
+        FQDN-BO monarc_sql_password="<password>"
 
 
-    [monarc:children]
-    rpx
-    master
-    dev
+        [rpx]
+        FQDN-RPX
 
 
-    [monarc:vars]
-    env_prefix=""
+        [monarc:children]
+        rpx
+        master
+        dev
+
+
+        [monarc:vars]
+        env_prefix=""
 
   The variable *monarc\_sql\_password* is the password for the SQL database
   on the BO.
