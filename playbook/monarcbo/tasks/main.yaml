@@ -9,20 +9,8 @@
 
 - name: create module dir
   file:
-    path: /var/lib/monarc/bo/MonarcAppBO/modules
+    path: /var/lib/monarc/bo/MonarcAppBO/module
     state: directory
-
-- name: MonarcCore link
-  file:
-    src: /var/lib/monarc/bo/MonarcAppBO/vendor/monarc/core
-    path: /var/lib/monarc/bo/MonarcAppBO/modules/MonarcCore
-    state: link
-
-- name: backoffice link
-  file:
-    src: /var/lib/monarc/bo/MonarcAppBO/vendor/monarc/backoffice
-    path: /var/lib/monarc/bo/MonarcAppBO/modules/MonarcBO
-    state: link
 
 - name: install composer
   copy:
@@ -36,6 +24,18 @@
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
   when: appbo_pull.before == None
+
+- name: MonarcCore link
+  file:
+    src: /var/lib/monarc/bo/MonarcAppBO/vendor/monarc/core
+    dest: /var/lib/monarc/bo/MonarcAppBO/module/MonarcCore
+    state: link
+
+- name: backoffice link
+  file:
+    src: /var/lib/monarc/bo/MonarcAppBO/vendor/monarc/backoffice
+    dest: /var/lib/monarc/bo/MonarcAppBO/module/MonarcBO
+    state: link
 
 - name: create monarc bo database
   mysql_db:
