@@ -25,7 +25,7 @@ Install ansible and get the playbook for MONARC:
 Create a file _inventory/hosts_:
 
     [dev]
-    IP-OF-THE-FO 
+    IP-OF-THE-FO
 
     [dev:vars]
     master= "IP/DOMAIN of the BO"
@@ -73,9 +73,8 @@ In this case, run the following command:
 * add the IP of the BO, FO and RPX in the file */etc/hosts* of the
   configuration server;
 * from the configuration server: ``ssh-copy-id ansible@BO/FO/RPX``
-* add the user *ansible* in the groups:
-  * **sudo**: ``sudo usermod -aG sudo ansible``
-  * **www-data**: ``sudo usermod -aG www-data ansible``
+* add the user *ansible* in the *sudo* group:
+  * ``sudo usermod -aG sudo ansible``
 
 ### Notes
 
