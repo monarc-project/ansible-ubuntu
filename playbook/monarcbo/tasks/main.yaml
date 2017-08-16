@@ -30,6 +30,9 @@
   shell: composer self-update
   become: True
 
+- name: set github auth token for composer
+  command: composer config -g github-oauth.github.com {{ github_auth_token }}
+
 - name: composer install
   shell: composer install
   args:
@@ -91,7 +94,6 @@
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
   when: appbo_pull.before != appbo_pull.after
-  become_user: www-data
 
 - name: required packages
   apt:
