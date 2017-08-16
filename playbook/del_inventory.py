@@ -3,17 +3,25 @@
 Delete an attribute from the ansible inventory
 """
 
+import os
+import sys
 import json
 import random
 import string
 
-import sys
 import yaml
 
-INVENTORY = '/var/lib/ansible/inventory'
+if len(sys.argv) > 1:
+    INVENTORY = sys.argv[1]
+else:
+    INVENTORY = '/var/lib/ansible/inventory'
 
 def run():
     """ Main function """
+    if not os.path.exists(INVENTORY):
+        print 'Folder do no exists:', INVENTORY
+        exit(1)
+
     stdin = sys.stdin.read()
 
     if stdin:

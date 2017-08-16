@@ -3,13 +3,12 @@
 Add an attribute for the ansible inventory
 """
 
+import os
+import sys
 import json
 import random
 import string
-import os
-import sys
 
-import sys
 import yaml
 
 if len(sys.argv) > 1:
@@ -24,6 +23,10 @@ def get_rnd_string(length):
 
 def run():
     """ Main function """
+    if not os.path.exists(INVENTORY):
+        print 'Folder do no exists:', INVENTORY
+        exit(1)
+
     stdin = sys.stdin.read()
 
     if stdin:
@@ -31,6 +34,7 @@ def run():
 
         path = os.path.join(os.path.abspath(INVENTORY), 'host_vars/',
                                                             newdata['server'])
+
         if not os.path.exists(path):
             os.makedirs(path)
 
