@@ -1,18 +1,18 @@
 ---
-# - name: netlor user
-#   user: name=netlor
+# - name: ansible user
+#   user: name=ansible
 #   become: True
 #
 # - name: create ssh directory
 #   file:
-#     name: /home/netlor/.ssh
+#     name: /home/ansible/.ssh
 #     state: directory
-#     owner: netlor
+#     owner: ansible
 #   become: True
 #
-# - name: install netlor ssh keys
+# - name: install ansible ssh keys
 #   copy:
-#     src: netlor_authorized_keys
-#     dest: /home/netlor/.ssh/authorized_keys
+#     src: ansible_authorized_keys
+#     dest: /home/ansible/.ssh/authorized_keys
 #     owner: netlor
 #   become: True
