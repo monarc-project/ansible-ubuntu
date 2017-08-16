@@ -17,9 +17,6 @@ if len(sys.argv) > 1:
 else:
     INVENTORY = './inventory/'
 
-#{"server":"client4.prod.dims.lc1.conostix.com","client":"grclux","salt":"zG@0q1EI",
-#"jabber_account":"grclux@jabber.cases.lu","sql_bootstrap":
-
 def get_rnd_string(length):
     """Get random string"""
     return ''.join(random.choice(

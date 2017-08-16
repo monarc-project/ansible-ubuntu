@@ -12,8 +12,6 @@ import yaml
 
 INVENTORY = '/var/lib/ansible/inventory'
 
-#{"serveur":"client2.prod.dims.lc1.conostix.com","client":"sesluxbg"}
-
 def run():
     """ Main function """
     stdin = sys.stdin.read()
