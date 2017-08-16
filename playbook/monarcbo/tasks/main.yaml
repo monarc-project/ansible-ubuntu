@@ -26,6 +26,10 @@
     mode: 0755
   become: True
 
+- name: update composer
+  shell: composer self-update
+  become: True
+
 - name: composer install
   shell: composer install
   args:
@@ -87,6 +91,7 @@
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
   when: appbo_pull.before != appbo_pull.after
+  become_user: www-data
 
 - name: required packages
   apt:
