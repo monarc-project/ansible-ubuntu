@@ -14,5 +14,5 @@
 #   copy:
 #     src: ansible_authorized_keys
 #     dest: /home/ansible/.ssh/authorized_keys
-#     owner: netlor
+#     owner: ansible
 #   become: True
