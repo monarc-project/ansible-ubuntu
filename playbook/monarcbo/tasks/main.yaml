@@ -104,7 +104,6 @@
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
   when: appbo_pull.before != appbo_pull.after
-  become: True
 
 - name: required packages
   apt:
