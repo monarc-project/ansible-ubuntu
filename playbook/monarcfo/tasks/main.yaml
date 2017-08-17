@@ -85,6 +85,12 @@
     - reload apache
   become: True
 
+- name: deactivates the default virtualhost
+  command: a2dissite 000-default.conf
+  become: True
+  notify:
+    - reload apache
+
 - name: enable apache conf
   command: "/usr/sbin/a2ensite {{item.value.name}}.conf"
   with_dict: "{{ clients }}"

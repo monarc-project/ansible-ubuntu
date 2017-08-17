@@ -52,8 +52,9 @@
     state: link
 
 - name: set MariaDB bind-address to 0.0.0.0
-  shell: echo 'bind-address = 0.0.0.0' | sudo tee -a /etc/mysql/my.cnf
+  shell: echo '\n[mysqld]\nbind-address = 0.0.0.0' | sudo tee -a /etc/mysql/my.cnf
   become: True
+  when: appbo_pull.before == None
   notify:
     - restart mysql
 
@@ -81,11 +82,13 @@
   command: gunzip -k db-bootstrap/monarc-common.sql.gz
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
+  when: appbo_pull.before == None
 
 - name: initializes the database
   command: mysql -u monarc -p"{{ monarc_sql_password }}" monarc_common < db-bootstrap/monarc-common.sql
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
+  when: appbo_pull.before == None
 
 - name: configuration template
   template:
@@ -100,6 +103,7 @@
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
   when: appbo_pull.before != appbo_pull.after
+  become: True
 
 - name: required packages
   apt:

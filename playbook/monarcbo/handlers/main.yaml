@@ -6,3 +6,7 @@
 - name: restart apache
   service: name=apache2 state=restarted
   become: True
+
+- name: restart mysql
+  service: name=mysql state=restarted
+  become: True
