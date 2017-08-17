@@ -1,10 +1,10 @@
 127.0.0.1       localhost
-172.18.14.52    rpx.dev.monarc.lc1.conostix.com rpx
+172.18.14.52    rpx.{{ clientDomain }} rpx
 
 {% for server in groups['dev'] %}
 {% set hostname = hostvars[server]['inventory_hostname'] %}
 {% for key,client in hostvars[server]['clients'].iteritems() %}
-172.18.13.62	{{client.name}}.dev.monarc.lc1.conostix.com
+172.18.13.62	{{client.name}}.{{ clientDomain }}
 {% endfor %}
 {% endfor %}
 
@@ -12,4 +12,3 @@
 ::1     localhost ip6-localhost ip6-loopback
 ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
-
