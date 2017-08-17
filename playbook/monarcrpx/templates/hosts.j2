@@ -1,10 +1,10 @@
 127.0.0.1       localhost
-groups['rpx'][0]    rpx.{{ clientDomain }} rpx
+{{ groups['rpx'][0] }}    rpx.{{ clientDomain }} rpx
 
 {% for server in groups['dev'] %}
 {% set hostname = hostvars[server]['inventory_hostname'] %}
 {% for key,client in hostvars[server]['clients'].iteritems() %}
-server	{{client.name}}.{{ clientDomain }}
+{{ server }}	{{client.name}}.{{ clientDomain }}
 {% endfor %}
 {% endfor %}
 
