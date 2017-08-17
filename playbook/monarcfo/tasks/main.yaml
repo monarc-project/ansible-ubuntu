@@ -14,7 +14,7 @@
 
 - name: create data dir
   file:
-    path: /var/lib/monarc/bo/MonarcAppBO/data
+    path: /var/lib/monarc/fo/data
     state: directory
     owner: "www-data"
   become: True
@@ -45,10 +45,10 @@
     dest: /var/lib/monarc/fo/module/MonarcCore
     state: link
 
-- name: backoffice link
+- name: frontoffice link
   file:
-    src: /var/lib/monarc/fo/vendor/monarc/backoffice
-    dest: /var/lib/monarc/fo/module/MonarcBO
+    src: /var/lib/monarc/fo/vendor/monarc/frontoffice
+    dest: /var/lib/monarc/fo//module/MonarcFO
     state: link
 
 - name: update-all
