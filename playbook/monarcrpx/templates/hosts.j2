@@ -1,5 +1,5 @@
 127.0.0.1       localhost
-172.18.14.52    rpx.{{ clientDomain }} rpx
+groups['rpx'][0]    rpx.{{ clientDomain }} rpx
 
 {% for server in groups['dev'] %}
 {% set hostname = hostvars[server]['inventory_hostname'] %}
