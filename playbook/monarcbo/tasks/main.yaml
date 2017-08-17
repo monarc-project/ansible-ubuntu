@@ -51,6 +51,12 @@
     dest: /var/lib/monarc/bo/MonarcAppBO/module/MonarcBO
     state: link
 
+- name: set MariaDB bind-address to 0.0.0.0
+  shell: echo 'bind-address = 0.0.0.0' | sudo tee -a /etc/mysql/my.cnf
+  become: True
+  notify:
+    - restart mysql
+
 - name: create monarc bo database
   mysql_db:
     name: monarc_master
