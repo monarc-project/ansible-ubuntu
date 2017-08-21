@@ -60,6 +60,7 @@ Install ansible on the configuration server and get the playbook for MONARC:
 
         [monarc:vars]
         env_prefix=""
+        clientDomain= ""
         github_auth_token="<your-github-auth-token>"
 
   The variable *monarc\_sql\_password* is the password for the SQL database
