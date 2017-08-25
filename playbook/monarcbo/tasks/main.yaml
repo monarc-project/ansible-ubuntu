@@ -97,6 +97,7 @@
     dest: /var/lib/monarc/bo/MonarcAppBO/config/autoload/local.php
     mode: 0440
     owner: ansible
+    group: ansible
   become: True
 
 - name: update-all
