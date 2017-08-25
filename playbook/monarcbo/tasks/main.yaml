@@ -80,7 +80,7 @@
   become: True
 
 - name: initializes the database
-  command: gunzip -k db-bootstrap/monarc-common.sql.gz
+  command: tar -xzvf db-bootstrap/monarc-common.tar.gz -C db-bootstrap/
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
   when: appbo_pull.before == None
@@ -95,12 +95,18 @@
   template:
     src: local.php.j2
     dest: /var/lib/monarc/bo/MonarcAppBO/config/autoload/local.php
-    mode: 0400
-    owner: www-data
+    mode: 0440
+    owner: ansible
   become: True
 
 - name: update-all
   shell: "scripts/update-all.sh"
+  args:
+    chdir: /var/lib/monarc/bo/MonarcAppBO/
+  when: appbo_pull.before != appbo_pull.after
+
+- name: create initial admin user
+  shell: php ./vendor/robmorgan/phinx/bin/phinx seed:run -c ./module/MonarcBO/migrations/phinx.php
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
   when: appbo_pull.before != appbo_pull.after
