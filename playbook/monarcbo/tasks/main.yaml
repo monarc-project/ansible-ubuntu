@@ -79,10 +79,11 @@
     config_file: /etc/mysql/debian.cnf
   become: True
 
-- name: initializes the database
-  command: tar -xzvf db-bootstrap/monarc-common.tar.gz -C db-bootstrap/
-  args:
-    chdir: /var/lib/monarc/bo/MonarcAppBO/
+- name: unarchive the database to import
+  unarchive:
+    remote_src: true
+    src: /var/lib/monarc/bo/MonarcAppBO/db-bootstrap/monarc-common.tar.gz
+    dest: /var/lib/monarc/bo/MonarcAppBO/db-bootstrap/
   when: appbo_pull.before == None
 
 - name: initializes the database
