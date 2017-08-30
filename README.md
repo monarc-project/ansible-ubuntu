@@ -74,6 +74,9 @@ Install ansible on the configuration server and get the playbook for MONARC:
         $ cd playbook/
         $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
 
+ansible will install and configure the back office, the front office and the
+reverse proxy. Consequently the configuration server should be able to contact
+these servers through SSH.
 
 ### Notes
 
