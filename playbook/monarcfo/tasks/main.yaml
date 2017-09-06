@@ -128,6 +128,18 @@
   when: clients is defined
   become: True
 
+- name: copy default deliveries templates
+  command: cp -R /var/lib/monarc/fo/deliveries/ /var/www/{{item.value.name}}/
+  with_dict: "{{ clients }}"
+  when: clients is defined
+  become: True
+
+- name: set rights of deliveries
+  command: chown -R www-data:www-data /var/www/{{item.value.name}}/deliveries
+  with_dict: "{{ clients }}"
+  when: clients is defined
+  become: True
+
 - name: client cache upgrade
   file:
     name: "/var/www/{{item.value.name}}/data/upgrade"
