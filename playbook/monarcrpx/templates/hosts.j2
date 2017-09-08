@@ -3,9 +3,11 @@
 
 {% for server in groups['dev'] %}
 {% set hostname = hostvars[server]['inventory_hostname'] %}
+{% if 'clients' in hostvars[server]  %}
 {% for key,client in hostvars[server]['clients'].iteritems() %}
 {{ server }}	{{client.name}}.{{ clientDomain }}
 {% endfor %}
+{% endif %}
 {% endfor %}
 
 # The following lines are desirable for IPv6 capable hosts
