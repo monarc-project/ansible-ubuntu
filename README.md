@@ -89,8 +89,15 @@ these servers through SSH.
         $ ssh ansible@BO sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./add_inventory.py ../inventory/
         $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
 
-The command above should be launched on the configuration server with ``cron``.
+2. Removing an attribute for the ansible inventory is done with the command:
 
+        $ ssh ansible@BO sudo -u www-data /usr/local/bin/del_monarc_clients.sh | ./del_inventory.py ../inventory/
+        $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
+
+The command above should be launched on the configuration server with ``cron``:
+
+3. Installation of Postfix on the BO and the FO is not done by ansible. You
+   have to do it manually.
 
 ## Roles
 
