@@ -42,32 +42,31 @@ Install ansible on the configuration server and get the playbook for MONARC:
 * create a file _inventory/hosts_:
 
         [dev]
-        FQDN-FO
+        FO
 
         [dev:vars]
-        master= "FQDN-BO"
-        publicHost= "FQDN-RPX"
-        clientDomain= ""
-
+        master= "BO"
+        publicHost= "RPX.localhost"
 
         [master]
-        FQDN-BO monarc_sql_password="<password>"
-
+        BO monarc_sql_password="password"
 
         [rpx]
-        FQDN-RPX
-
+        RPX.localhost
 
         [monarc:children]
         rpx
         master
         dev
 
-
         [monarc:vars]
         env_prefix=""
-        clientDomain= ""
+        clientDomain= "RPX.localhost"
         github_auth_token="<your-github-auth-token>"
+        protocol="https"
+        certificate="sslcert.crt"
+        certificatekey="sslcert.key"
+        bourlalias="monarcbo"
 
   The variable *monarc\_sql\_password* is the password for the SQL database
   on the BO.
