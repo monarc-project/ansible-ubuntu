@@ -1,15 +1,15 @@
 10.75.0.13  vl2608monarcfo1
 10.75.0.14  vl2609monarcfo2
 
-ProxyPass /{{ bourlalias }}{{ '-' + env_prefix if env_prefix else '' }} {{ protocol }}://{{ bourlalias }}.{{ clientDomain }}
-ProxyPassReverse /{{bourlalias }}{{ '-' + env_prefix if env_prefix else '' }} {{ protocol }}://{{ bourlalias }}.{{ clientDomain }}
+ProxyPass /{{ bourlalias }}{{ '-' + env_prefix if env_prefix else '' }} {{ protocol }}://{{ bourlalias }}{{ '.' + env_prefix if env_prefix else '' }}.{{ clientDomain }}
+ProxyPassReverse /{{bourlalias }}{{ '-' + env_prefix if env_prefix else '' }} {{ protocol }}://{{ bourlalias }}{{ '.' + env_prefix if env_prefix else '' }}.{{ clientDomain }}
 
 {% for server in groups['dev'] %}
 {% set hostname = hostvars[server]['inventory_hostname'] %}
 {% if 'clients' in hostvars[server]  %}
 {% for key,client in hostvars[server]['clients'].iteritems() %}
-ProxyPass /{{client.name}}{{ '-' + hostvars[server].env_prefix if hostvars[server].env_prefix else '' }} {{ protocol }}://{{ client.name }}.{{ clientDomain }}
-ProxyPassReverse /{{client.name}}{{ '-' + hostvars[server].env_prefix if hostvars[server].env_prefix else '' }} {{ protocol }}://{{ client.name }}.{{ clientDomain }}
+ProxyPass /{{client.name}}{{ '-' + hostvars[server].env_prefix if hostvars[server].env_prefix else '' }} {{ protocol }}://{{ client.name }}{{ '.' + hostvars[server].env_prefix if hostvars[server].env_prefix else '' }}.{{ clientDomain }}
+ProxyPassReverse /{{client.name}}{{ '-' + hostvars[server].env_prefix if hostvars[server].env_prefix else '' }} {{ protocol }}://{{ client.name }}{{ '.' + hostvars[server].env_prefix if hostvars[server].env_prefix else '' }}.{{ clientDomain }}
 {% endfor %}
 {% endif %}
 {% endfor %}
