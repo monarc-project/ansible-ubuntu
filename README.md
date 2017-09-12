@@ -11,7 +11,7 @@ the figure below.
 * install git on all servers
 * install Python 2 on all servers. Actually ansible 2.2 features only a tech
   preview of Python 3 support;
-  install dnspython using pip install
+* install dnspython using pip install
 * [ansible](https://www.ansible.com/) must be installed on the configuration
   server. We have tested with version 2.2.1.0 of ansible.
 * install postfix on all BO and FO servers.
