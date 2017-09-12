@@ -10,8 +10,8 @@
 	    RewriteEngine On
 
         SSLEngine On
-        SSLCertificateFile "/etc/sslkeys/{{ certificate }}"
-        SSLCertificateKeyFile "/etc/sslkeys/{{ certificatekey }}"
+        SSLCertificateFile "{{ certificate }}"
+        SSLCertificateKeyFile "{{ certificatekey }}"
 
         SetEnv APPLICATION_ENV "development"
         <Directory /var/lib/monarc/bo/MonarcAppBO/public/>
