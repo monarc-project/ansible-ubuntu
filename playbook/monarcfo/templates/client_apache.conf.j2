@@ -10,8 +10,8 @@
 	RewriteEngine On
 
 	SSLEngine On
-	SSLCertificateFile "/etc/sslkeys/{{ certificate }}"
-   	SSLCertificateKeyFile "/etc/sslkeys/{{ certificatekey }}"
+	SSLCertificateFile "{{ certificate }}"
+   	SSLCertificateKeyFile "{{ certificatekey }}"
 
 	<Directory {{ www_directory | default('/var/lib/monarc/fo/')}}/public>
 		require all granted
