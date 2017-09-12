@@ -74,17 +74,17 @@ Install ansible on the configuration server and get the playbook for MONARC:
   The variable *monarc\_sql\_password* is the password for the SQL database
   on the BO.
 * RPX needs the following apache modules enabled:
-      ```bash
-        a2enmod proxy
-        a2enmod proxy_http
-        a2enmod proxy_ajp
-        a2enmod rewrite
-        a2enmod deflate
-        a2enmod headers
-        a2enmod proxy_balancer
-        a2enmod proxy_connect
-        a2enmod proxy_html
-      ```
+    ```bash
+    a2enmod proxy
+    a2enmod proxy_http
+    a2enmod proxy_ajp
+    a2enmod rewrite
+    a2enmod deflate
+    a2enmod headers
+    a2enmod proxy_balancer
+    a2enmod proxy_connect
+    a2enmod proxy_html
+    ```
 
 * finally, launch ansible:
 
