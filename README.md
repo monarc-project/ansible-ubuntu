@@ -67,6 +67,7 @@ Install ansible on the configuration server and get the playbook for MONARC:
         certificate="sslcert.crt"
         certificatekey="sslcert.key"
         bourlalias="monarcbo"
+        localDNS="example.net"
 
   The variable *monarc\_sql\_password* is the password for the SQL database
   on the BO.
