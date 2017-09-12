@@ -71,7 +71,18 @@ Install ansible on the configuration server and get the playbook for MONARC:
 
   The variable *monarc\_sql\_password* is the password for the SQL database
   on the BO.
-
+* RPX needs the following apache modules enabled:
+  ```bash
+  a2enmod proxy
+  a2enmod proxy_http
+  a2enmod proxy_ajp
+  a2enmod rewrite
+  a2enmod deflate
+  a2enmod headers
+  a2enmod proxy_balancer
+  a2enmod proxy_connect
+  a2enmod proxy_html
+  ```
 
 * finally, launch ansible:
 
@@ -123,3 +134,43 @@ Can be multiple installation per environment to balance to the load.
 
 The `add_inventory.py` and `del_inventory.py` scripts are used to dynamically
 edit the inventory files of the configuration server.
+
+## SSL
+Monarc is protected by SSL. The certificate ``yourcert.crt`` and the key file ``yourcert.key`` located at ``/etc/sslkeys/`` (location configurable using the variables in the ``inventory/hosts`` file) and can be read by all users (modified only by root). You can also use a single .pem file, but make sure it includes the certificate **and** the key.
+
+It is, however, important to configure the apache2 correctly by adding the ssl module ``a2enmod ssl`` manually.
+
+## RPX ApacheConfig
+
+This configuration needs to be done manually for the moment and the file ``/etc/apache2/sites-enabled/000-default.conf`` should look like this:
+
+```apache
+<VirtualHost *:80>
+        ServerName <your server name>
+        Redirect permanent  / https://<your server name>
+</VirtualHost>
+
+<VirtualHost _default_:443>
+        ServerName <your server name>
+
+        ServerAdmin webmaster@<your server name>
+        DocumentRoot /var/www/html
+
+        SSLEngine on
+        SSLCertificateFile "<your certificate>"
+        SSLCertificateKeyFile "<your certificate key>"
+
+        SSLProxyEngine On
+        SSLProxyVerify none
+        SSLProxyCheckPeerCN off
+        SSLProxyCheckPeerName off
+        SSLProxyCheckPeerExpire off
+        Include "/etc/apache2/client_redirection"
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+</VirtualHost>
+
+```
+
