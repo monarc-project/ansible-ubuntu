@@ -8,10 +8,12 @@ the figure below.
 
 ## Requirements
 
+* install git on all servers
 * install Python 2 on all servers. Actually ansible 2.2 features only a tech
   preview of Python 3 support;
 * [ansible](https://www.ansible.com/) must be installed on the configuration
   server. We have tested with version 2.2.1.0 of ansible.
+* install postfix on all BO and FO servers.
 
 
 ## Usage
@@ -72,17 +74,17 @@ Install ansible on the configuration server and get the playbook for MONARC:
   The variable *monarc\_sql\_password* is the password for the SQL database
   on the BO.
 * RPX needs the following apache modules enabled:
-  ```bash
-  a2enmod proxy
-  a2enmod proxy_http
-  a2enmod proxy_ajp
-  a2enmod rewrite
-  a2enmod deflate
-  a2enmod headers
-  a2enmod proxy_balancer
-  a2enmod proxy_connect
-  a2enmod proxy_html
-  ```
+      ```bash
+        a2enmod proxy
+        a2enmod proxy_http
+        a2enmod proxy_ajp
+        a2enmod rewrite
+        a2enmod deflate
+        a2enmod headers
+        a2enmod proxy_balancer
+        a2enmod proxy_connect
+        a2enmod proxy_html
+      ```
 
 * finally, launch ansible:
 
