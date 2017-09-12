@@ -1,5 +1,4 @@
 {% if protocol == "https" %}
-NameVirtualHost *:80
 <VirtualHost *:80>
 	ServerName {{ bourlalias }}.{{ env_prefix }}.{{ clientDomain }}
 	Redirect permanent / https://{{ bourlalias }}.{{ env_prefix }}.{{ clientDomain }}
@@ -10,7 +9,7 @@ NameVirtualHost *:80
 
 	    RewriteEngine On
 
-        SSLEmgine On
+        SSLEngine On
         SSLCertificateFile "/etc/sslkeys/{{ certificate }}"
         SSLCertificateKeyFile "/etc/sslkeys/{{ certificatekey }}"
 
