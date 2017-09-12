@@ -1,5 +1,4 @@
 {% if protocol == "https" %}
-NameVirtualHost *:80
 <VirtualHost *:80>
 	ServerName {{ item.value.name }}.{{ env_prefix }}.{{ clientDomain }}
 	Redirect permanent / https://{{ item.value.name }}.{{ env_prefix }}.{{ clientDomain }}
@@ -10,9 +9,9 @@ NameVirtualHost *:80
 
 	RewriteEngine On
 
-	SSLEmgine On
+	SSLEngine On
 	SSLCertificateFile "/etc/sslkeys/{{ certificate }}"
-    SSLCertificateKeyFile "/etc/sslkeys/{{ certificatekey }}"
+   	SSLCertificateKeyFile "/etc/sslkeys/{{ certificatekey }}"
 
 	<Directory {{ www_directory | default('/var/lib/monarc/fo/')}}/public>
 		require all granted
