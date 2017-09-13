@@ -23,6 +23,13 @@
     - gettext
   become: True
 
+- name: apache ssl
+  apache2_module:
+    name: ssl
+  become: True
+  notify:
+    - restart apache
+
 - name: monarc directory
   file:
     path: /var/lib/monarc

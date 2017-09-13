@@ -125,12 +125,10 @@ Can be multiple installation per environment to balance to the load.
 The `add_inventory.py` and `del_inventory.py` scripts are used to dynamically
 edit the inventory files of the configuration server.
 
-## SSL
-Monarc is protected by SSL. The certificate ``yourcert.crt`` and the key file
+## TLS certificate
+
+The certificate ``yourcert.crt`` and the key file
 ``yourcert.key`` located at ``/etc/sslkeys/`` (location configurable using the
 variables in the ``inventory/hosts`` file) and can be read by all users
 (modified only by root). You can also use a single .pem file, but make sure
 it includes the certificate **and** the key.
-
-It is, however, important to configure the apache2 correctly by adding the SSL
-module ``a2enmod ssl`` manually.
