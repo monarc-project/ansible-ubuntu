@@ -8,6 +8,53 @@
     - apache2
   become: True
 
+- name: apache proxy
+  apache2_module:
+    name: proxy
+  become: True
+
+- name: apache proxy_http
+  apache2_module:
+    name: proxy_http
+  become: True
+
+- name: apache proxy_ajp
+  apache2_module:
+    name: proxy_ajp
+  become: True
+
+- name: apache rewrite
+  apache2_module:
+    name: rewrite
+  become: True
+
+- name: apache deflate
+  apache2_module:
+    name: deflate
+  become: True
+
+- name: apache headers
+  apache2_module:
+    name: headers
+  become: True
+
+- name: apache proxy_balancer
+  apache2_module:
+    name: proxy_balancer
+  become: True
+
+- name: apache proxy_connect
+  apache2_module:
+    name: proxy_connect
+  become: True
+
+- name: apache proxy_html
+  apache2_module:
+    name: proxy_html
+  become: True
+  notify:
+    - restart apache
+
 - name: proxy pass apache configuration
   template:  src=clients_redirection.j2 dest=/etc/apache2/client_redirection
   become: True
@@ -15,3 +62,5 @@
 - name: hostfile
   template: src=hosts.j2 dest=/etc/hosts
   become: True
+  notify:
+    - restart apache

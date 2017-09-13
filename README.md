@@ -8,17 +8,16 @@ the figure below.
 
 ## Requirements
 
-* install git on all servers
+* install Git on all servers
 * install Python 2 on all servers. Actually ansible 2.2 features only a tech
   preview of Python 3 support;
-* install dnspython using pip install
+* install dnspython using pip install;
 * [ansible](https://www.ansible.com/) must be installed on the configuration
   server. We have tested with version 2.2.1.0 of ansible.
 * install postfix on all BO and FO servers.
 
 
 ## Usage
-
 
 Install ansible on the configuration server and get the playbook for MONARC:
 
@@ -74,18 +73,6 @@ Install ansible on the configuration server and get the playbook for MONARC:
 
   The variable *monarc\_sql\_password* is the password for the SQL database
   on the BO.
-* RPX needs the following apache modules enabled:
-    ```bash
-    a2enmod proxy
-    a2enmod proxy_http
-    a2enmod proxy_ajp
-    a2enmod rewrite
-    a2enmod deflate
-    a2enmod headers
-    a2enmod proxy_balancer
-    a2enmod proxy_connect
-    a2enmod proxy_html
-    ```
 
 * finally, launch ansible:
 
@@ -139,13 +126,19 @@ The `add_inventory.py` and `del_inventory.py` scripts are used to dynamically
 edit the inventory files of the configuration server.
 
 ## SSL
-Monarc is protected by SSL. The certificate ``yourcert.crt`` and the key file ``yourcert.key`` located at ``/etc/sslkeys/`` (location configurable using the variables in the ``inventory/hosts`` file) and can be read by all users (modified only by root). You can also use a single .pem file, but make sure it includes the certificate **and** the key.
+Monarc is protected by SSL. The certificate ``yourcert.crt`` and the key file
+``yourcert.key`` located at ``/etc/sslkeys/`` (location configurable using the
+variables in the ``inventory/hosts`` file) and can be read by all users
+(modified only by root). You can also use a single .pem file, but make sure
+it includes the certificate **and** the key.
 
-It is, however, important to configure the apache2 correctly by adding the ssl module ``a2enmod ssl`` manually.
+It is, however, important to configure the apache2 correctly by adding the SSL
+module ``a2enmod ssl`` manually.
 
 ## RPX ApacheConfig
 
-This configuration needs to be done manually for the moment and the file ``/etc/apache2/sites-enabled/000-default.conf`` should look like this:
+This configuration needs to be done manually for the moment and the file
+``/etc/apache2/sites-enabled/000-default.conf`` should look like this:
 
 ```apache
 <VirtualHost *:80>
@@ -176,4 +169,3 @@ This configuration needs to be done manually for the moment and the file ``/etc/
 </VirtualHost>
 
 ```
-
