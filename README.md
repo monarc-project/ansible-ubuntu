@@ -142,19 +142,18 @@ This configuration needs to be done manually for the moment and the file
 
 ```apache
 <VirtualHost *:80>
-        ServerName <your server name>
-        Redirect permanent  / https://<your server name>
+        ServerName <your-server-name>
+        Redirect permanent  / https://<your-server-name>
 </VirtualHost>
-
 <VirtualHost _default_:443>
-        ServerName <your server name>
+        ServerName <your-server-name>
 
-        ServerAdmin webmaster@<your server name>
+        ServerAdmin webmaster@<your-server-name>
         DocumentRoot /var/www/html
 
         SSLEngine on
-        SSLCertificateFile "<your certificate>"
-        SSLCertificateKeyFile "<your certificate key>"
+        SSLCertificateFile "<your-certificate>"
+        SSLCertificateKeyFile "<your-certificate-key>"
 
         SSLProxyEngine On
         SSLProxyVerify none
@@ -167,5 +166,4 @@ This configuration needs to be done manually for the moment and the file
         CustomLog ${APACHE_LOG_DIR}/access.log combined
 
 </VirtualHost>
-
 ```
