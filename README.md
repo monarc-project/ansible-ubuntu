@@ -134,36 +134,3 @@ it includes the certificate **and** the key.
 
 It is, however, important to configure the apache2 correctly by adding the SSL
 module ``a2enmod ssl`` manually.
-
-## RPX ApacheConfig
-
-This configuration needs to be done manually for the moment and the file
-``/etc/apache2/sites-enabled/000-default.conf`` should look like this:
-
-```apache
-<VirtualHost *:80>
-        ServerName <your-server-name>
-        Redirect permanent  / https://<your-server-name>
-</VirtualHost>
-<VirtualHost _default_:443>
-        ServerName <your-server-name>
-
-        ServerAdmin webmaster@<your-server-name>
-        DocumentRoot /var/www/html
-
-        SSLEngine on
-        SSLCertificateFile "<your-certificate>"
-        SSLCertificateKeyFile "<your-certificate-key>"
-
-        SSLProxyEngine On
-        SSLProxyVerify none
-        SSLProxyCheckPeerCN off
-        SSLProxyCheckPeerName off
-        SSLProxyCheckPeerExpire off
-        Include "/etc/apache2/client_redirection"
-
-        ErrorLog ${APACHE_LOG_DIR}/error.log
-        CustomLog ${APACHE_LOG_DIR}/access.log combined
-
-</VirtualHost>
-```
