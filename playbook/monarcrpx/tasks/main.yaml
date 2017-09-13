@@ -48,6 +48,11 @@
     name: proxy_connect
   become: True
 
+- name: apache ssl
+  apache2_module:
+    name: ssl
+  become: True
+
 - name: apache proxy_html
   apache2_module:
     name: proxy_html
