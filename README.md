@@ -40,7 +40,7 @@ Install ansible on the configuration server and get the playbook for MONARC:
 * add the user *www-data* in the *ansible* group:
   * ``sudo usermod -aG  ansible www-data``
 * give the permission to ansible to use sudo without password:
-  * add ``ansible  ALL=(ALL:ALL) NOPASSWD:ALL`` in the file */etc/sudoers*
+  * add ``ansible ALL=(ALL:ALL) NOPASSWD:ALL`` in the file */etc/sudoers*
 * create a file _inventory/hosts_:
 
         [dev]
