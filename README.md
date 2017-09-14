@@ -8,7 +8,7 @@ the figure below.
 
 ## Requirements
 
-* install Git on all servers
+* install Git on all servers;
 * install Python 2 on all servers. Actually ansible 2.2 features only a tech
   preview of Python 3 support;
 * install dnspython using pip install;
@@ -87,13 +87,20 @@ these servers through SSH.
 
 1. Adding an attribute for the ansible inventory is done with the command:
 
-        $ ssh ansible@BO sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./add_inventory.py ../inventory/
-        $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
-
+        ```bash
+        RESULT=ssh ansible@BO sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./add_inventory.py ../inventory/
+        if [ $RESULT -eq 0 ]; then
+            ansible-playbook -i ../inventory/ monarc.yaml --user ansible
+        fi
+        ```
 2. Removing an attribute for the ansible inventory is done with the command:
 
-        $ ssh ansible@BO sudo -u www-data /usr/local/bin/del_monarc_clients.sh | ./del_inventory.py ../inventory/
-        $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
+        ```bash
+        RESULT=ssh ansible@BO sudo -u www-data /usr/local/bin/del_monarc_clients.sh | ./del_inventory.py ../inventory/
+        if [ $RESULT -eq 0 ]; then
+            ansible-playbook -i ../inventory/ monarc.yaml --user ansible
+        fi
+        ```
 
    The command above should be launched on the configuration server with
    ``cron``.

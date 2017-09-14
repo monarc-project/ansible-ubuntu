@@ -36,8 +36,12 @@ def run():
                 del client_list[client_name]
 
                 yaml.dump(ymldata)
+                exit(0)
             except yaml.YAMLError as exc:
                 print exc
                 exit(1)
+    else:
+        exit(3)
 
-run()
+if __name__ == '__main__':
+    run()
