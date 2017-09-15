@@ -1,3 +1,4 @@
+{% if protocol == "https" %}
 <VirtualHost *:80>
         ServerName {{ clientDomain }}
         Redirect permanent  / https://{{ clientDomain }}
@@ -22,3 +23,16 @@
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
+{% else %}
+<VirtualHost *:80>
+        ServerName {{ clientDomain }}
+
+        ServerAdmin webmaster@{{ clientDomain }}
+        DocumentRoot /var/www/html
+
+        Include "/etc/apache2/client_redirection"
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+{% endif %}
