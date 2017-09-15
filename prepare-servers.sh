@@ -18,11 +18,11 @@ sudo -H pip install ansible dnspython
 
 # Create a user for ansible
 sudo useradd --create-home -s /bin/bash $ANSIBLE_USER_NAME
-sudo passwd $ANSIBLE_USER_NAME $ANSIBLE_USER_PASSWORD
-# Switch to the newly created user
-su $ANSIBLE_USER_NAME
+echo "$ANSIBLE_USER_NAME:$ANSIBLE_USER_PASSWORD" | sudo chpasswd
+echo $ANSIBLE_USER_PASSWORD
+
 # Generate a SSH key for the new user
-ssh-keygen -t rsa -C "$ANSIBLE_USER_EMAIL"
+sudo -u $ANSIBLE_USER_NAME ssh-keygen -t rsa -C "$ANSIBLE_USER_EMAIL"
 
 if [ "$PROXY" != '' ]; then
     # set the proxy locally (i.e. on the configuration server)
@@ -35,7 +35,7 @@ for ip in IP_RPX IP_BO IP_FO1; do
     echo "Configuring $ip..."
     ssh $HOST_USER_NAME@$ip -t " sudo useradd --create-home -s /bin/bash $ANSIBLE_USER_NAME ; sudo passwd $ANSIBLE_USER_NAME $ANSIBLE_USER_PASSWORD"
 
-    ssh-copy-id $ip
+    sudo -u $ANSIBLE_USER_NAME ssh-copy-id $ip
 
     ssh $HOST_USER_NAME@$ip -t " sudo usermod -aG sudo $ANSIBLE_USER_NAME; usermod -aG  $ANSIBLE_USER_NAME www-data  ;  echo '$ANSIBLE_USER_NAME ALL=(ALL:ALL) NOPASSWD:ALL' >> /etc/sudoers"
 
