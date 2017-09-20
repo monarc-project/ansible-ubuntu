@@ -139,3 +139,13 @@ The certificate ``yourcert.crt`` and the key file
 variables in the ``inventory/hosts`` file) and can be read by all users
 (modified only by root). You can also use a single .pem file, but make sure
 it includes the certificate **and** the key.
+
+## Backups
+
+As backing up all the VMS completely is very resource intensive, the most important parts should be backed up: the databases on the BO and FOs should and the created config files, mentioned throughout this documentation, will insure quick restoration. 
+
+## Bug Reports
+
+For **critical** bug reports please submit them to [our email](http://www.google.com/recaptcha/mailhide/d?k=01klMZA_bM-p6HvLRFxqS2XA==&c=S80CeNwqPjUn5gOUOdRP3Q==)
+
+For small bugs like a missing image, layout problems, you can directly submit it to [github](https://github.com/monarc-project/MonarcAppFO/issues)
