@@ -142,7 +142,7 @@ it includes the certificate **and** the key.
 
 ## Backups
 
-As backing up all the VMS completely is very resource intensive, the most important parts should be backed up: the databases on the BO and FOs should and the created config files, mentioned throughout this documentation, will insure quick restoration. 
+As backing up all the VMS completely is very resource intensive, the most important parts should be backed up: the databases on the BO and FOs should and the created config files, mentioned throughout this documentation, will insure quick restoration.
 
 ## Bug Reports
 
