@@ -1,8 +1,12 @@
 #!/bin/sh
 
 # Launch the ansible playbook when necessary.
+# Launch this file with cron (as the user 'ansible')
 
-BO=$1
+PLAYBOOK_PATH=$1
+BO=$2
+
+cd $PLAYBOOK_PATH
 
 RESULT=ssh ansible@$BO sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./add_inventory.py ../inventory/
 if [ $RESULT -eq 0 ]; then
