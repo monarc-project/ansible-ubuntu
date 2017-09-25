@@ -34,24 +34,26 @@ def run():
 
         path = os.path.join(os.path.abspath(INVENTORY), 'host_vars/',
                                                             newdata['server'])
-
         if not os.path.exists(path):
             os.makedirs(path)
 
         generated_file = os.path.join(path, 'generated.yaml')
         with open(generated_file, 'a+') as stream:
+            ymldata = yaml.load(stream)
+            if ymldata == None:
+                ymldata = {}
+                ymldata['clients'] = {}
+
+        client_list = ymldata['clients']
+        client_name = newdata['proxy_alias']
+        client_list[client_name] = {}
+        client_list[client_name]['name'] = client_name
+        client_list[client_name]['mysql_password'] = get_rnd_string(16)
+        client_list[client_name]['salt'] = get_rnd_string(64)
+        client_list[client_name]['sql_bootstrap'] = newdata['sql_bootstrap']
+
+        with open(generated_file, 'w') as stream:
             try:
-                ymldata = yaml.load(stream)
-                if ymldata == None:
-                    ymldata = {}
-                    ymldata['clients'] = {}
-                client_list = ymldata['clients']
-                client_name = newdata['proxy_alias']
-                client_list[client_name] = {}
-                client_list[client_name]['name'] = client_name
-                client_list[client_name]['mysql_password'] = get_rnd_string(16)
-                client_list[client_name]['salt'] = get_rnd_string(64)
-                client_list[client_name]['sql_bootstrap'] = newdata['sql_bootstrap']
                 yaml.dump(ymldata, stream)
                 exit(0)
             except yaml.YAMLError as exc:
