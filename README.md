@@ -85,28 +85,12 @@ these servers through SSH.
 
 ### Notes
 
-1. Adding an attribute for the ansible inventory is done with the command:
-
-        ```bash
-        RESULT=ssh ansible@BO sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./add_inventory.py ../inventory/
-        if [ $RESULT -eq 0 ]; then
-            ansible-playbook -i ../inventory/ monarc.yaml --user ansible
-        fi
-        ```
-2. Removing an attribute for the ansible inventory is done with the command:
-
-        ```bash
-        RESULT=ssh ansible@BO sudo -u www-data /usr/local/bin/del_monarc_clients.sh | ./del_inventory.py ../inventory/
-        if [ $RESULT -eq 0 ]; then
-            ansible-playbook -i ../inventory/ monarc.yaml --user ansible
-        fi
-        ```
-
-   The command above should be launched on the configuration server with
-   ``cron``.
-
-3. Installation of Postfix on the BO and the FO is not done by ansible. You
+1. Adding/removing an attribute for the ansible inventory can be done with the
+   script ``update.sh`` via cron as the user 'ansible'.
+2. Installation of Postfix on the BO and the FO is not done by ansible. You
    have to do it manually.
+
+
 
 ## Roles
 
@@ -127,10 +111,14 @@ Only one per environment (dev, preprod, prod...).
 Can be multiple installation per environment to balance to the load.
 
 
+
 ## Python scripts
 
 The `add_inventory.py` and `del_inventory.py` scripts are used to dynamically
-edit the inventory files of the configuration server.
+edit the inventory files of the configuration server. These scripts are used by
+``update.sh``.
+
+
 
 ## TLS certificate
 
@@ -140,12 +128,20 @@ variables in the ``inventory/hosts`` file) and can be read by all users
 (modified only by root). You can also use a single .pem file, but make sure
 it includes the certificate **and** the key.
 
+
+
 ## Backups
 
-As backing up all the VMS completely is very resource intensive, the most important parts should be backed up: the databases on the BO and FOs should and the created config files, mentioned throughout this documentation, will insure quick restoration.
+As backing up all the VMS completely is very resource intensive, the most
+important parts should be backed up: the databases on the BO and FOs should and
+the created config files, mentioned throughout this documentation, will insure
+quick restoration.
+
+
 
 ## Bug Reports
 
 For **critical** bug reports please submit them to [our email](http://www.google.com/recaptcha/mailhide/d?k=01klMZA_bM-p6HvLRFxqS2XA==&c=S80CeNwqPjUn5gOUOdRP3Q==)
 
-For small bugs like a missing image, layout problems, you can directly submit it to [github](https://github.com/monarc-project/MonarcAppFO/issues)
+For small bugs like a missing image, layout problems, you can directly submit
+it to [GitHub](https://github.com/monarc-project/MonarcAppFO/issues)
