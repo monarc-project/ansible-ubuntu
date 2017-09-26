@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Add an attribute for the ansible inventory
+Add an attribute for the ansible inventory.
 """
 
 import os
@@ -38,6 +38,7 @@ def run():
             os.makedirs(path)
 
         generated_file = os.path.join(path, 'generated.yaml')
+
         with open(generated_file, 'a+') as stream:
             ymldata = yaml.load(stream)
             if ymldata == None:

@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 """
-Delete an attribute from the ansible inventory
+Delete an attribute from the ansible inventory.
 """
 
 import os
 import sys
 import json
-import random
 import string
 
 import yaml
@@ -14,7 +13,8 @@ import yaml
 if len(sys.argv) > 1:
     INVENTORY = sys.argv[1]
 else:
-    INVENTORY = '/var/lib/ansible/inventory'
+    #INVENTORY = '/var/lib/ansible/inventory'
+    INVENTORY = './inventory/'
 
 def run():
     """ Main function """
@@ -27,15 +27,26 @@ def run():
     if stdin:
         newdata = json.loads(stdin)
 
-        with open('%s/host_vars/%s/generated.yaml' % (INVENTORY, newdata['server']),
-                  'r+') as stream:
-            try:
-                ymldata = yaml.load(stream)
-                client_list = ymldata['clients']
-                client_name = newdata['client']
-                del client_list[client_name]
+        path = os.path.join(os.path.abspath(INVENTORY), 'host_vars/',
+                                                            newdata['server'])
+        if not os.path.exists(path):
+            print 'Folder do no exists:', path
+            exit(1)
 
-                yaml.dump(ymldata)
+        generated_file = os.path.join(path, 'generated.yaml')
+
+        with open(generated_file, 'a+') as stream:
+            ymldata = yaml.load(stream)
+            client_list = ymldata['clients']
+            client_name = newdata['client']
+            try:
+                del client_list[client_name]
+            except:
+                exit(1)
+
+        with open(generated_file, 'w') as stream:
+            try:
+                yaml.dump(ymldata, stream)
                 exit(0)
             except yaml.YAMLError as exc:
                 print exc
