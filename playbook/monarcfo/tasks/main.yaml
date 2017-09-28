@@ -74,6 +74,10 @@
   when: clients is defined
   become: True
 
+- name: disable all apache virtual hosts
+  command: find /etc/apache2/sites-enabled/ -type l -exec rm -f "{}" \;
+  become: True
+
 - name: client apache configuration
   template:
     src: client_apache.conf.j2
@@ -85,11 +89,11 @@
     - reload apache
   become: True
 
-- name: deactivates the default virtualhost
-  command: a2dissite 000-default.conf
-  become: True
-  notify:
-    - reload apache
+# - name: deactivates the default virtualhost
+#   command: a2dissite 000-default.conf
+#   become: True
+#   notify:
+#     - reload apache
 
 - name: enable apache conf
   command: "/usr/sbin/a2ensite {{item.value.name}}.conf"
