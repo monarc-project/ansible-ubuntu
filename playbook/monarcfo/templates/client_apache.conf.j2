@@ -1,10 +1,10 @@
 {% if protocol == "https" %}
 <VirtualHost *:80>
-	ServerName {{ item.value.name }}.{{ env_prefix }}.{{ clientDomain }}
-	Redirect permanent / https://{{ item.value.name }}.{{ env_prefix }}.{{ clientDomain }}
+	ServerName {{ item.value.name }}{{ '.' + env_prefix if env_prefix else '' }}.{{ clientDomain }}
+	Redirect permanent / https://{{ item.value.name }}{{ '.' + env_prefix if env_prefix else '' }}.{{ clientDomain }}
 </VirtualHost>
 <VirtualHost _default_:443>
-	ServerName {{ item.value.name }}.{{ env_prefix }}.{{ clientDomain }}
+	ServerName {{ item.value.name }}{{ '.' + env_prefix if env_prefix else '' }}.{{ clientDomain }}
 	DocumentRoot {{ www_directory | default('/var/lib/monarc/fo/')}}/public
 
 	RewriteEngine On
@@ -41,7 +41,7 @@
 </VirtualHost>
 {% else %}
 <VirtualHost *:80>
-	ServerName {{ item.value.name }}.{{ env_prefix }}.{{ clientDomain }}
+	ServerName {{ item.value.name }}{{ '.' + env_prefix if env_prefix else '' }}.{{ clientDomain }}
 	DocumentRoot {{ www_directory | default('/var/lib/monarc/fo/')}}/public
 
 	RewriteEngine On
