@@ -13,7 +13,6 @@ import yaml
 if len(sys.argv) > 1:
     INVENTORY = sys.argv[1]
 else:
-    #INVENTORY = '/var/lib/ansible/inventory'
     INVENTORY = './inventory/'
 
 def run():
