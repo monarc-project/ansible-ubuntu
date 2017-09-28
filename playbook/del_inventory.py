@@ -38,7 +38,7 @@ def run():
         with open(generated_file, 'a+') as stream:
             ymldata = yaml.load(stream)
             client_list = ymldata['clients']
-            client_name = newdata['client']
+            client_name = newdata['proxy_alias']
             try:
                 del client_list[client_name]
             except:
