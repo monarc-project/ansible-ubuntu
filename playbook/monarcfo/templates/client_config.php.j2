@@ -47,11 +47,16 @@ return array(
             'index' => 3,
             'label' => 'Deutsch',
         ],
+        'ne' => [
+            'index' => 4,
+            'label' => 'Nederlands',
+        ],
     ],
+
 
     'defaultLanguageIndex' => 1,
 
-    'activeLanguages' => array('fr','en','de',),
+    'activeLanguages' => array('fr','en','de','ne',),
 
     'monarc' => array(
         'ttl' => 20, // timeout
@@ -61,4 +66,3 @@ return array(
 
     'publicHost' => '{{ publicHost }}/{{item.value.name}}-{{ env_prefix }}/',
 );
-
