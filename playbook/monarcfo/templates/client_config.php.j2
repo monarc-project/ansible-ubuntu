@@ -64,5 +64,5 @@ return array(
         'cliModel' => 'generic', // modèle à afficher pour le client, soit un ID de modèle spéc, soit 'generic' (vide pour tout)
     ),
 
-    'publicHost' => '{{ publicHost }}/{{item.value.name}}-{{ env_prefix }}/',
+    'publicHost' => '{{ publicHost }}/{{item.value.name}}{{ '-' + env_prefix if env_prefix else '' }}/',
 );
