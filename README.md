@@ -68,6 +68,7 @@ Install ansible on the configuration server and get the playbook for MONARC:
         protocol="https"
         certificate="sslcert.crt"
         certificatekey="sslcert.key"
+        certificatechain="sslcert.crt"
         bourlalias="monarcbo"
         localDNS="example.net"
 

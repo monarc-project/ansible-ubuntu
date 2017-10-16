@@ -12,6 +12,9 @@
 	SSLEngine On
 	SSLCertificateFile "{{ certificate }}"
    	SSLCertificateKeyFile "{{ certificatekey }}"
+	{% if certificatechain and certificatechain != ""  %}
+	SSLCertificateChainFile "{{ certificatechain }}"
+	{% endif %}
 
 	<Directory {{ www_directory | default('/var/lib/monarc/fo/')}}/public>
 		require all granted

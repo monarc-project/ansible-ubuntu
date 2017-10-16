@@ -12,6 +12,9 @@
         SSLEngine On
         SSLCertificateFile "{{ certificate }}"
         SSLCertificateKeyFile "{{ certificatekey }}"
+		{% if certificatechain and certificatechain != ""  %}
+		SSLCertificateChainFile "{{ certificatechain }}"
+		{% endif %}
 
         SetEnv APPLICATION_ENV "development"
         <Directory /var/lib/monarc/bo/MonarcAppBO/public/>

@@ -12,6 +12,9 @@
         SSLEngine on
         SSLCertificateFile "{{ certificate }}"
         SSLCertificateKeyFile "{{ certificatekey }}"
+        {% if certificatechain and certificatechain != ""  %}
+    	SSLCertificateChainFile "{{ certificatechain }}"
+    	{% endif %}
 
         SSLProxyEngine On
         SSLProxyVerify none
