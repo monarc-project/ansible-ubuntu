@@ -73,8 +73,8 @@
 - name: reverse proxy apache configuration
   template:
     src: reverse_proxy_apache.conf.j2
-    dest: "/etc/apache2/sites-enabled/000-default.conf`"
+    dest: "/etc/apache2/sites-enabled/000-default.conf"
     owner: root
+  become: True
   notify:
     - reload apache
-  become: True
