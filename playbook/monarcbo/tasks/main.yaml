@@ -65,7 +65,7 @@
     config_file: /etc/mysql/debian.cnf
   become: True
 
-- name: create monarc common database1
+- name: create monarc common database
   mysql_db:
     name: monarc_common
     config_file: /etc/mysql/debian.cnf
