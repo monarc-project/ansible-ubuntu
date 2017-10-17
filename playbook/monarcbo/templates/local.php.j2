@@ -59,4 +59,6 @@ return array(
         'ttl' => 20, // timeout
         'salt' => '', // salt privé pour chiffrement pwd
     ),
+
+    'publicHost' => '{{ protocol }}://{{ clientDomain }}/{{ bourlalias }}{{ '-' env_prefix if env_prefix else '' }}',
 );
