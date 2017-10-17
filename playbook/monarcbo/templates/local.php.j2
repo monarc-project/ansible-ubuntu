@@ -60,5 +60,5 @@ return array(
         'salt' => '', // salt privé pour chiffrement pwd
     ),
 
-    'publicHost' => '{{ protocol }}://{{ clientDomain }}/{{ bourlalias }}{{ '-' env_prefix if env_prefix else '' }}',
+    'publicHost' => '{{ protocol }}://{{ publicHost }}/{{item.value.name}}',
 );
