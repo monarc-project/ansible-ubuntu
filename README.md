@@ -48,7 +48,7 @@ Install ansible on the configuration server and get the playbook for MONARC:
 
         [dev:vars]
         master= "BO"
-        publicHost= "RPX.localhost"
+        publicHost= "monarc.example.com"
 
         [master]
         BO monarc_sql_password="password"
@@ -63,7 +63,8 @@ Install ansible on the configuration server and get the playbook for MONARC:
 
         [monarc:vars]
         env_prefix=""
-        clientDomain= "RPX.localhost"
+        clientDomain="monarc.example.com"
+        emailFrom="info@example.com"
         github_auth_token="<your-github-auth-token>"
         protocol="https"
         certificate="sslcert.crt"

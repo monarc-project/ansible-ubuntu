@@ -58,10 +58,15 @@ return array(
 
     'activeLanguages' => array('fr','en','de','ne',),
 
+    'email' => [
+        'name' => 'MONARC',
+        'from' => '{{ emailFrom if emailFrom else "info@monarc.lu" }}',
+    ],
+
     'monarc' => array(
         'ttl' => 20, // timeout
-        'salt' => '{{ item.value.salt }}', // salt privé pour chiffrement pwd
-        'cliModel' => 'generic', // modèle à afficher pour le client, soit un ID de modèle spéc, soit 'generic' (vide pour tout)
+        'salt' => '{{ item.value.salt }}', // private salt for the password
+        'cliModel' => 'generic', // model to display for the client, else an ID of model, else 'generic' (empty for all)
     ),
 
     'publicHost' => '{{ protocol }}://{{ publicHost }}/{{item.value.name}}{{ '-' + env_prefix if env_prefix else '' }}',

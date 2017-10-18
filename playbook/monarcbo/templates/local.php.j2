@@ -55,9 +55,14 @@ return array(
     */
     'activeLanguages' => array('fr','en','de','ne'),
 
+    'email' => [
+        'name' => 'MONARC',
+        'from' => '{{ emailFrom if emailFrom else "info@monarc.lu" }}',
+    ],
+
     'monarc' => array(
         'ttl' => 20, // timeout
-        'salt' => '', // salt privé pour chiffrement pwd
+        'salt' => '', // private salt for the password
     ),
 
     'publicHost' => '{{ protocol }}://{{ clientDomain }}/{{bourlalias}}',
