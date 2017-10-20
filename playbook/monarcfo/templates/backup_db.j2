@@ -3,6 +3,8 @@
 backupdir="/var/lib/mysql-backup/monarc/"
 timeat=$(date +"%Y%m%d_%H%M%S")
 
+mkdir $backupdir  > /dev/null 2>&1
+
 {% for server in groups['dev'] %}
 {% set hostname = hostvars[server]['inventory_hostname'] %}
 {% if 'clients' in hostvars[server]  %}
