@@ -91,10 +91,11 @@ these servers through SSH.
    script ``update.sh`` via cron as the user 'ansible'.
 2. Installation of Postfix on the BO and the FO is not done by ansible. You
    have to do it manually.
+3. For information about database backup, please read the following.
 
 
 
-## Roles
+## Ansible roles
 
 There are three roles, described below.
 
@@ -114,7 +115,7 @@ Can be multiple installation per environment to balance to the load.
 
 
 
-## Python scripts
+## Ansible inventory management
 
 The `add_inventory.py` and `del_inventory.py` scripts are used to dynamically
 edit the inventory files of the configuration server. These scripts are used by
@@ -134,11 +135,19 @@ it includes the certificate **and** the key.
 
 ## Backups
 
-As backing up all the VMS completely is very resource intensive, the most
+As backing up all the VMs completely is very resource intensive, the most
 important parts should be backed up: the databases on the BO and FOs should and
-the created config files, mentioned throughout this documentation, will insure
-quick restoration.
+the created configuration files, mentioned throughout this documentation, will
+insure quick restoration.
 
+ansible keep an up-to-date database backup script on each FO server instances.
+This script is located at ``/usr/local/bin/backup_monarc_db.sh`` and is updated
+by ansible on each client creation/deletion.  
+
+You just have to set a cron rule in order to launch the script periodically.
+
+The database backups will be placed in the folder
+``/var/lib/mysql-backup/monarc/``
 
 
 ## Bug Reports
