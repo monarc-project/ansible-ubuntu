@@ -16,10 +16,12 @@ if len(sys.argv) > 1:
 else:
     INVENTORY = './inventory/'
 
+
 def get_rnd_string(length):
     """Get random string"""
     return ''.join(random.choice(
         string.ascii_uppercase + string.digits) for _ in range(length))
+
 
 def run():
     """ Main function """
@@ -34,8 +36,9 @@ def run():
 
         for new_client in newdata:
 
-            path = os.path.join(os.path.abspath(INVENTORY), 'host_vars/',
-                                                        new_client['server'])
+            path = os.path.join(os.path.abspath(INVENTORY),
+                                'host_vars/',
+                                new_client['server'])
             if not os.path.exists(path):
                 os.makedirs(path)
 
@@ -43,7 +46,7 @@ def run():
 
             with open(generated_file, 'a+') as stream:
                 ymldata = yaml.load(stream)
-                if ymldata == None:
+                if ymldata is None:
                     ymldata = {}
                     ymldata['clients'] = {}
 
@@ -65,6 +68,7 @@ def run():
         exit(0)
     else:
         exit(3)
+
 
 if __name__ == '__main__':
     run()

@@ -6,7 +6,6 @@ Delete an attribute from the ansible inventory.
 import os
 import sys
 import json
-import string
 
 import yaml
 
@@ -14,6 +13,7 @@ if len(sys.argv) > 1:
     INVENTORY = sys.argv[1]
 else:
     INVENTORY = './inventory/'
+
 
 def run():
     """ Main function """
@@ -28,8 +28,9 @@ def run():
 
         for to_delete in todelete:
 
-            path = os.path.join(os.path.abspath(INVENTORY), 'host_vars/',
-                                                            to_delete['server'])
+            path = os.path.join(os.path.abspath(INVENTORY),
+                                'host_vars/',
+                                to_delete['server'])
             if not os.path.exists(path):
                 print 'Folder do no exists:', path
                 exit(1)
@@ -42,7 +43,7 @@ def run():
                 client_name = to_delete['proxy_alias']
                 try:
                     del client_list[client_name]
-                except:
+                except Exception:
                     pass
 
             with open(generated_file, 'w') as stream:
@@ -55,6 +56,7 @@ def run():
         exit(0)
     else:
         exit(3)
+
 
 if __name__ == '__main__':
     run()
