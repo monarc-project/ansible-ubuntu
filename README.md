@@ -11,9 +11,9 @@ the figure below.
 * install Git on all servers;
 * install Python 2 on all servers. Actually ansible 2.2 features only a tech
   preview of Python 3 support;
-* install dnspython using pip install on the configuration server;
+* install dnspython using ``pip install`` on the configuration server;
 * [ansible](https://www.ansible.com/) must be installed on the configuration
-  server. We have tested with version 2.2.1.0 of ansible.
+  server;
 * install postfix on all BO and FO servers.
 
 
@@ -21,7 +21,7 @@ the figure below.
 
 Install ansible on the configuration server and get the playbook for MONARC:
 
-    $ sudo apt-get install ansible
+    $ sudo -H pip install ansible dnspython
     $ git clone https://github.com/monarc-project/ansible-ubuntu.git
     $ cd ansible-ubuntu/
 
@@ -88,7 +88,8 @@ these servers through SSH.
 ### Notes
 
 1. Adding/removing an attribute for the ansible inventory can be done with the
-   script ``update.sh`` via cron as the user 'ansible'.
+   script ``update.sh`` via cron as the user 'ansible'. Edit this script
+   according to your need.
 2. Installation of Postfix on the BO and the FO is not done by ansible. You
    have to do it manually.
 3. For information about database backup, please read the following.
