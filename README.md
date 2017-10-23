@@ -28,8 +28,6 @@ Install ansible on the configuration server and get the playbook for MONARC:
 ### Configuration
 
 * create a user named *ansible* on each server;
-* add the IP of the BO, FO and RPX in the file */etc/hosts* of the
-  configuration server;
 * generate a SSH key for the user *ansible* on the configuration server:
 
         $ ssh-keygen -t rsa -C "your_email@example.com"
