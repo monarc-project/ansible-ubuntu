@@ -5,8 +5,7 @@
 
 PLAYBOOK_PATH=$1
 BO=$2
-
-ANSIBLE_PATH="/usr/local/bin/ansible-playbook"
+ANSIBLE_PATH=$3
 
 cd $PLAYBOOK_PATH
 
