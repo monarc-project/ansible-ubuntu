@@ -24,7 +24,10 @@ def run():
     stdin = sys.stdin.read()
 
     if stdin:
-        todelete = json.loads(stdin)
+        try:
+            todelete = json.loads(stdin)
+        except ValueError:
+            exit(1)
 
         for to_delete in todelete:
 
@@ -52,10 +55,10 @@ def run():
                 except yaml.YAMLError as exc:
                     print exc
         else:
-            exit(3)
+            exit(1)
         exit(0)
     else:
-        exit(3)
+        exit(1)
 
 
 if __name__ == '__main__':

@@ -21,6 +21,7 @@
     - npm
     - python-mysqldb
     - gettext
+    - jq
   become: True
 
 - name: apache ssl
