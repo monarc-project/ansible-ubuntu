@@ -1,10 +1,10 @@
 {% if protocol == "https" %}
 <VirtualHost *:80>
-	ServerName {{ bourlalias }}.{{ env_prefix }}.{{ clientDomain }}
+	ServerName {{ bourlalias }}{{ '.' + env_prefix if env_prefix else '' }}.{{ clientDomain }}
 	Redirect permanent / https://{{ bourlalias }}.{{ env_prefix }}.{{ clientDomain }}
 </VirtualHost>
 <VirtualHost _default_:443>
-        ServerName {{ bourlalias }}.{{ env_prefix }}.{{ clientDomain }}
+        ServerName {{ bourlalias }}{{ '.' + env_prefix if env_prefix else '' }}.{{ clientDomain }}
         DocumentRoot /var/lib/monarc/bo/MonarcAppBO/public/
 
 	    RewriteEngine On
@@ -40,10 +40,10 @@
 </VirtualHost>
 {% else %}
 <VirtualHost *:80>
-        ServerName {{ ansible_fqdn }}
+        ServerName {{ bourlalias }}{{ '.' + env_prefix if env_prefix else '' }}.{{ clientDomain }}
         DocumentRoot /var/lib/monarc/bo/MonarcAppBO/public/
 
-	RewriteEngine On
+		RewriteEngine On
 
         SetEnv APPLICATION_ENV "development"
         <Directory /var/lib/monarc/bo/MonarcAppBO/public/>
