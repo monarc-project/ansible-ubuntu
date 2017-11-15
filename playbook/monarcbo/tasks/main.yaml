@@ -79,15 +79,14 @@
     config_file: /etc/mysql/debian.cnf
   become: True
 
-- name: unarchive the database to import
-  unarchive:
-    remote_src: true
-    src: /var/lib/monarc/bo/MonarcAppBO/db-bootstrap/monarc-common.tar.gz
-    dest: /var/lib/monarc/bo/MonarcAppBO/db-bootstrap/
+- name: initializes the database structure
+  shell: mysql -u monarc -p"{{ monarc_sql_password }}" monarc_common < db-bootstrap/monarc_common.sql
+  args:
+    chdir: /var/lib/monarc/bo/MonarcAppBO/
   when: appbo_pull.before == None
 
-- name: initializes the database
-  shell: mysql -u monarc -p"{{ monarc_sql_password }}" monarc_common < db-bootstrap/monarc-common.sql
+- name: populates the database
+  shell: mysql -u monarc -p"{{ monarc_sql_password }}" monarc_common < db-bootstrap/monarc_data.sql
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
   when: appbo_pull.before == None
