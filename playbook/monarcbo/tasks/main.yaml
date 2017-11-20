@@ -80,7 +80,7 @@
   become: True
 
 - name: initializes the database structure
-  shell: mysql -u monarc -p"{{ monarc_sql_password }}" monarc_common < db-bootstrap/monarc_common.sql
+  shell: mysql -u monarc -p"{{ monarc_sql_password }}" monarc_common < db-bootstrap/monarc_structure.sql
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
   when: appbo_pull.before == None
