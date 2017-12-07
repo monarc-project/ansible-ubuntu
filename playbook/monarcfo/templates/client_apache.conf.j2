@@ -38,6 +38,7 @@
 	</Directory>
 
 	SetEnv "APP_CONF_DIR" /var/www/{{item.value.name}}/
+	SetEnv "APP_DIR" {{ www_directory | default('/var/lib/monarc/fo')}}
 
 	CustomLog /var/log/apache2/{{ env_prefix }}{{ item.value.name }}/access.log combined
 	ErrorLog /var/log/apache2/{{ env_prefix }}{{ item.value.name }}/error.log
@@ -71,6 +72,7 @@
 	</Directory>
 
 	SetEnv "APP_CONF_DIR" /var/www/{{item.value.name}}/
+	SetEnv "APP_DIR" {{ www_directory | default('/var/lib/monarc/fo')}}
 
 	CustomLog /var/log/apache2/{{ env_prefix }}{{ item.value.name }}/access.log combined
 	ErrorLog /var/log/apache2/{{ env_prefix }}{{ item.value.name }}/error.log
