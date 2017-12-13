@@ -8,13 +8,12 @@ the figure below.
 
 ## Requirements
 
-* install Git on all servers;
-* install Python 2 on all servers. Actually ansible 2.2 features only a tech
+* Git on all servers;
+* Python 2 on all servers. Actually ansible 2.2 features only a tech
   preview of Python 3 support;
-* install dnspython using ``pip install`` on the configuration server;
 * [ansible](https://www.ansible.com/) must be installed on the configuration
   server;
-* install postfix on all BO and FO servers.
+* Postfix on the BO and all FO servers.
 
 
 ## Usage
@@ -25,21 +24,25 @@ Install ansible on the configuration server and get the playbook for MONARC:
     $ git clone https://github.com/monarc-project/ansible-ubuntu.git
     $ cd ansible-ubuntu/
 
+If you encounter a problem of locales, try the following:
+
+    $ export LC_ALL="en_US.UTF-8"
+    $ sudo dpkg-reconfigure locales
+
 ### Configuration
 
-* create a user named *ansible* on each server;
+* create a user named *ansible* on each server:
+  * ``sudo adduser ansible``
 * generate a SSH key for the user *ansible* on the configuration server:
-
-        $ ssh-keygen -t rsa -C "your_email@example.com"
-
+  * ``ssh-keygen -t rsa -C "your_email@example.com"``
 * from the configuration server: ``ssh-copy-id ansible@BO/FO/RPX``
 * add the user *ansible* in the *sudo* group:
   * ``sudo usermod -aG sudo ansible``
 * add the user *www-data* in the *ansible* group:
   * ``sudo usermod -aG  ansible www-data``
 * give the permission to ansible to use sudo without password:
-  * add ``ansible ALL=(ALL:ALL) NOPASSWD:ALL`` in the file */etc/sudoers*
-* create a file _inventory/hosts_:
+  * add ``ansible ALL=(ALL:ALL) NOPASSWD:ALL`` in the file */etc/sudoers* with *visudo*
+* create a configuration file, _inventory/hosts_, for Ansible:
 
         [dev]
         FO
@@ -151,7 +154,7 @@ The database backups will be placed in the folder
 
 ## Bug Reports
 
-For **critical** bug reports please submit them to [our email](http://www.google.com/recaptcha/mailhide/d?k=01klMZA_bM-p6HvLRFxqS2XA==&c=S80CeNwqPjUn5gOUOdRP3Q==)
+For **critical** bug reports please submit them to [our email](mailto:info@cases.lu?subject=MONARC)
 
 For small bugs like a missing image, layout problems, you can directly submit
 it to [GitHub](https://github.com/monarc-project/MonarcAppFO/issues)
