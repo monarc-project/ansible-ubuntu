@@ -91,8 +91,8 @@ these servers through SSH.
 2. Installation of Postfix on the BO and the FO is not done by ansible. You
    have to do it manually.
 3. For information about database backup, please read the following.
-
-
+4. Generation of a self-signed certificate:
+   ``sudo openssl req -x509 -nodes -days 1000 -newkey rsa:2048 -keyout /etc/sslkeys/monarc.key -out /etc/sslkeys/monarc.crt``
 
 ## Ansible roles
 
