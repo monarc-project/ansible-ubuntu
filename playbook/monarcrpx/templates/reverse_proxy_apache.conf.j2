@@ -1,31 +1,37 @@
 {% if protocol == "https" %}
 <VirtualHost *:80>
         ServerName {{ clientDomain }}
-        Redirect permanent  / https://{{ clientDomain }}
+        Redirect permanent  / https://{{ clientDomain }}_*/*_
 </VirtualHost>
+
 <VirtualHost _default_:443>
         ServerName {{ clientDomain }}
 
         ServerAdmin webmaster@{{ clientDomain }}
         DocumentRoot /var/www/html
 
+        #Alias Certbot-auto
+        Alias /.well-known/acme-challenge    /var/www/letsencrypt/.well-known/acme-challenge
+
+        <Directory /var/www/letsencrypt/.well-known/acme-challenge/>
+            Require all granted
+        </Directory>
+
         SSLEngine on
-        SSLCertificateFile "{{ certificate }}"
-        SSLCertificateKeyFile "{{ certificatekey }}"
-        {% if certificatechain and certificatechain != ""  %}
-    	SSLCertificateChainFile "{{ certificatechain }}"
-    	{% endif %}
+
+        SSLCertificateFile "/etc/letsencrypt/live/my.monarc.lu/cert.pem"
+        SSLCertificateKeyFile "/etc/letsencrypt/live/my.monarc.lu/privkey.pem"
 
         SSLProxyEngine On
         SSLProxyVerify none
         SSLProxyCheckPeerCN off
         SSLProxyCheckPeerName off
         SSLProxyCheckPeerExpire off
+
         Include "/etc/apache2/client_redirection"
 
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
 {% else %}
 <VirtualHost *:80>
         ServerName {{ clientDomain }}

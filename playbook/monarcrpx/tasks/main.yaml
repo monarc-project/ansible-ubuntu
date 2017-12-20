@@ -73,8 +73,12 @@
 - name: reverse proxy apache configuration
   template:
     src: reverse_proxy_apache.conf.j2
-    dest: "/etc/apache2/sites-enabled/000-default.conf"
+    dest: "/etc/apache2/sites-available/{{ clientDomain }}.conf"
     owner: root
   become: True
   notify:
     - reload apache
+
+- name: enable apache conf
+  command: "/usr/sbin/a2ensite {{ clientDomain }}.conf"
+  become: True
