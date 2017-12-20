@@ -19,8 +19,8 @@
 
         SSLEngine on
 
-        SSLCertificateFile "/etc/letsencrypt/live/my.monarc.lu/cert.pem"
-        SSLCertificateKeyFile "/etc/letsencrypt/live/my.monarc.lu/privkey.pem"
+        SSLCertificateFile "/etc/letsencrypt/live/{{ clientDomain }}/cert.pem"
+        SSLCertificateKeyFile "/etc/letsencrypt/live/{{ clientDomain }}/privkey.pem"
 
         SSLProxyEngine On
         SSLProxyVerify none
