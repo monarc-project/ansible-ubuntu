@@ -91,8 +91,30 @@ these servers through SSH.
 #### Updating the inventory
 
 Adding/removing an attribute for the ansible inventory can be done with the
-   script ``update.sh`` via cron as the user 'ansible'. Edit this script
-   according to your need.
+script ``update.sh`` via cron as the user 'ansible'. Edit this script according
+to your need.
+
+#### TLS certifcate
+
+##### Self-signed certificate
+
+Generation of the certificate:
+
+``sudo openssl req -x509 -nodes -days 1000 -newkey rsa:2048 -keyout /etc/sslkeys/monarc.key -out /etc/sslkeys/monarc.crt``
+
+Then provide the address of the certificate (here monarc.crt) and the address
+of the certificate key in the configuration file (_inventory/hosts_).
+You can generally set _certificatechain_ to the empty string.
+
+##### Let's Encrypt certificate
+
+Generation of the certificate:
+
+``sudo -E letsencrypt certonly --agree-tos -m <your-email> --webroot -d <clientDomain> -w /var/www/letsencrypt/``
+
+Then simply set the value of _certificate_ to _letsencrypt_.   
+And set the values of _certificatekey_ and _certificatechain_ to the empty
+string.
 
 #### Postfix
 
@@ -102,26 +124,6 @@ to do it manually.
 #### Backup
 
 For information about database backup, please read the following.
-
-#### TLS certifcate
-
-##### Self-signed certificate
-
-Generation of a self-signed certificate:
-
-``sudo openssl req -x509 -nodes -days 1000 -newkey rsa:2048 -keyout /etc/sslkeys/monarc.key -out /etc/sslkeys/monarc.crt``
-
-Then provide the address of the certificate (here monarc.crt) and the address
-of the certificate key in the configuration file (_inventory/hosts_).
-You can generally set _certificatechain_ to the empty string.
-
-##### Let's Encrypt
-
-``sudo -E letsencrypt certonly --agree-tos -m <your-email> --webroot -d <clientDomain> -w /var/www/letsencrypt/``
-
-Then simply set the value of _certificate_ to _letsencrypt_.   
-And set the values of _certificatekey_ and _certificatechain_ to the empty
-string.
 
 
 ## Ansible roles
