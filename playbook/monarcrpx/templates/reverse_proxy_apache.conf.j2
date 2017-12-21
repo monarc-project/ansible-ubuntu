@@ -10,17 +10,25 @@
         ServerAdmin webmaster@{{ clientDomain }}
         DocumentRoot /var/www/html
 
-        #Alias Certbot-auto
-        Alias /.well-known/acme-challenge    /var/www/letsencrypt/.well-known/acme-challenge
-
-        <Directory /var/www/letsencrypt/.well-known/acme-challenge/>
-            Require all granted
-        </Directory>
-
         SSLEngine on
 
-        SSLCertificateFile "/etc/letsencrypt/live/{{ clientDomain }}/cert.pem"
-        SSLCertificateKeyFile "/etc/letsencrypt/live/{{ clientDomain }}/privkey.pem"
+        {% if certificate == "letsencrypt" %}
+            #Alias Certbot-auto
+            Alias /.well-known/acme-challenge    /var/www/letsencrypt/.well-known/acme-challenge
+
+            <Directory /var/www/letsencrypt/.well-known/acme-challenge/>
+                Require all granted
+            </Directory>
+
+            SSLCertificateFile "/etc/letsencrypt/live/{{ clientDomain }}/cert.pem"
+            SSLCertificateKeyFile "/etc/letsencrypt/live/{{ clientDomain }}/privkey.pem"
+        {% else %}
+            SSLCertificateFile "{{ certificate }}"
+            SSLCertificateKeyFile "{{ certificatekey }}"
+            {% if certificatechain and certificatechain != ""  %}
+              SSLCertificateChainFile "{{ certificatechain }}"
+            {% endif %}
+        {% endif %}
 
         SSLProxyEngine On
         SSLProxyVerify none
