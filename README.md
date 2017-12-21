@@ -94,7 +94,7 @@ Adding/removing an attribute for the ansible inventory can be done with the
 script ``update.sh`` via cron as the user 'ansible'. Edit this script according
 to your need.
 
-#### TLS certifcate
+#### TLS certificate
 
 ##### Self-signed certificate
 
@@ -151,17 +151,6 @@ Can be multiple installation per environment to balance to the load.
 The `add_inventory.py` and `del_inventory.py` scripts are used to dynamically
 edit the inventory files of the configuration server. These scripts are used by
 ``update.sh``.
-
-
-
-## TLS certificate
-
-The certificate ``yourcert.crt`` and the key file
-``yourcert.key`` located at ``/etc/sslkeys/`` (location configurable using the
-variables in the ``inventory/hosts`` file) and can be read by all users
-(modified only by root). You can also use a single .pem file, but make sure
-it includes the certificate **and** the key.
-
 
 
 ## Backups
