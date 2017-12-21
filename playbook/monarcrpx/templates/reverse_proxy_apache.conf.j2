@@ -1,7 +1,7 @@
 {% if protocol == "https" %}
 <VirtualHost *:80>
         ServerName {{ clientDomain }}
-        Redirect permanent  / https://{{ clientDomain }}_*/*_
+        Redirect permanent / https://{{ clientDomain }}/
 </VirtualHost>
 
 <VirtualHost _default_:443>
