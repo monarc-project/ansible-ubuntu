@@ -13,21 +13,21 @@
         SSLEngine on
 
         {% if certificate == "letsencrypt" %}
-            #Alias Certbot-auto
-            Alias /.well-known/acme-challenge    /var/www/letsencrypt/.well-known/acme-challenge
+        #Alias Certbot-auto
+        Alias /.well-known/acme-challenge    /var/www/letsencrypt/.well-known/acme-challenge
 
-            <Directory /var/www/letsencrypt/.well-known/acme-challenge/>
-                Require all granted
-            </Directory>
+        <Directory /var/www/letsencrypt/.well-known/acme-challenge/>
+            Require all granted
+        </Directory>
 
-            SSLCertificateFile "/etc/letsencrypt/live/{{ clientDomain }}/cert.pem"
-            SSLCertificateKeyFile "/etc/letsencrypt/live/{{ clientDomain }}/privkey.pem"
+        SSLCertificateFile "/etc/letsencrypt/live/{{ clientDomain }}/cert.pem"
+        SSLCertificateKeyFile "/etc/letsencrypt/live/{{ clientDomain }}/privkey.pem"
         {% else %}
-            SSLCertificateFile "{{ certificate }}"
-            SSLCertificateKeyFile "{{ certificatekey }}"
-            {% if certificatechain and certificatechain != ""  %}
-              SSLCertificateChainFile "{{ certificatechain }}"
-            {% endif %}
+        SSLCertificateFile "{{ certificate }}"
+        SSLCertificateKeyFile "{{ certificatekey }}"
+        {% if certificatechain and certificatechain != ""  %}
+        SSLCertificateChainFile "{{ certificatechain }}"
+        {% endif %}
         {% endif %}
 
         SSLProxyEngine On
