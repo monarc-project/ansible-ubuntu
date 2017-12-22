@@ -20,7 +20,7 @@
             Require all granted
         </Directory>
 
-        SSLCertificateFile "/etc/letsencrypt/live/{{ clientDomain }}/cert.pem"
+        SSLCertificateFile "/etc/letsencrypt/live/{{ clientDomain }}/fullchain.pem"
         SSLCertificateKeyFile "/etc/letsencrypt/live/{{ clientDomain }}/privkey.pem"
         {% else %}
         SSLCertificateFile "{{ certificate }}"
