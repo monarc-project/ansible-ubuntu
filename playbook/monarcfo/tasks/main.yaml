@@ -133,13 +133,19 @@
   become: True
 
 - name: copy default deliveries templates
-  command: cp -R /var/lib/monarc/fo/deliveries/ /var/www/{{item.value.name}}/
+  command: cp -nR /var/lib/monarc/fo/deliveries/ /var/www/{{item.value.name}}/
   with_dict: "{{ clients }}"
   when: clients is defined
   become: True
 
-- name: set rights of deliveries
+- name: set owner of deliveries
   command: chown -R www-data:www-data /var/www/{{item.value.name}}/deliveries
+  with_dict: "{{ clients }}"
+  when: clients is defined
+  become: True
+
+- name: set appropriate rights for deliveries
+  command: chmod -R go+w /var/www/{{item.value.name}}/deliveries
   with_dict: "{{ clients }}"
   when: clients is defined
   become: True
