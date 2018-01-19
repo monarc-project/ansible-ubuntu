@@ -20,6 +20,7 @@ the figure below.
 
 Install ansible on the configuration server and get the playbook for MONARC:
 
+    $ sudo apt install python-pip
     $ sudo -H pip install ansible dnspython
     $ git clone https://github.com/monarc-project/ansible-ubuntu.git
     $ cd ansible-ubuntu/

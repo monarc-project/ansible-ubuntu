@@ -14,3 +14,5 @@ ssh ansible@$BO sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./add_in
 ssh ansible@$BO sudo -u www-data /usr/local/bin/del_monarc_clients.sh | ./del_inventory.py ../inventory/
 
 $ANSIBLE_PATH -i ../inventory/ monarc.yaml --user ansible
+
+./list_inventory.py ../inventory/ $BO | xargs -d '\n' ./update_deliveries.sh
