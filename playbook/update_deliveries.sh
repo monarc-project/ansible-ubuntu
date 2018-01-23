@@ -17,4 +17,4 @@ BO=$3
 
 rsync -az $BO:$DELIVERIES_DIR $DELIVERIES_TEMP_DIR
 
-rsync -avz --no-perms --no-owner --no-group $DELIVERIES_TEMP_DIR $FO:/var/www/$CLIENT_NAME/deliveries/cases/
+rsync -avz --no-perms --no-owner --no-group --omit-dir-times $DELIVERIES_TEMP_DIR $FO:/var/www/$CLIENT_NAME/deliveries/cases/
