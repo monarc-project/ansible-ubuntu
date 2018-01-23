@@ -3,7 +3,6 @@
 import os
 import glob
 import sys
-import json
 import yaml
 
 def run(INVENTORY, BO):
