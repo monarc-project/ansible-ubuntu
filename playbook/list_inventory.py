@@ -3,9 +3,10 @@
 import os
 import glob
 import sys
+import json
 import yaml
 
-def run(INVENTORY, BO):
+def run(INVENTORY):
     if not os.path.exists(INVENTORY):
         print 'Folder do no exists:', INVENTORY
         exit(1)
@@ -20,14 +21,12 @@ def run(INVENTORY, BO):
                 continue
             clients_list = ymldata['clients']
             for client in clients_list:
-                print("{} {} {}".format(server_name, client, BO))
+                print("{} {}".format(server_name, client))
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 2:
+    if len(sys.argv) > 1:
         INVENTORY = sys.argv[1]
-        BO = sys.argv[2].strip()
     else:
-        INVENTORY = './inventory/'
-        BO = 'BO'
-    run(INVENTORY, BO)
+        INVENTORY = '../inventory/'
+    run(INVENTORY)
