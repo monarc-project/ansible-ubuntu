@@ -3,7 +3,7 @@
 if [ ! $# -eq 3 ]
   then
     echo "Three arguments are required. Usage:"
-    echo "./updated_deliveries.sh BO_ADDRESS FO_ADDRESS CLIENT_NAME"
+    echo "./update_deliveries.sh BO_ADDRESS FO_ADDRESS CLIENT_NAME"
     exit 1
 fi
 

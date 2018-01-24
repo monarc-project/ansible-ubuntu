@@ -6,7 +6,7 @@
 if [ ! $# -eq 3 ]
   then
     echo "Three arguments are required. Usage:"
-    echo "./updated_deliveries.sh PLAYBOOK_PATH BO_ADDRESS ANSIBLE_PATH"
+    echo "./update.sh PLAYBOOK_PATH BO_ADDRESS ANSIBLE_PATH"
     exit 1
 fi
 
