@@ -14,7 +14,9 @@ def run(INVENTORY):
     yamls = os.path.join(INVENTORY, 'host_vars' ,'*', 'generated.yaml')
 
     for generated_file in glob.glob(yamls):
-        server_name = os.path.dirname(os.path.relpath("../inventory/host_vars/FO/generated.yaml", os.path.join(INVENTORY, 'host_vars')))
+        server_name = os.path.dirname(
+                os.path.relpath("../inventory/host_vars/FO/generated.yaml",
+                                os.path.join(INVENTORY, 'host_vars')))
         with open(generated_file, 'r') as stream:
             ymldata = yaml.load(stream)
             if ymldata is None:

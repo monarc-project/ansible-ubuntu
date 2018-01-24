@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 
-if [ $# -eq 0 ]
+if [ ! $# -eq 3 ]
   then
-    echo "No arguments supplied"
+    echo "Three arguments are required. Usage:"
+    echo "./updated_deliveries.sh BO_ADDRESS FO_ADDRESS CLIENT_NAME"
     exit 1
 fi
+
 
 DELIVERIES_DIR="/var/lib/monarc/bo/MonarcAppBO/data/monarc/models/"
 DELIVERIES_TEMP_DIR="/tmp/deliveries/"
 
-mkdir $DELIVERIES_TEMP_DIR
+if [ ! -d "$DELIVERIES_TEMP_DIR" ]; then
+    mkdir $DELIVERIES_TEMP_DIR
+fi
 
 BO_ADDRESS=$1
 FO_ADDRESS=$2
