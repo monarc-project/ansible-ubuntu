@@ -6,6 +6,29 @@ the figure below.
 ![MONARC architecture](images/monarc-architecture.png "MONARC architecture")
 
 
+
+
+## Ansible roles
+
+There are three roles, described below.
+
+### monarcco
+
+Common tasks for the front office and the back office.
+
+### monarcbo
+
+[Backoffice](https://github.com/monarc-project/MonarcAppBO).
+Only one per environment (dev, preprod, prod...).
+
+### monarcfo
+
+[Frontoffice](https://github.com/monarc-project/MonarcAppFO).
+Can be multiple installation per environment to balance to the load.
+
+
+
+
 ## Requirements
 
 * Git on all servers;
@@ -73,27 +96,44 @@ If you encounter a problem of locales, try the following:
         certificatekey="sslcert.key"
         certificatechain="sslcert.crt"
         bourlalias="monarcbo"
-        localDNS="example.net"
+        localDNS="example.com"
 
   The variable *monarc\_sql\_password* is the password for the SQL database
   on the BO.
 
 * finally, launch ansible:
 
-        $ cd playbook/
-        $ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
+        ansible@CFG:~/ansible-ubuntu/playbook$ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
 
 ansible will install and configure the back office, the front office and the
 reverse proxy. Consequently the configuration server should be able to contact
 these servers through SSH.
 
+
+
 ### Notes
 
-#### Updating the inventory
+#### Updating the inventory of ansible
 
 Adding/removing an attribute for the ansible inventory can be done with the
-script ``update.sh`` via cron as the user 'ansible'. Edit this script according
-to your need.
+script ``update.sh`` via cron as the user 'ansible'.
+
+    ansible@CFG:~$ crontal -l
+    /home/ansible/ansible-ubuntu/playbook/update.sh /home/ansible/ansible-ubuntu/playbook/ $BO_ADDRESS `which ansible-playbook`
+
+The script ``update.sh`` will:
+
+* update the inventory of ansible;
+* launch ansible for the creation/suppression of clients;
+* synchronize the template of deliveries.
+
+The `add_inventory.py` and `del_inventory.py` scripts are used to dynamically
+edit the inventory files of the configuration server. These scripts are used by
+``update.sh``.
+
+You can use `list_inventory.py` to check all the current clients in the
+inventory of ansible.
+
 
 #### TLS certificate
 
@@ -124,43 +164,6 @@ to do it manually.
 
 #### Backup
 
-For information about database backup, please read the following.
-
-
-## Ansible roles
-
-There are three roles, described below.
-
-### monarcco
-
-Common tasks for the front and the back-office.
-
-### monarcbo
-
-[Backoffice](https://github.com/monarc-project/MonarcAppBO).
-Only one per environment (dev, preprod, prod...).
-
-### monarcfo
-
-[Frontoffice](https://github.com/monarc-project/MonarcAppFO).
-Can be multiple installation per environment to balance to the load.
-
-
-
-## Ansible inventory management
-
-The `add_inventory.py` and `del_inventory.py` scripts are used to dynamically
-edit the inventory files of the configuration server. These scripts are used by
-``update.sh``.
-
-
-## Backups
-
-As backing up all the VMs completely is very resource intensive, the most
-important parts should be backed up: the databases on the BO and FOs should and
-the created configuration files, mentioned throughout this documentation, will
-insure quick restoration.
-
 ansible keep an up-to-date database backup script on each FO server instances.
 This script is located at ``/usr/local/bin/backup_monarc_db.sh`` and is updated
 by ansible on each client creation/deletion.  
@@ -171,9 +174,12 @@ The database backups will be placed in the folder
 ``/var/lib/mysql-backup/monarc/``
 
 
-## Bug Reports
 
-For **critical** bug reports please submit them to [our email](mailto:info@cases.lu?subject=MONARC)
 
-For small bugs like a missing image, layout problems, you can directly submit
+## Issues
+
+For security issues please contact us to
+[info@cases.lu](mailto:info@cases.lu?subject=MONARC).
+
+For other issues (ideas, improvements, etc.), you can directly submit
 it to [GitHub](https://github.com/monarc-project/MonarcAppFO/issues)
