@@ -32,7 +32,6 @@
 
 - name: set github auth token for composer
   command: composer config -g github-oauth.github.com {{ github_auth_token }}
-  when: appbo_pull.before == None
 
 - name: composer install
   shell: composer install
