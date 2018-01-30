@@ -21,7 +21,7 @@ def run(INVENTORY):
     fo_servers = []
     try:
         HOSTS.read(os.path.join(INVENTORY, 'hosts'))
-        fo_servers = HOSTS['dev'].keys()
+        fo_servers = [fo_server for fo_server, _ in HOSTS.items('dev')]
     except Exception as e:
         exit(1)
 
