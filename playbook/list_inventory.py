@@ -4,7 +4,6 @@ import os
 import sys
 import json
 import yaml
-import configparser
 
 try:
     HOSTS = configparser.ConfigParser(allow_no_value=True)
