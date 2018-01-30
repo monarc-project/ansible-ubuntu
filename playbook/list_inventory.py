@@ -11,10 +11,14 @@ def run(INVENTORY):
         print 'Folder do no exists:', INVENTORY
         exit(1)
 
+    fo_servers = []
     hosts = configparser.ConfigParser(allow_no_value=True)
     hosts.optionxform = lambda option: option
-    hosts.read(os.path.join(INVENTORY, 'hosts'))
-    fo_servers = hosts['dev'].keys()
+    try:
+        hosts.read(os.path.join(INVENTORY, 'hosts'))
+        fo_servers = hosts['dev'].keys()
+    except Exception as e:
+        exit(1)
 
     for fo_server in fo_servers:
         yaml_file = os.path.join(INVENTORY, 'host_vars' ,
