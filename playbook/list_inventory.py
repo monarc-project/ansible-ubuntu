@@ -6,9 +6,11 @@ import json
 import yaml
 
 try:
-    HOSTS = configparser.ConfigParser(allow_no_value=True)
+    import configparser as configparser
 except:
-    HOSTS = ConfigParser.ConfigParser(allow_no_value=True)
+    import ConfigParser as configparser
+
+HOSTS = configparser.ConfigParser(allow_no_value=True)
 HOSTS.optionxform = lambda option: option
 
 def run(INVENTORY):
