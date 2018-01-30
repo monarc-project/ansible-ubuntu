@@ -6,17 +6,21 @@ import json
 import yaml
 import configparser
 
+try:
+    HOSTS = configparser.ConfigParser(allow_no_value=True)
+except:
+    HOSTS = ConfigParser.ConfigParser(allow_no_value=True)
+HOSTS.optionxform = lambda option: option
+
 def run(INVENTORY):
     if not os.path.exists(INVENTORY):
         print 'Folder do no exists:', INVENTORY
         exit(1)
 
     fo_servers = []
-    hosts = configparser.ConfigParser(allow_no_value=True)
-    hosts.optionxform = lambda option: option
     try:
-        hosts.read(os.path.join(INVENTORY, 'hosts'))
-        fo_servers = hosts['dev'].keys()
+        HOSTS.read(os.path.join(INVENTORY, 'hosts'))
+        fo_servers = HOSTS['dev'].keys()
     except Exception as e:
         exit(1)
 
