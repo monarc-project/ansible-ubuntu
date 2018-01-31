@@ -20,4 +20,10 @@ CLIENT_NAME=$3
 
 rsync -az $BO_ADDRESS:$DELIVERIES_DIR $DELIVERIES_TEMP_DIR > /dev/null
 
+if [ ! $? -eq 0 ]
+    then
+      echo 'Failed to retrieve deliveries templates from the back office.'
+      exit 1
+fi
+
 rsync -avz --no-perms --no-owner --no-group --omit-dir-times $DELIVERIES_TEMP_DIR $FO_ADDRESS:/var/www/$CLIENT_NAME/deliveries/cases/ > /dev/null
