@@ -18,6 +18,7 @@ BO_ADDRESS=$1
 FO_ADDRESS=$2
 CLIENT_NAME=$3
 
+# Retrieve the deliveries templates from the back office.
 rsync -az $BO_ADDRESS:$DELIVERIES_DIR $DELIVERIES_TEMP_DIR > /dev/null
 
 if [ ! $? -eq 0 ]
@@ -26,4 +27,5 @@ if [ ! $? -eq 0 ]
       exit 1
 fi
 
+# Update the deliveries templates of the clients
 rsync -avz --no-perms --no-owner --no-group --omit-dir-times $DELIVERIES_TEMP_DIR $FO_ADDRESS:/var/www/$CLIENT_NAME/deliveries/cases/ > /dev/null
