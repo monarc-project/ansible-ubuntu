@@ -7,7 +7,7 @@ if [ ! $# -eq 3 ]
     exit 1
 fi
 
-DELIVERIES_DIR="/var/lib/monarc/bo/MonarcAppBO/deliveries/cases/"
+DELIVERIES_DIR="/var/lib/monarc/bo/MonarcAppBO/data/monarc/models/"
 DELIVERIES_TEMP_DIR="/tmp/deliveries/"
 
 if [ ! -d "$DELIVERIES_TEMP_DIR" ]; then
