@@ -38,6 +38,8 @@
 
         Include "/etc/apache2/client_redirection"
 
+        ProxyTimeout 1200
+
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
