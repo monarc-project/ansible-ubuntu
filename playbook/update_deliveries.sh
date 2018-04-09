@@ -21,6 +21,9 @@ CLIENT_NAME=$3
 # Retrieve the deliveries templates from the back office.
 rsync -az $BO_ADDRESS:$DELIVERIES_DIR $DELIVERIES_TEMP_DIR > /dev/null
 
+# Rename the files appropriately for the front offices
+find $DELIVERIES_TEMP_DIR -type f -name "*_*" -exec bash -c 'f="$1"; g="${f/*_/}"; mv -- "$f" "$g"' _ '{}' \;
+
 if [ ! $? -eq 0 ]
     then
       echo 'Failed to retrieve deliveries templates from the back office.'
