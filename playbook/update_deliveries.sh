@@ -31,4 +31,4 @@ if [ ! $? -eq 0 ]
 fi
 
 # Update the deliveries templates of the clients
-rsync -avz --no-perms --no-owner --no-group --omit-dir-times $DELIVERIES_TEMP_DIR $FO_ADDRESS:/var/www/$CLIENT_NAME/deliveries/cases/ > /dev/null
+rsync -avz --no-perms --no-owner --no-group --omit-dir-times $DELIVERIES_TEMP_DIR $FO_ADDRESS:/var/www/$CLIENT_NAME/data/monarc/models/ > /dev/null
