@@ -22,7 +22,7 @@ CLIENT_NAME=$3
 rsync -az $BO_ADDRESS:$DELIVERIES_DIR $DELIVERIES_TEMP_DIR > /dev/null
 
 # Rename the files appropriately for the front offices
-find $DELIVERIES_TEMP_DIR -type f -name "*_*" -exec bash -c 'f="$1"; g="${f/*_/}"; mv -- "$f" "$g"' _ '{}' \;
+./rename_deliveries.py $DELIVERIES_TEMP_DIR
 
 if [ ! $? -eq 0 ]
     then
@@ -32,3 +32,7 @@ fi
 
 # Update the deliveries templates of the clients
 rsync -avz --no-perms --no-owner --no-group --omit-dir-times $DELIVERIES_TEMP_DIR $FO_ADDRESS:/var/www/$CLIENT_NAME/deliveries/cases/ > /dev/null
+
+#
+# # Clean the temp deliveries templates
+# rm -Rf $DELIVERIES_TEMP_DIR
