@@ -159,6 +159,14 @@
   when: clients is defined and appfo_pull.before != appfo_pull.after
   become: True
 
+- name: deleting client cache
+  file:
+    path: /var/www/{{ item.value.name }}/data/cache/
+    state: absent
+  with_dict: "{{ clients }}"
+  when: clients is defined
+  become: True
+
 - name: client database creation
   mysql_db:
     name: "{{ item.value.name }}"
