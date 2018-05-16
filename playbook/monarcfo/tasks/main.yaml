@@ -152,7 +152,7 @@
 
 - name: client cache upgrade
   file:
-    name: "/var/www/{{item.value.name}}/data/upgrade"
+    path: "/var/www/{{item.value.name}}/data/upgrade"
     owner: www-data
     state: touch
   with_dict: "{{ clients }}"
