@@ -103,7 +103,7 @@
   shell: "scripts/update-all.sh"
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
-  when: appbo_pull.before != appbo_pull.after
+  when: appbo_pull.before == None
 
 - name: create initial admin user
   shell: php ./vendor/robmorgan/phinx/bin/phinx seed:run -c ./module/MonarcBO/migrations/phinx.php

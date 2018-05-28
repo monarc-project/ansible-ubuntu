@@ -55,7 +55,7 @@
   shell: "scripts/update-all.sh -b"
   args:
     chdir: /var/lib/monarc/fo
-  when: appfo_pull.before != appfo_pull.after
+  when: appfo_pull.before == None
 
 - name: apache mod rewrite
   apache2_module:
