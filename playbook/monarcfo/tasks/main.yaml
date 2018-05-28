@@ -5,6 +5,7 @@
     repo: https://github.com/monarc-project/MonarcAppFO
     dest: /var/lib/monarc/fo
     version: master
+    update: no
   register: appfo_pull
 
 - name: create module dir
@@ -156,7 +157,7 @@
     owner: www-data
     state: touch
   with_dict: "{{ clients }}"
-  when: clients is defined and appfo_pull.before != appfo_pull.after
+  when: clients is defined
   become: True
 
 - name: deleting client cache

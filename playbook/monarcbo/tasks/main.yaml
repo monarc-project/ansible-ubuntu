@@ -5,6 +5,7 @@
     repo: https://github.com/monarc-project/MonarcAppBO
     dest: /var/lib/monarc/bo/MonarcAppBO/
     version: master
+    update: no
   register: appbo_pull
 
 - name: create module dir
