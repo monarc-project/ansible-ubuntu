@@ -165,7 +165,7 @@
     path: /var/www/{{ item.value.name }}/data/cache/
     state: absent
   with_dict: "{{ clients }}"
-  when: clients is defined and appfo_pull.before != appfo_pull.after
+  when: clients is defined
   become: True
 
 - name: client database creation
