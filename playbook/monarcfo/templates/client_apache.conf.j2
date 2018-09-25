@@ -3,6 +3,8 @@
 		DocumentRoot {{ www_directory | default('/var/lib/monarc/fo/')}}/public
 
 		RewriteEngine On
+		RewriteCond %{REQUEST_METHOD} !^(GET|POST|HEAD)
+		RewriteRule .* - [R=405,L]
 
 		<Directory {{ www_directory | default('/var/lib/monarc/fo/')}}/public>
 				require all granted

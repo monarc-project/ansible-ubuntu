@@ -4,6 +4,9 @@
 
     RewriteEngine On
 
+    RewriteCond %{REQUEST_METHOD} !^(GET|POST|HEAD)
+    RewriteRule .* - [R=405,L]
+
     SetEnv APPLICATION_ENV "development"
     <Directory /var/lib/monarc/bo/MonarcAppBO/public/>
 				DirectoryIndex index.php
