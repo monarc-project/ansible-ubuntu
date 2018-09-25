@@ -2,10 +2,6 @@
 <VirtualHost *:80>
         ServerName {{ clientDomain }}
 
-        RewriteEngine On
-        RewriteCond %{REQUEST_METHOD} !^(GET|POST|HEAD)
-        RewriteRule .* - [R=405,L]
-
         Redirect permanent / https://{{ clientDomain }}/
 </VirtualHost>
 
@@ -14,10 +10,6 @@
 
         ServerAdmin webmaster@{{ clientDomain }}
         DocumentRoot /var/www/html
-
-        RewriteEngine On
-        RewriteCond %{REQUEST_METHOD} !^(GET|POST|HEAD)
-        RewriteRule .* - [R=405,L]
 
         SSLEngine on
 
@@ -58,10 +50,6 @@
 
         ServerAdmin webmaster@{{ clientDomain }}
         DocumentRoot /var/www/html
-
-        RewriteEngine On
-        RewriteCond %{REQUEST_METHOD} !^(GET|POST|HEAD)
-        RewriteRule .* - [R=405,L]
 
         Include "/etc/apache2/client_redirection"
 
