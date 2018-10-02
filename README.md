@@ -7,7 +7,6 @@ the figure below.
 
 
 
-
 ## Ansible roles
 
 There are three roles, described below.
@@ -31,12 +30,11 @@ Can be multiple installation per environment to balance to the load.
 
 ## Requirements
 
-* Git on all servers;
-* Python 2 on all servers. Actually ansible 2.2 features only a tech
-  preview of Python 3 support;
+* Git and Python on all servers;
 * [ansible](https://www.ansible.com/) must be installed on the configuration
   server;
-* Postfix on the BO and all FO servers.
+* Postfix on the BO and all FO servers (for the password recovery feature of
+  MONARC).
 
 
 ## Usage

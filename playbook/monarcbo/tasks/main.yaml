@@ -20,17 +20,6 @@
     owner: "www-data"
   become: True
 
-- name: install composer
-  copy:
-    src: "composer.phar"
-    dest: "/usr/local/bin/composer"
-    mode: 0755
-  become: True
-
-- name: update composer
-  shell: composer self-update
-  become: True
-
 - name: set github auth token for composer
   command: composer config -g github-oauth.github.com {{ github_auth_token }}
 
