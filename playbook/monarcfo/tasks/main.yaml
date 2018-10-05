@@ -92,7 +92,9 @@
   become: True
 
 - name: logrotate conf
-  template:  src=logrotate_apache.j2 dest=/etc/logrotate.d/apache2
+  template:
+    src: logrotate_apache.j2
+    dest: /etc/logrotate.d/apache2
   become: True
 
 - name: create client dir
