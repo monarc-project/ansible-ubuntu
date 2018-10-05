@@ -1,8 +1,11 @@
 <VirtualHost *:80>
-		ServerName {{ bourlalias }}{{ '.' + env_prefix if env_prefix else '' }}.{{ clientDomain }}
+	ServerName {{ bourlalias }}{{ '.' + env_prefix if env_prefix else '' }}.{{ clientDomain }}
     DocumentRoot /var/lib/monarc/bo/MonarcAppBO/public/
 
     RewriteEngine On
+
+    RewriteCond %{REQUEST_METHOD} !^(GET|POST|PUT|PATCH|DELETE|HEAD)
+    RewriteRule .* - [R=405,L]
 
     SetEnv APPLICATION_ENV "development"
     <Directory /var/lib/monarc/bo/MonarcAppBO/public/>
