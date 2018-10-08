@@ -6,7 +6,6 @@ the figure below.
 ![MONARC architecture](images/monarc-architecture.png "MONARC architecture")
 
 
-
 ## Ansible roles
 
 There are three roles, described below.
@@ -18,14 +17,11 @@ Common tasks for the front office and the back office.
 ### monarcbo
 
 [Backoffice](https://github.com/monarc-project/MonarcAppBO).
-Only one per environment (dev, preprod, prod...).
 
 ### monarcfo
 
 [Frontoffice](https://github.com/monarc-project/MonarcAppFO).
-Can be multiple installation per environment to balance to the load.
-
-
+Can be multiple installation per client to balance to the load.
 
 
 ## Requirements
@@ -173,8 +169,6 @@ You just have to set a cron rule in order to launch the script periodically.
 
 The database backups will be placed in the folder
 ``/var/lib/mysql-backup/monarc/``
-
-
 
 
 ## Issues
