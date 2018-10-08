@@ -23,9 +23,9 @@ removal=$(ssh ansible@$BO_ADDRESS sudo -u www-data /usr/local/bin/del_monarc_cli
 
 echo "Running ansible..."
 if [ "$addition" == 0 ] || [ "$removal" == 0 ] ; then
-    $ANSIBLE_PATH -i ../inventory/ $PLAYBOOK_CFG --user ansible --tags "update-clients"
-else
     $ANSIBLE_PATH -i ../inventory/ $PLAYBOOK_CFG --user ansible
+else
+    $ANSIBLE_PATH -i ../inventory/ $PLAYBOOK_CFG --user ansible --skip-tags "update-clients"
 fi
 
 echo "Synchronizing templates of deliveries..."
