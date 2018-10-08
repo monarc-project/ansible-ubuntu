@@ -19,7 +19,7 @@ def run():
     """ Main function """
     if not os.path.exists(INVENTORY):
         print 'Folder do no exists:', INVENTORY
-        exit(1)
+        return 1
 
     stdin = sys.stdin.read()
 
@@ -27,7 +27,7 @@ def run():
         try:
             todelete = json.loads(stdin)
         except ValueError:
-            exit(1)
+            return 1
 
         for to_delete in todelete:
 
@@ -36,7 +36,7 @@ def run():
                                 to_delete['server'])
             if not os.path.exists(path):
                 print 'Folder do no exists:', path
-                exit(1)
+                return 1
 
             generated_file = os.path.join(path, 'generated.yaml')
 
@@ -55,11 +55,12 @@ def run():
                 except yaml.YAMLError as exc:
                     print exc
         else:
-            exit(1)
-        exit(0)
+            return 1
+        return 0
     else:
-        exit(1)
+        return 1
 
 
 if __name__ == '__main__':
-    run()
+    result = run()
+    print(result)

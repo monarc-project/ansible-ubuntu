@@ -60,9 +60,10 @@
     state: directory
     owner: root
     group: adm
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
   become: True
+  tags: "update-clients"
 
 - name: disable all apache virtual hosts
   command: find /etc/apache2/sites-enabled/ -type l -exec rm -f "{}" \;
@@ -73,11 +74,12 @@
     src: client_apache.conf.j2
     dest: "/etc/apache2/sites-available/{{ item.value.name }}.conf"
     owner: root
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
   notify:
     - reload apache
   become: True
+  tags: "update-clients"
 
 # - name: deactivates the default virtualhost
 #   command: a2dissite 000-default.conf
@@ -87,9 +89,10 @@
 
 - name: enable apache conf
   command: "/usr/sbin/a2ensite {{item.value.name}}.conf"
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
   become: True
+  tags: "update-clients"
 
 - name: logrotate conf
   template:
@@ -101,9 +104,10 @@
   file:
     name: "/var/www/{{item.value.name}}"
     state: directory
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
   become: True
+  tags: "update-clients"
 
 - name: client config file
   template:
@@ -111,43 +115,48 @@
     dest: "/var/www/{{item.value.name}}/local.php"
     owner: www-data
     mode: 0600
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
   become: True
+  tags: "update-clients"
 
 - name: create client data dir
   file:
     name: "/var/www/{{item.value.name}}/data"
     state: directory
     owner: www-data
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
   become: True
+  tags: "update-clients"
 
 - name: copy default deliveries templates
   command: cp -nR /var/lib/monarc/fo/deliveries/ /var/www/{{item.value.name}}/
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
   become: True
+  tags: "update-clients"
 
 - name: set owner of deliveries
   command: chown -R www-data:www-data /var/www/{{item.value.name}}/deliveries
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
   become: True
+  tags: "update-clients"
 
 - name: set appropriate rights for deliveries
   command: chmod -R go+w /var/www/{{item.value.name}}/deliveries
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
   become: True
+  tags: "update-clients"
 
 - name: client cache upgrade
   file:
     path: "/var/www/{{item.value.name}}/data/upgrade"
     owner: www-data
     state: touch
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
   become: True
 
@@ -155,7 +164,7 @@
   file:
     path: /var/www/{{ item.value.name }}/data/cache/
     state: absent
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
   become: True
 
@@ -163,9 +172,10 @@
   mysql_db:
     name: "{{ item.value.name }}"
     config_file: /etc/mysql/debian.cnf
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
   become: True
+  tags: "update-clients"
 
 - name: client database user creation
   mysql_user:
@@ -173,31 +183,35 @@
     password: "{{ item.value.mysql_password }}"
     priv: "{{ item.value.name }}.*:ALL"
     config_file: /etc/mysql/debian.cnf
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
   become: True
+  tags: "update-clients"
 
 - name: client db migration
   shell: "scripts/client-upgrade-db.sh MonarcFO localhost {{ item.value.name }} {{ item.value.mysql_password }} {{ item.value.name }}"
   args:
     chdir: /var/lib/monarc/fo
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
+  tags: "update-clients"
 
 - name: bootstrap file
   template:
     src: client_bootstrap.j2
     dest: "/tmp/bootstrap_{{ item.value.name }}.sql"
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
+  tags: "update-clients"
 
 - name: initialize client db
   shell: "if [ $( echo 'select count(id) from users;' | mysql --defaults-file=/etc/mysql/debian.cnf -N {{ item.value.name }} ) -eq 0  ] ; then mysql --defaults-file=/etc/mysql/debian.cnf {{ item.value.name }} < /tmp/bootstrap_{{ item.value.name }}.sql ;  fi"
   args:
     chdir: /var/lib/monarc/fo
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
   become: True
+  tags: "update-clients"
 
 - name: database backup script
   template:
@@ -205,6 +219,7 @@
     dest: "/usr/local/bin/backup_monarc_db.sh"
     mode: 0755
     owner: root
-  with_dict: "{{ clients }}"
+  with_dict: "{{ clients|default({}) }}"
   when: clients is defined
   become: true
+  tags: "update-clients"

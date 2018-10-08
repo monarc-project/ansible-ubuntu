@@ -65,6 +65,7 @@
     src: clients_redirection.j2
     dest: /etc/apache2/client_redirection
   become: True
+  tags: "update-clients"
 
 - name: hostfile
   template:
@@ -73,6 +74,7 @@
   become: True
   notify:
     - restart apache
+  tags: "update-clients"
 
 - name: reverse proxy apache configuration
   template:

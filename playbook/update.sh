@@ -10,6 +10,7 @@ if [ ! $# -eq 3 ]
     exit 1
 fi
 
+PLAYBOOK_CFG="monarc.yaml"
 PLAYBOOK_PATH=$1
 BO_ADDRESS=$2
 ANSIBLE_PATH=$3
@@ -17,11 +18,15 @@ ANSIBLE_PATH=$3
 cd $PLAYBOOK_PATH
 
 echo "Updating ansible inventory..."
-ssh ansible@$BO_ADDRESS sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./add_inventory.py ../inventory/
-ssh ansible@$BO_ADDRESS sudo -u www-data /usr/local/bin/del_monarc_clients.sh | ./del_inventory.py ../inventory/
+addition=$(ssh ansible@$BO_ADDRESS sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./add_inventory.py ../inventory/)
+removal=$(ssh ansible@$BO_ADDRESS sudo -u www-data /usr/local/bin/del_monarc_clients.sh | ./del_inventory.py ../inventory/)
 
 echo "Running ansible..."
-$ANSIBLE_PATH -i ../inventory/ monarc.yaml --user ansible
+if [ "$addition" == 0 ] || [ "$removal" == 0 ] ; then
+    $ANSIBLE_PATH -i ../inventory/ $PLAYBOOK_CFG --user ansible --tags "update-clients"
+else
+    $ANSIBLE_PATH -i ../inventory/ $PLAYBOOK_CFG --user ansible
+fi
 
 echo "Synchronizing templates of deliveries..."
 ./list_inventory.py ../inventory/ | xargs -n2  ./update_deliveries.sh $BO_ADDRESS
