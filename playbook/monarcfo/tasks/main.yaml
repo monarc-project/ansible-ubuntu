@@ -61,7 +61,6 @@
     owner: root
     group: adm
   with_dict: "{{ clients|default({}) }}"
-  when: clients is defined
   become: True
   tags: "update-clients"
 
@@ -75,7 +74,6 @@
     dest: "/etc/apache2/sites-available/{{ item.value.name }}.conf"
     owner: root
   with_dict: "{{ clients|default({}) }}"
-  when: clients is defined
   notify:
     - reload apache
   become: True
@@ -90,7 +88,6 @@
 - name: enable apache conf
   command: "/usr/sbin/a2ensite {{item.value.name}}.conf"
   with_dict: "{{ clients|default({}) }}"
-  when: clients is defined
   become: True
   tags: "update-clients"
 
@@ -105,7 +102,6 @@
     name: "/var/www/{{item.value.name}}"
     state: directory
   with_dict: "{{ clients|default({}) }}"
-  when: clients is defined
   become: True
   tags: "update-clients"
 
@@ -116,7 +112,6 @@
     owner: www-data
     mode: 0600
   with_dict: "{{ clients|default({}) }}"
-  when: clients is defined
   become: True
   tags: "update-clients"
 
@@ -126,28 +121,24 @@
     state: directory
     owner: www-data
   with_dict: "{{ clients|default({}) }}"
-  when: clients is defined
   become: True
   tags: "update-clients"
 
 - name: copy default deliveries templates
   command: cp -nR /var/lib/monarc/fo/deliveries/ /var/www/{{item.value.name}}/
   with_dict: "{{ clients|default({}) }}"
-  when: clients is defined
   become: True
   tags: "update-clients"
 
 - name: set owner of deliveries
   command: chown -R www-data:www-data /var/www/{{item.value.name}}/deliveries
   with_dict: "{{ clients|default({}) }}"
-  when: clients is defined
   become: True
   tags: "update-clients"
 
 - name: set appropriate rights for deliveries
   command: chmod -R go+w /var/www/{{item.value.name}}/deliveries
   with_dict: "{{ clients|default({}) }}"
-  when: clients is defined
   become: True
   tags: "update-clients"
 
@@ -173,7 +164,6 @@
     name: "{{ item.value.name }}"
     config_file: /etc/mysql/debian.cnf
   with_dict: "{{ clients|default({}) }}"
-  when: clients is defined
   become: True
   tags: "update-clients"
 
@@ -184,7 +174,6 @@
     priv: "{{ item.value.name }}.*:ALL"
     config_file: /etc/mysql/debian.cnf
   with_dict: "{{ clients|default({}) }}"
-  when: clients is defined
   become: True
   tags: "update-clients"
 
@@ -193,7 +182,6 @@
   args:
     chdir: /var/lib/monarc/fo
   with_dict: "{{ clients|default({}) }}"
-  when: clients is defined
   tags: "update-clients"
 
 - name: bootstrap file
@@ -201,7 +189,6 @@
     src: client_bootstrap.j2
     dest: "/tmp/bootstrap_{{ item.value.name }}.sql"
   with_dict: "{{ clients|default({}) }}"
-  when: clients is defined
   tags: "update-clients"
 
 - name: initialize client db
@@ -209,7 +196,6 @@
   args:
     chdir: /var/lib/monarc/fo
   with_dict: "{{ clients|default({}) }}"
-  when: clients is defined
   become: True
   tags: "update-clients"
 
@@ -220,6 +206,5 @@
     mode: 0755
     owner: root
   with_dict: "{{ clients|default({}) }}"
-  when: clients is defined
   become: true
   tags: "update-clients"
