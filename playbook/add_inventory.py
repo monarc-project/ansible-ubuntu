@@ -27,7 +27,7 @@ def run():
     """ Main function """
     if not os.path.exists(INVENTORY):
         print 'Folder do no exists:', INVENTORY
-        return 1
+        exit(1)
 
     stdin = sys.stdin.read()
 
@@ -35,7 +35,7 @@ def run():
         try:
             newdata = json.loads(stdin)
         except ValueError:
-            return 1
+            exit(1)
 
         for new_client in newdata:
 
@@ -67,12 +67,11 @@ def run():
                 except yaml.YAMLError as exc:
                     print exc
         else:
-            return 1
-        return 0
+            exit(1)
+        exit(0)
     else:
-        return 1
+        exit(1)
 
 
 if __name__ == '__main__':
-    result = run()
-    print(result)
+    run()
