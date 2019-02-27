@@ -75,7 +75,7 @@ return array(
         'from' => '{{ emailFrom if emailFrom else "info@monarc.lu" }}',
     ],
 
-    'terms' => '{{ terms }}',
+    'terms' => '{{ terms if terms else "#" }}',
 
     'monarc' => array(
         'ttl' => 60, // timeout
