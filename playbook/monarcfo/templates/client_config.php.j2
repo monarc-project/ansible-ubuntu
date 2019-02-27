@@ -75,6 +75,8 @@ return array(
         'from' => '{{ emailFrom if emailFrom else "info@monarc.lu" }}',
     ],
 
+    'terms' => '{{ terms }}',
+
     'monarc' => array(
         'ttl' => 60, // timeout
         'salt' => '{{ item.value.salt }}', // private salt for the password

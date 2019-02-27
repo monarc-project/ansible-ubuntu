@@ -91,6 +91,7 @@ If you encounter a problem of locales, try the following:
         certificatechain="sslcert.crt"
         bourlalias="monarcbo"
         localDNS="example.com"
+        terms="https://my.monarc.lu/terms.html"
 
   The variable *monarc\_sql\_password* is the password for the SQL database
   on the BO.
