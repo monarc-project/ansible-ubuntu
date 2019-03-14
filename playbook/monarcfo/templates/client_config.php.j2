@@ -20,7 +20,7 @@
 
 return array(
     'doctrine' => array(
-        'connection' => array(
+	 'connection' => array(
             'orm_default' => array(
                 'params' => array(
                     'host' => '{{ master }}',
@@ -54,7 +54,7 @@ return array(
             'index' => 3,
             'label' => 'Deutsch',
         ],
-        'ne' => [
+        'nl' => [
             'index' => 4,
             'label' => 'Nederlands',
         ],
@@ -63,7 +63,7 @@ return array(
 
     'defaultLanguageIndex' => 1,
 
-    'activeLanguages' => array('fr','en','de','ne',),
+    'activeLanguages' => array('fr','en','de','nl',),
 
     'appVersion' => $package_json['version'],
 
