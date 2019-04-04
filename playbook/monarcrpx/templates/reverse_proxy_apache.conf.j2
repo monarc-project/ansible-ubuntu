@@ -71,6 +71,13 @@
         RewriteCond %{REQUEST_METHOD} !^(GET|POST|PUT|PATCH|DELETE|HEAD)
         RewriteRule .* - [R=405,L]
 
+        <IfModule mod_headers.c>
+           Header always set X-Content-Type-Options nosniff
+           Header always set X-XSS-Protection "1; mode=block"
+           Header always set X-Robots-Tag none
+           Header always set X-Frame-Options SAMEORIGIN
+        </IfModule>
+
         Include "/etc/apache2/client_redirection"
 
         ErrorLog ${APACHE_LOG_DIR}/error.log
