@@ -208,3 +208,11 @@
   with_dict: "{{ clients }}"
   when: clients is defined
   become: true
+
+- name: install gsfonts for NewCenturySchlbk-Roman
+  apt:
+    name: "{{ item }}"
+    update_cache: True
+  with_items:
+    - gsfonts
+  become: True
