@@ -159,6 +159,14 @@
   when: clients is defined
   become: True
 
+- name: deleting client Doctrine cache
+  file:
+    path: /var/www/{{ item.value.name }}/data/DoctrineORMModule/
+    state: absent
+  with_dict: "{{ clients }}"
+  when: clients is defined
+  become: True
+
 - name: client database creation
   mysql_db:
     name: "{{ item.value.name }}"
