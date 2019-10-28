@@ -10,7 +10,7 @@
 
 - name: create module dir
   file:
-    path: /var/lib/monarc/fo/module
+    path: /var/lib/monarc/fo/module/Monarc
     state: directory
 
 - name: create data dir
@@ -32,13 +32,13 @@
 - name: MonarcCore link
   file:
     src: /var/lib/monarc/fo/vendor/monarc/core
-    dest: /var/lib/monarc/fo/module/MonarcCore
+    dest: /var/lib/monarc/fo/module/Monarc/Core
     state: link
 
 - name: frontoffice link
   file:
     src: /var/lib/monarc/fo/vendor/monarc/frontoffice
-    dest: /var/lib/monarc/fo//module/MonarcFO
+    dest: /var/lib/monarc/fo/module/Monarc/FrontOffice
     state: link
 
 - name: update-all
@@ -124,6 +124,15 @@
   when: clients is defined
   become: True
 
+- name: create client Proxy dir
+  file:
+    name: "/var/www/{{item.value.name}}/data/LazyServices/Proxy"
+    state: directory
+    owner: www-data
+  with_dict: "{{ clients }}"
+  when: clients is defined
+  become: True
+
 - name: copy default deliveries templates
   command: cp -nR /var/lib/monarc/fo/deliveries/ /var/www/{{item.value.name}}/
   with_dict: "{{ clients }}"
@@ -137,14 +146,14 @@
   become: True
 
 - name: set appropriate rights for deliveries
-  command: chmod -R go+w /var/www/{{item.value.name}}/deliveries
+  command: chmod -R go+w /var/www/{{ item.value.name }}/deliveries
   with_dict: "{{ clients }}"
   when: clients is defined
   become: True
 
 - name: client cache upgrade
   file:
-    path: "/var/www/{{item.value.name}}/data/upgrade"
+    path: "/var/www/{{ item.value.name }}/data/upgrade"
     owner: www-data
     state: touch
   with_dict: "{{ clients }}"

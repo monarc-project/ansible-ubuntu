@@ -10,7 +10,7 @@
 
 - name: create module dir
   file:
-    path: /var/lib/monarc/bo/MonarcAppBO/module
+    path: /var/lib/monarc/bo/MonarcAppBO/module/Monarc
     state: directory
 
 - name: create data dir
@@ -18,6 +18,25 @@
     path: /var/lib/monarc/bo/MonarcAppBO/data
     state: directory
     owner: "www-data"
+  become: True
+
+- name: create Proxy dir
+  file:
+    name: /var/lib/monarc/bo/MonarcAppBO/data/LazyServices/Proxy
+    state: directory
+    owner: www-data
+  become: True
+
+- name: deleting cache
+  file:
+    path: /var/lib/monarc/bo/MonarcAppBO/data/cache/
+    state: absent
+  become: True
+
+- name: deleting Doctrine cache
+  file:
+    path: /var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule/
+    state: absent
   become: True
 
 - name: set github auth token for composer
@@ -32,13 +51,13 @@
 - name: MonarcCore link
   file:
     src: /var/lib/monarc/bo/MonarcAppBO/vendor/monarc/core
-    dest: /var/lib/monarc/bo/MonarcAppBO/module/MonarcCore
+    dest: /var/lib/monarc/bo/MonarcAppBO/module/Monarc/Core
     state: link
 
 - name: backoffice link
   file:
     src: /var/lib/monarc/bo/MonarcAppBO/vendor/monarc/backoffice
-    dest: /var/lib/monarc/bo/MonarcAppBO/module/MonarcBO
+    dest: /var/lib/monarc/bo/MonarcAppBO/module/Monarc/BackOffice
     state: link
 
 - name: set MariaDB bind-address to 0.0.0.0
