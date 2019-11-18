@@ -228,8 +228,6 @@
 
 - name: install gsfonts for NewCenturySchlbk-Roman
   apt:
-    name: "{{ item }}"
     update_cache: True
-  with_items:
-    - gsfonts
+    name: gsfonts
   become: True

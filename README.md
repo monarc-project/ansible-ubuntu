@@ -26,7 +26,7 @@ Can be multiple installation per client to balance to the load.
 
 ## Requirements
 
-* Git and Python on all servers;
+* Git and Python 3 on all servers;
 * [ansible](https://www.ansible.com/) must be installed on the configuration
   server;
 * Postfix on the BO and all FO servers (for the password recovery feature of

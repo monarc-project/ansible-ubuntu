@@ -17,26 +17,26 @@
 
 - name: install php7 and nodejs packages
   apt:
-    name: "{{ item }}"
     update_cache: True
-  with_items:
-    - apache2
-    - git
-    - libapache2-mod-php
-    - mariadb-server
-    - php
-    - php-cli
-    - php-mbstring
-    - php-xml
-    - php-mysql
-    - php-zip
-    - php-intl
-    - php-imagick
-    - nodejs
-    - python-mysqldb
-    - gettext
-    - jq
-    - composer
+    pkg:
+      - apache2
+      - git
+      - libapache2-mod-php
+      - mariadb-server
+      - php
+      - php-cli
+      - php-mbstring
+      - php-xml
+      - php-mysql
+      - php-intl
+      - php-zip
+      - php-imagick
+      - nodejs
+      - python-mysqldb
+      - gettext
+      - jq
+      - composer
+    state: present
   become: True
 
 - name: apache ssl
