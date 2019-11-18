@@ -63,6 +63,8 @@
     src: clients_redirection.j2
     dest: /etc/apache2/client_redirection
   become: True
+  notify:
+    - reload apache
 
 - name: hostfile
   template:
