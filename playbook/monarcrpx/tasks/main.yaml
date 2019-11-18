@@ -2,10 +2,8 @@
 
 - name: install apache
   apt:
-    name: "{{ item }}"
+    name: apache2
     update_cache: True
-  with_items:
-    - apache2
   become: True
 
 - name: apache proxy
@@ -65,6 +63,8 @@
     src: clients_redirection.j2
     dest: /etc/apache2/client_redirection
   become: True
+  notify:
+    - reload apache
 
 - name: hostfile
   template:

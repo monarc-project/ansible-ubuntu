@@ -8,7 +8,7 @@ mkdir $backupdir  > /dev/null 2>&1
 {% for server in groups['dev'] %}
 {% set hostname = hostvars[server]['inventory_hostname'] %}
 {% if 'clients' in hostvars[server]  %}
-{% for key,client in hostvars[server]['clients'].iteritems() %}
+{% for key,client in hostvars[server]['clients'].items() %}
 mkdir $backupdir/{{client.name}}  > /dev/null 2>&1
 mysqldump --defaults-file=/etc/mysql/debian.cnf --databases {{client.name}} > $backupdir/{{client.name}}/{{client.name}}.sql
 {% endfor %}

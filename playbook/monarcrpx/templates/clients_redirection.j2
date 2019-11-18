@@ -4,7 +4,7 @@ ProxyPassReverse /{{bourlalias }}{{ '-' + env_prefix if env_prefix else '' }} ht
 {% for server in groups['dev'] %}
 {% set hostname = hostvars[server]['inventory_hostname'] %}
 {% if 'clients' in hostvars[server]  %}
-{% for key,client in hostvars[server]['clients'].iteritems() %}
+{% for key,client in hostvars[server]['clients'].items() %}
 ProxyPass /{{client.name}}{{ '-' + hostvars[server].env_prefix if hostvars[server].env_prefix else '' }} http://{{ client.name }}{{ '.' + hostvars[server].env_prefix if hostvars[server].env_prefix else '' }}.{{ clientDomain }}
 ProxyPassReverse /{{client.name}}{{ '-' + hostvars[server].env_prefix if hostvars[server].env_prefix else '' }} http://{{ client.name }}{{ '.' + hostvars[server].env_prefix if hostvars[server].env_prefix else '' }}.{{ clientDomain }}
 {% endfor %}
