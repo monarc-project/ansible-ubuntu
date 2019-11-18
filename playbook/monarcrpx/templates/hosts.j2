@@ -6,7 +6,7 @@
 {% for server in groups['dev'] %}
 {% set hostname = hostvars[server]['inventory_hostname'] %}
 {% if 'clients' in hostvars[server]  %}
-{% for key,client in hostvars[server]['clients'].iteritems() %}
+{% for key,client in hostvars[server]['clients'].items() %}
 {{ lookup("dig",server+'.'+localDNS) }}     {{client.name}}.{{ clientDomain }}
 {% endfor %}
 {% endif %}

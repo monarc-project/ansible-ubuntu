@@ -2,10 +2,8 @@
 
 - name: install apache
   apt:
-    name: "{{ item }}"
+    name: apache2
     update_cache: True
-  with_items:
-    - apache2
   become: True
 
 - name: apache proxy
