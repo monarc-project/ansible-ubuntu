@@ -140,7 +140,11 @@
   become: True
 
 - name: set owner of deliveries
-  command: chown -R www-data:www-data /var/www/{{item.value.name}}/deliveries
+  file:
+    path: /var/www/{{item.value.name}}/deliveries
+    recurse: yes
+    owner: www-data
+    group: www-data
   with_dict: "{{ clients }}"
   when: clients is defined
   become: True
