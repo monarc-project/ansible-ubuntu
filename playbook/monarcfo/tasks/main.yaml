@@ -199,7 +199,7 @@
   become: True
 
 - name: client db migration
-  shell: "scripts/client-upgrade-db.sh MonarcFO localhost {{ item.value.name }} {{ item.value.mysql_password }} {{ item.value.name }}"
+  shell: "scripts/client-upgrade-db.sh frontoffice localhost {{ item.value.name }} {{ item.value.mysql_password }} {{ item.value.name }}"
   args:
     chdir: /var/lib/monarc/fo
   with_dict: "{{ clients }}"
