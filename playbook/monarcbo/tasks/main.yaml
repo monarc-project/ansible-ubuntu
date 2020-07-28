@@ -181,3 +181,8 @@
   become: True
   notify:
     - reload apache
+
+- name: create new client for stats collection
+  command: "poetry run flask create_client --name {{item.value.name}} --token {{item.value.statsToken}}"
+  with_dict: "{{ clients }}"
+  when: clients is defined
