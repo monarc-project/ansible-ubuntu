@@ -182,7 +182,16 @@
   notify:
     - reload apache
 
+- name: create StatsService dir
+  file:
+    name: /var/lib/monarc/stats-service
+    state: directory
+    owner: www-data
+  become: True
+
 - name: create new client for stats collection
   command: "poetry run flask client_create --name {{item.value.name}} --token {{item.value.statsToken}}"
   with_dict: "{{ clients }}"
+  args:
+    chdir: /var/lib/monarc/stats-service
   when: clients is defined
