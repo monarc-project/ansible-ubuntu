@@ -16,6 +16,9 @@ ANSIBLE_PATH=$3
 
 cd $PLAYBOOK_PATH
 
+echo "Executes ansible inventory migrations..."
+../inventory/migrations/001-add_stats_token_to_inventory.py ../inventory
+
 echo "Updating ansible inventory..."
 ssh ansible@$BO_ADDRESS sudo -u www-data /usr/local/bin/new_monarc_clients.sh | ./add_inventory.py ../inventory/
 ssh ansible@$BO_ADDRESS sudo -u www-data /usr/local/bin/del_monarc_clients.sh | ./del_inventory.py ../inventory/
