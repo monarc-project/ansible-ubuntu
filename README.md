@@ -135,9 +135,9 @@ configuration server and the front office servers:
 
 #### Inventory migrations
 
-##### First migration
+##### 1. Add statsToken
 
-This migration adds a `stats token` to the clients without this token.
+This migration adds a Stats Service token (`statsToken`) to the clients without this token.
 
     ansible@CFG:~/ansible-ubuntu/inventory/migrations$ ./add_stats_token_to_inventory.py ../
 
