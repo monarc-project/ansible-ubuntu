@@ -139,7 +139,7 @@ configuration server and the front office servers:
 
 This migration adds a Stats Service token (`statsToken`) to the clients without this token.
 
-    ansible@CFG:~/ansible-ubuntu/inventory/migrations$ ./add_stats_token_to_inventory.py ../
+    ansible@CFG:~/ansible-ubuntu/inventory/migrations$ ./001-add_stats_token_to_inventory.py ../
 
 
 
