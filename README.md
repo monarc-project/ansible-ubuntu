@@ -127,10 +127,16 @@ edit the inventory files of the configuration server. These scripts are used by
 ``update.sh``.
 
 You can use `list_inventory.py` to check all the current clients in the
-inventory of ansible. If want to check the connectivity between the
+inventory of ansible. If you want to check the connectivity between the
 configuration server and the front office servers:
 
     ansible@CFG:~$ ./list_inventory.py ../inventory/ | cut -f 1 -d ' ' | uniq | xargs -n 1 ping -w 1
+
+
+#### Inventory migrations
+
+    ansible@CFG:~/ansible-ubuntu/inventory/migrations$ ./add_stats_token_to_inventory.py ../
+
 
 
 #### TLS certificate
