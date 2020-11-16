@@ -17,6 +17,9 @@ ANSIBLE_PATH=$3
 cd $PLAYBOOK_PATH
 
 echo "Executes ansible inventory migrations..."
+# backup the inventory (only one backup per day)
+tar cfz ../inventory/$(date +%Y-%m-%d)-backup-inventory.tar.gz ../inventory/host_vars
+# executes the migrations
 ../inventory/migrations/001-add_stats_token_to_inventory.py ../inventory
 
 echo "Updating ansible inventory..."
