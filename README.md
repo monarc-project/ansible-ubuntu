@@ -87,6 +87,7 @@ Get the playbook for MONARC and install Ansible on the configuration server:
         bourlalias="monarcbo"
         localDNS="example.com"
         terms="https://my.monarc.lu/terms.html"
+        stats_service="/var/lib/monarc/stats-service"
 
   The variable *monarc\_sql\_password* is the password for the SQL database
   on the BO.
