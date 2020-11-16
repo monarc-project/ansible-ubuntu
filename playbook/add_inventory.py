@@ -28,7 +28,7 @@ def get_rnd_string(length):
 def run():
     """ Main function """
     if not os.path.exists(INVENTORY):
-        print "Folder do no exists:", INVENTORY
+        print("Folder do no exists: {}".format(INVENTORY))
         exit(1)
 
     stdin = sys.stdin.read()
@@ -50,7 +50,7 @@ def run():
             generated_file = os.path.join(path, "generated.yaml")
 
             with open(generated_file, "a+") as stream:
-                ymldata = yaml.load(stream)
+                ymldata = yaml.load(stream, Loader=yaml.FullLoader)
                 if ymldata is None:
                     ymldata = {}
                     ymldata["clients"] = {}
@@ -68,7 +68,7 @@ def run():
                 try:
                     yaml.dump(ymldata, stream)
                 except yaml.YAMLError as exc:
-                    print exc
+                    print(exc)
         else:
             exit(1)
         exit(0)
