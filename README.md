@@ -26,28 +26,23 @@ Can be multiple installation per client to balance to the load.
 
 ## Requirements
 
-* Git and Python 3 on all servers;
-* [ansible](https://www.ansible.com/) must be installed on the configuration
+* Git and Python 3 on all servers (using [poetry](https://python-poetry.org)
+  is recommended);
+* [Ansible](https://www.ansible.com/) must be installed on the configuration
   server;
 * Postfix on the BO and all FO servers (for the password recovery feature of
   MONARC).
 
 
-## Usage
+Get the playbook for MONARC and install Ansible on the configuration server:
 
-Install ansible on the configuration server and get the playbook for MONARC:
-
-    $ sudo apt install python-pip
-    $ sudo -H pip install ansible dnspython
     $ git clone https://github.com/monarc-project/ansible-ubuntu.git
     $ cd ansible-ubuntu/
+    $ poetry install
+    $ poetry shell
 
-If you encounter a problem of locales, try the following:
 
-    $ export LC_ALL="en_US.UTF-8"
-    $ sudo dpkg-reconfigure locales
-
-### Configuration
+## Configuration
 
 * create a user named *ansible* on each server:
   * ``sudo adduser ansible``
@@ -92,23 +87,24 @@ If you encounter a problem of locales, try the following:
         bourlalias="monarcbo"
         localDNS="example.com"
         terms="https://my.monarc.lu/terms.html"
+        stats_service="/var/lib/monarc/stats-service"
 
   The variable *monarc\_sql\_password* is the password for the SQL database
   on the BO.
 
-* finally, launch ansible:
+* finally, launch Ansible:
 
         ansible@CFG:~/ansible-ubuntu/playbook$ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
 
-ansible will install and configure the back office, the front office and the
+Ansible will install and configure the back office, the front office and the
 reverse proxy. Consequently the configuration server should be able to contact
 these servers through SSH.
 
 
 
-### Notes
+## Notes
 
-#### Updating the inventory of ansible
+### Updating the inventory of Ansible
 
 Adding/removing an attribute for the ansible inventory can be done with the
 script ``update.sh`` via cron as the user 'ansible'.
@@ -118,8 +114,8 @@ script ``update.sh`` via cron as the user 'ansible'.
 
 The script ``update.sh`` will:
 
-* update the inventory of ansible;
-* launch ansible for the creation/suppression of clients;
+* update the inventory of Ansible;
+* launch Ansible for the creation/suppression of clients;
 * synchronize the template of deliveries.
 
 The `add_inventory.py` and `del_inventory.py` scripts are used to dynamically
@@ -127,15 +123,25 @@ edit the inventory files of the configuration server. These scripts are used by
 ``update.sh``.
 
 You can use `list_inventory.py` to check all the current clients in the
-inventory of ansible. If want to check the connectivity between the
+inventory of Ansible. If you want to check the connectivity between the
 configuration server and the front office servers:
 
     ansible@CFG:~$ ./list_inventory.py ../inventory/ | cut -f 1 -d ' ' | uniq | xargs -n 1 ping -w 1
 
 
-#### TLS certificate
+### Inventory migrations
 
-##### Self-signed certificate
+#### 1. Add statsToken
+
+This migration adds a Stats Service token (`statsToken`) to the clients without this token.
+
+    ansible@CFG:~/ansible-ubuntu/inventory/migrations$ ./001-add_stats_token_to_inventory.py ../
+
+
+
+### TLS certificate
+
+#### Self-signed certificate
 
 Generation of the certificate:
 
@@ -145,7 +151,7 @@ Then provide the address of the certificate (here monarc.crt) and the address
 of the certificate key in the configuration file (_inventory/hosts_).
 You can generally set _certificatechain_ to the empty string.
 
-##### Let's Encrypt certificate
+#### Let's Encrypt certificate
 
 Generation of the certificate:
 
@@ -155,16 +161,16 @@ Then simply set the value of _certificate_ to _letsencrypt_.
 And set the values of _certificatekey_ and _certificatechain_ to the empty
 string.
 
-#### Postfix
+### Postfix
 
-Installation of Postfix on the BO and the FO is not done by ansible. You have
+Installation of Postfix on the BO and the FO is not done by Ansible. You have
 to do it manually.
 
-#### Backup
+### Backup
 
-ansible keep an up-to-date database backup script on each FO server instances.
+Ansible keep an up-to-date database backup script on each FO server instances.
 This script is located at ``/usr/local/bin/backup_monarc_db.sh`` and is updated
-by ansible on each client creation/deletion.  
+by Ansible on each client creation/deletion.  
 
 You just have to set a cron rule in order to launch the script periodically.
 

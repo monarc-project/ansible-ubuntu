@@ -4,6 +4,7 @@ import os
 import sys
 import json
 import yaml
+import secrets
 
 try:
     import configparser as configparser
@@ -15,6 +16,7 @@ HOSTS.optionxform = lambda option: option
 
 
 def run(INVENTORY):
+    """Update the inventory with the 'apiKey' = {statsToken}."""
     if not os.path.exists(INVENTORY):
         print("Folder do no exists: {}".format(INVENTORY))
         exit(1)
@@ -27,16 +29,24 @@ def run(INVENTORY):
         exit(1)
 
     for fo_server in fo_servers:
+        # iterate through each yaml configuration files of the FO servers
         yaml_file = os.path.join(INVENTORY, "host_vars", fo_server, "generated.yaml")
         if not os.path.exists(yaml_file):
             continue
         with open(yaml_file, "r") as stream:
-            ymldata = yaml.load(stream)
+            ymldata = yaml.load(stream, Loader=yaml.FullLoader)
             if ymldata is None:
                 continue
-            clients_list = ymldata["clients"]
-            for client in clients_list:
-                print("{} {}".format(fo_server, client))
+            for client in ymldata["clients"]:
+                # update the client section if needed
+                if "statsToken" not in ymldata["clients"][client]:
+                    ymldata["clients"][client]["statsToken"] = secrets.token_urlsafe(64)
+            # save the yaml configuration file
+            with open(yaml_file, "w") as stream:
+                try:
+                    yaml.dump(ymldata, stream)
+                except yaml.YAMLError as exc:
+                    print(exc)
 
 
 if __name__ == "__main__":
