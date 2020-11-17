@@ -197,10 +197,10 @@
 #   when: stats_service is defined
 
 - name: create new client for stats collection
-  command: "poetry run flask client_create --name {{item.value.name}} --token {{item.value.statsToken}}"
-  with_dict: "{{ clients }}"
+  command: ./contrib/create_client.sh {{item.value.name}} {{item.value.statsToken}}
+  with_dict: "{{ dict(groups['dev'] | map('extract',hostvars,'clients') | map('dictsort') | sum(start=[]) | list) }}"
   args:
     chdir: "{{ stats_service }}"
   when:
-    - clients is defined
+    - item is defined
     - stats_service is defined
