@@ -200,7 +200,7 @@
   command: "poetry run flask client_create --name {{item.value.name}} --token {{item.value.statsToken}}"
   with_dict: "{{ clients }}"
   args:
-    chdir: {{ stats_service }}
+    chdir: "{{ stats_service }}"
   when:
     - clients is defined
     - stats_service is defined

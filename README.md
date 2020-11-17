@@ -112,6 +112,8 @@ script ``update.sh`` via cron as the user 'ansible'.
     ansible@CFG:~$ crontal -l
     /home/ansible/ansible-ubuntu/playbook/update.sh /home/ansible/ansible-ubuntu/playbook/ $BO_ADDRESS `which ansible-playbook`
 
+Optionally as a fourth argument you can specify the Python executable (environment) to use.
+
 The script ``update.sh`` will:
 
 * update the inventory of Ansible;
