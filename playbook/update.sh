@@ -27,7 +27,7 @@ echo "Executes ansible inventory migrations..."
 # backup the inventory (only one backup per day)
 #tar cfz ../inventory/$(date +%Y-%m-%d)-backup-inventory.tar.gz ../inventory/host_vars
 # executes the migrations
-$PYTHON_PATH ../inventory/migrations/001-add_stats_token_to_inventory.py ../inventory
+$PYTHON_PATH ./migrations/001-add_stats_token_to_inventory.py ../inventory
 
 echo "Updating ansible inventory..."
 ssh ansible@$BO_ADDRESS sudo -u www-data /usr/local/bin/new_monarc_clients.sh | $PYTHON_PATH ./add_inventory.py ../inventory/
