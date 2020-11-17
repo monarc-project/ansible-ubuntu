@@ -31,7 +31,7 @@ def run(INVENTORY):
         if not os.path.exists(yaml_file):
             continue
         with open(yaml_file, "r") as stream:
-            ymldata = yaml.load(stream)
+            ymldata = yaml.load(stream, Loader=yaml.FullLoader)
             if ymldata is None:
                 continue
             clients_list = ymldata["clients"]

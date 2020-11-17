@@ -3,7 +3,7 @@
 # Launch the ansible playbook when necessary.
 # Launch this file with cron (as the user 'ansible')
 
-if [ ! $# -eq 3 ]
+if [ $# -lt 3 ]
   then
     echo "Three arguments are required. Usage:"
     echo "./update.sh PLAYBOOK_PATH BO_ADDRESS ANSIBLE_PATH [PYTHON_PATH]"
