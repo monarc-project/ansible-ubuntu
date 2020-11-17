@@ -182,19 +182,19 @@
   notify:
     - reload apache
 
-- name: create Stats Service dir
-  file:
-    name: {{ stats_service }}
-    state: directory
-    owner: www-data
-  become: True
-  when: stats_service is defined
-
-- name: update Stats Service
-  shell: "./update.sh"
-  args:
-    chdir: {{ stats_service }}
-  when: stats_service is defined
+# - name: create Stats Service dir
+#   file:
+#     name: {{ stats_service }}
+#     state: directory
+#     owner: www-data
+#   become: True
+#   when: stats_service is defined
+# 
+# - name: update Stats Service
+#   shell: "./contrib/update.sh"
+#   args:
+#     chdir: {{ stats_service }}
+#   when: stats_service is defined
 
 - name: create new client for stats collection
   command: "poetry run flask client_create --name {{item.value.name}} --token {{item.value.statsToken}}"
