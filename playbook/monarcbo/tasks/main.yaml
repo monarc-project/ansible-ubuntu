@@ -199,6 +199,8 @@
 - name: create new client for stats collection
   command: ./contrib/create_client.sh {{item.value.name}} {{item.value.statsToken}}
   with_dict: "{{ dict(groups['dev'] | map('extract',hostvars,'clients') | map('dictsort') | sum(start=[]) | list) }}"
+  become: yes
+  become_user: ansible
   args:
     chdir: "{{ stats_service }}"
   when:
