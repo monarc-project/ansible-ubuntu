@@ -24,7 +24,7 @@
   command: composer config -g github-oauth.github.com {{ github_auth_token }}
 
 - name: composer install
-  shell: composer install
+  shell: composer ins -o
   args:
     chdir: /var/lib/monarc/fo
   when: appfo_pull.before == None
