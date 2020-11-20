@@ -235,3 +235,10 @@
     update_cache: True
     name: gsfonts
   become: True
+
+- name: update ./bin/console permissions
+  file:
+    path: "/var/lib/monarc/fo/bin/console"
+    owner: www-data
+    group: ansible
+    mode: 755
