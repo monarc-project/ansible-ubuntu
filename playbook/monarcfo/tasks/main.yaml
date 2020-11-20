@@ -242,3 +242,4 @@
     owner: www-data
     group: ansible
     mode: 755
+  become: true
