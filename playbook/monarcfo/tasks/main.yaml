@@ -243,6 +243,7 @@
     group: ansible
     mode: 755
   become: true
+
 - name: update ./scripts/collect-stats-for-all-clients.sh permissions
   file:
     path: "/var/lib/monarc/fo/scripts/collect-stats-for-all-clients.sh"
