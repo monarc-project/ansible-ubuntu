@@ -124,6 +124,24 @@
   when: clients is defined
   become: True
 
+- name: create client cache dir
+  file:
+    name: "/var/www/{{item.value.name}}/data/cache"
+    state: directory
+    owner: www-data
+  with_dict: "{{ clients }}"
+  when: clients is defined
+  become: True
+
+- name: create client Doctrine cache dir
+  file:
+    name: "/var/www/{{item.value.name}}/data/DoctrineORMModule/Proxy"
+    state: directory
+    owner: www-data
+  with_dict: "{{ clients }}"
+  when: clients is defined
+  become: True
+
 - name: create client Proxy dir
   file:
     name: "/var/www/{{item.value.name}}/data/LazyServices/Proxy"
