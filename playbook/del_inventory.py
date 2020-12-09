@@ -40,7 +40,7 @@ def run():
 
             generated_file = os.path.join(path, "generated.yaml")
 
-            with open(generated_file, "a+") as stream:
+            with open(generated_file, "r") as stream:
                 ymldata = yaml.load(stream, Loader=yaml.FullLoader)
                 client_list = ymldata["clients"]
                 client_name = to_delete["proxy_alias"]
