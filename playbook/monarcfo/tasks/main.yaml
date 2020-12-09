@@ -24,7 +24,7 @@
   command: composer config -g github-oauth.github.com {{ github_auth_token }}
 
 - name: composer install
-  shell: composer install
+  shell: composer ins -o --no-dev
   args:
     chdir: /var/lib/monarc/fo
   when: appfo_pull.before == None
@@ -118,6 +118,24 @@
 - name: create client data dir
   file:
     name: "/var/www/{{item.value.name}}/data"
+    state: directory
+    owner: www-data
+  with_dict: "{{ clients }}"
+  when: clients is defined
+  become: True
+
+- name: create client cache dir
+  file:
+    name: "/var/www/{{item.value.name}}/data/cache"
+    state: directory
+    owner: www-data
+  with_dict: "{{ clients }}"
+  when: clients is defined
+  become: True
+
+- name: create client Doctrine cache dir
+  file:
+    name: "/var/www/{{item.value.name}}/data/DoctrineORMModule/Proxy"
     state: directory
     owner: www-data
   with_dict: "{{ clients }}"
@@ -235,3 +253,19 @@
     update_cache: True
     name: gsfonts
   become: True
+
+- name: update ./bin/console permissions
+  file:
+    path: "/var/lib/monarc/fo/bin/console"
+    owner: www-data
+    group: ansible
+    mode: 755
+  become: true
+
+- name: update ./scripts/collect-stats-for-all-clients.sh permissions
+  file:
+    path: "/var/lib/monarc/fo/scripts/collect-stats-for-all-clients.sh"
+    owner: www-data
+    group: ansible
+    mode: 755
+  become: true
