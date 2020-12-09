@@ -35,7 +35,6 @@
       - python-mysqldb
       - gettext
       - jq
-      - composer
     state: present
   become: True
 
