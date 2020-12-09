@@ -40,6 +40,7 @@ def run():
             exit(1)
 
         for new_client in newdata:
+            new_client_name = new_client["proxy_alias"]
 
             path = os.path.join(
                 os.path.abspath(INVENTORY), "host_vars/", new_client["server"]
@@ -56,16 +57,18 @@ def run():
                     ymldata = {}
                     ymldata["clients"] = {}
 
+            if new_client_name in ymldata["clients"]:
+                continue
+
             # Add a the new client
-            client_name = new_client["proxy_alias"]
             client_list = {}
             client_list["clients"] = ymldata["clients"]
-            client_list["clients"][client_name] = {}
-            client_list["clients"][client_name]["name"] = client_name
-            client_list["clients"][client_name]["statsToken"] = secrets.token_urlsafe(64)
-            client_list["clients"][client_name]["mysql_password"] = get_rnd_string(16)
-            client_list["clients"][client_name]["salt"] = get_rnd_string(64)
-            client_list["clients"][client_name]["sql_bootstrap"] = new_client["sql_bootstrap"]
+            client_list["clients"][new_client_name] = {}
+            client_list["clients"][new_client_name]["name"] = new_client_name
+            client_list["clients"][new_client_name]["statsToken"] = secrets.token_urlsafe(64)
+            client_list["clients"][new_client_name]["mysql_password"] = get_rnd_string(16)
+            client_list["clients"][new_client_name]["salt"] = get_rnd_string(64)
+            client_list["clients"][new_client_name]["sql_bootstrap"] = new_client["sql_bootstrap"]
 
             # Update
             ymldata.update(client_list)
