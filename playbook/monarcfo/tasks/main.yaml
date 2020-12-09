@@ -184,15 +184,23 @@
 
 - name: deleting client cache
   file:
-    path: /var/www/{{ item.value.name }}/data/cache/
+    path: /var/www/{{ item.value.name }}/data/cache/*
     state: absent
   with_dict: "{{ clients }}"
   when: clients is defined
   become: True
 
-- name: deleting client Doctrine cache
+- name: deleting client Doctrine proxy cache
   file:
-    path: /var/www/{{ item.value.name }}/data/DoctrineORMModule/
+    path: /var/www/{{ item.value.name }}/data/DoctrineORMModule/Proxy/*
+    state: absent
+  with_dict: "{{ clients }}"
+  when: clients is defined
+  become: True
+
+- name: deleting client LazyServices proxy cache
+  file:
+    path: /var/www/{{ item.value.name }}/data/LazyServices/Proxy/*
     state: absent
   with_dict: "{{ clients }}"
   when: clients is defined
