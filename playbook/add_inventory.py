@@ -49,20 +49,26 @@ def run():
 
             generated_file = os.path.join(path, "generated.yaml")
 
-            with open(generated_file, "a+") as stream:
+            # Read the yaml file
+            with open(generated_file, "r") as stream:
                 ymldata = yaml.load(stream, Loader=yaml.FullLoader)
                 if ymldata is None:
                     ymldata = {}
                     ymldata["clients"] = {}
 
-            client_list = ymldata["clients"]
+            # Add a the new client
             client_name = new_client["proxy_alias"]
-            client_list[client_name] = {}
-            client_list[client_name]["name"] = client_name
-            client_list[client_name]["statsToken"] = secrets.token_urlsafe(64)
-            client_list[client_name]["mysql_password"] = get_rnd_string(16)
-            client_list[client_name]["salt"] = get_rnd_string(64)
-            client_list[client_name]["sql_bootstrap"] = new_client["sql_bootstrap"]
+            client_list = {}
+            client_list["clients"] = ymldata["clients"]
+            client_list["clients"][client_name] = {}
+            client_list["clients"][client_name]["name"] = client_name
+            client_list["clients"][client_name]["statsToken"] = secrets.token_urlsafe(64)
+            client_list["clients"][client_name]["mysql_password"] = get_rnd_string(16)
+            client_list["clients"][client_name]["salt"] = get_rnd_string(64)
+            client_list["clients"][client_name]["sql_bootstrap"] = new_client["sql_bootstrap"]
+
+            # Update
+            ymldata.update(client_list)
 
             with open(generated_file, "w") as stream:
                 try:
