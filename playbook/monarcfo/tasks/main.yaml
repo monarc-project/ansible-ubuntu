@@ -267,7 +267,7 @@
     path: "/var/lib/monarc/fo/bin/console"
     owner: www-data
     group: ansible
-    mode: 755
+    mode: 775
   become: true
 
 - name: update ./scripts/collect-stats-for-all-clients.sh permissions
@@ -275,5 +275,5 @@
     path: "/var/lib/monarc/fo/scripts/collect-stats-for-all-clients.sh"
     owner: www-data
     group: ansible
-    mode: 755
+    mode: 775
   become: true
