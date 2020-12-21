@@ -26,6 +26,7 @@
       - php
       - php-cli
       - php-mbstring
+      - php-bcmath
       - php-xml
       - php-mysql
       - php-intl
