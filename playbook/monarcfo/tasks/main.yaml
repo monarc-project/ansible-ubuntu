@@ -264,7 +264,7 @@
 
 - name: update ./bin/console permissions
   file:
-    path: "/var/lib/monarc/fo/bin/console"
+    path: "/var/lib/monarc/fo/vendor/monarc/frontoffice/bin/console"
     owner: www-data
     group: ansible
     mode: 0775
