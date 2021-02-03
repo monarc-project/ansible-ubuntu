@@ -39,6 +39,10 @@
     state: present
   become: True
 
+- name: Install common Python dependences
+  pip:
+    name: PyMySQL
+
 - name: apache ssl
   apache2_module:
     name: ssl
