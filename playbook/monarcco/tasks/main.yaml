@@ -33,7 +33,6 @@
       - php-zip
       - php-imagick
       - nodejs
-      - python-mysqldb
       - gettext
       - jq
     state: present
