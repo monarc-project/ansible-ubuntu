@@ -120,11 +120,6 @@
     chdir: /var/lib/monarc/bo/MonarcAppBO/
   when: appbo_pull.before == None
 
-- name: required packages
-  apt:
-    name: python-mysqldb
-  become: True
-
 - name: create readonly access to monarc common
   mysql_user:
     name: "{{ item.value.name }}"
