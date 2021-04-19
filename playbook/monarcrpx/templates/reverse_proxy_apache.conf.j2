@@ -25,6 +25,7 @@
            Header always set X-XSS-Protection "1; mode=block"
            Header always set X-Robots-Tag none
            Header always set X-Frame-Options SAMEORIGIN
+           Header always set Permissions-Policy: interest-cohort=()
         </IfModule>
 
         SSLEngine on
@@ -76,6 +77,7 @@
            Header always set X-XSS-Protection "1; mode=block"
            Header always set X-Robots-Tag none
            Header always set X-Frame-Options SAMEORIGIN
+           Header always set Permissions-Policy: interest-cohort=()
         </IfModule>
 
         Include "/etc/apache2/client_redirection"
