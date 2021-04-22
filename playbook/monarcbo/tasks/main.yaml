@@ -20,6 +20,13 @@
     owner: "www-data"
   become: True
 
+- name: create data/cache dir
+  file:
+    path: /var/lib/monarc/bo/MonarcAppBO/data/cache
+    state: directory
+    owner: "www-data"
+  become: True
+
 - name: create Proxy dir
   file:
     name: /var/lib/monarc/bo/MonarcAppBO/data/LazyServices/Proxy
