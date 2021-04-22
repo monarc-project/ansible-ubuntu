@@ -45,6 +45,13 @@
     path: /var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule/
     state: absent
   become: True
+  
+- name: create Doctrine cache
+  file:
+    path: /var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule/Proxy
+    state: directory
+    owner: "www-data"
+  become: True
 
 - name: set github auth token for composer
   command: composer config -g github-oauth.github.com {{ github_auth_token }}
