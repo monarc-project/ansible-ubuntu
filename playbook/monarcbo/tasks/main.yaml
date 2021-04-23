@@ -13,6 +13,18 @@
     path: /var/lib/monarc/bo/MonarcAppBO/module/Monarc
     state: directory
 
+- name: deleting cache
+  file:
+    path: /var/lib/monarc/bo/MonarcAppBO/data/cache/
+    state: absent
+  become: True
+
+- name: deleting Doctrine cache
+  file:
+    path: /var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule/
+    state: absent
+  become: True
+
 - name: create data dir
   file:
     path: /var/lib/monarc/bo/MonarcAppBO/data
@@ -34,18 +46,6 @@
     owner: www-data
   become: True
 
-- name: deleting cache
-  file:
-    path: /var/lib/monarc/bo/MonarcAppBO/data/cache/
-    state: absent
-  become: True
-
-- name: deleting Doctrine cache
-  file:
-    path: /var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule/
-    state: absent
-  become: True
-  
 - name: create Doctrine cache
   file:
     path: /var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule/Proxy
