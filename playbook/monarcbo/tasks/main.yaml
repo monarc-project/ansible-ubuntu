@@ -198,12 +198,12 @@
 #     owner: www-data
 #   become: True
 #   when: stats_service is defined
-# 
-# - name: update Stats Service
-#   shell: "./contrib/update.sh"
-#   args:
-#     chdir: {{ stats_service }}
-#   when: stats_service is defined
+
+- name: Update Stats Service
+  shell: "./contrib/update.sh"
+  args:
+    chdir: {{ stats_service }}
+  when: stats_service is defined
 
 - name: create new client for stats collection
   command: ./contrib/create_client.sh {{item.value.name}} {{item.value.statsToken}}
