@@ -200,7 +200,7 @@
 #   when: stats_service is defined
 
 - name: Update Stats Service
-  command: "source /home/ansible/.bashrc && ./contrib/update.sh"
+  shell: "source /home/ansible/.bashrc && ./contrib/update.sh"
   args:
     chdir: "{{ stats_service }}"
   when: stats_service is defined
