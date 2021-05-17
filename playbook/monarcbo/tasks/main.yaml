@@ -202,7 +202,7 @@
 - name: Update Stats Service
   shell: "./contrib/update.sh"
   args:
-    chdir: {{ stats_service }}
+    chdir: "{{ stats_service }}"
   when: stats_service is defined
 
 - name: create new client for stats collection
