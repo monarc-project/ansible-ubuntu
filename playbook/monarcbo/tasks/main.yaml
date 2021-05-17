@@ -204,6 +204,8 @@
   args:
     chdir: "{{ stats_service }}"
   when: stats_service is defined
+  become: yes
+  become_user: ansible
 
 - name: create new client for stats collection
   command: ./contrib/create_client.sh {{item.value.name}} {{item.value.statsToken}}
