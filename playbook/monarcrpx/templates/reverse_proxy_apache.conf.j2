@@ -15,6 +15,12 @@
         ServerAdmin webmaster@{{ clientDomain }}
         DocumentRoot /var/www/html
 
+        <Directory /var/www/html/static/vm>
+            Options Indexes FollowSymLinks
+            AllowOverride All
+            Require all granted
+        </Directory>
+
         RewriteEngine On
         RewriteCond %{REQUEST_METHOD} !^(GET|POST|PUT|PATCH|DELETE|HEAD)
         RewriteRule .* - [R=405,L]
