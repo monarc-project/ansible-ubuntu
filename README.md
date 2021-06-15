@@ -78,16 +78,24 @@ Get the playbook for MONARC and install Ansible on the configuration server:
         [monarc:vars]
         env_prefix=""
         clientDomain="monarc.example.com"
+        bourlalias="monarcbo"
         emailFrom="info@example.com"
-        github_auth_token="<your-github-auth-token>"
+        
         protocol="https"
         certificate="sslcert.crt"
         certificatekey="sslcert.key"
         certificatechain="sslcert.crt"
-        bourlalias="monarcbo"
+        
         localDNS="example.com"
+        
         terms="https://my.monarc.lu/terms.html"
+        
         stats_service="/var/lib/monarc/stats-service"
+        stats_service_prefix_url="dashboard"
+        
+        github_auth_token="<your-github-auth-token>"
+
+
 
   The variable *monarc\_sql\_password* is the password for the SQL database
   on the BO.
