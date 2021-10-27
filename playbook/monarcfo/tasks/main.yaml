@@ -95,6 +95,8 @@
   template:
     src: logrotate_apache.j2
     dest: /etc/logrotate.d/apache2
+  with_dict: "{{ clients }}"
+  when: clients is defined
   become: True
 
 - name: create client dir
