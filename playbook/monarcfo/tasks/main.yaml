@@ -75,8 +75,6 @@
     owner: root
   with_dict: "{{ clients }}"
   when: clients is defined
-  notify:
-    - reload apache
   become: True
 
 # - name: deactivates the default virtualhost
@@ -116,6 +114,8 @@
   with_dict: "{{ clients }}"
   when: clients is defined
   become: True
+  notify:
+    - restart apache
 
 - name: create client data dir
   file:
