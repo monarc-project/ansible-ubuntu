@@ -115,7 +115,7 @@
   when: clients is defined
   become: True
   notify:
-    - restart apache
+    - reload apache
 
 - name: create client data dir
   file:
