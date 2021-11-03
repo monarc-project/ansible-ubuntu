@@ -248,16 +248,6 @@
   when: clients is defined
   become: True
 
-- name: database backup script
-  template:
-    src: backup_db.j2
-    dest: "/usr/local/bin/backup_monarc_db.sh"
-    mode: 0755
-    owner: root
-  with_dict: "{{ clients }}"
-  when: clients is defined
-  become: true
-
 - name: install gsfonts for NewCenturySchlbk-Roman
   apt:
     update_cache: True

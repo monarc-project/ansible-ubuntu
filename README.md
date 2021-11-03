@@ -36,11 +36,12 @@ Can be multiple installation per client to balance to the load.
 
 Get the playbook for MONARC and install Ansible on the configuration server:
 
-    $ git clone https://github.com/monarc-project/ansible-ubuntu.git
-    $ cd ansible-ubuntu/
-    $ poetry install
-    $ poetry shell
-
+```bash
+$ git clone https://github.com/monarc-project/ansible-ubuntu.git
+$ cd ansible-ubuntu/
+$ poetry install
+$ poetry shell
+```
 
 ## Configuration
 
@@ -102,7 +103,9 @@ Get the playbook for MONARC and install Ansible on the configuration server:
 
 * finally, launch Ansible:
 
-        ansible@CFG:~/ansible-ubuntu/playbook$ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
+```bash
+ansible@CFG:~/ansible-ubuntu/playbook$ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
+```
 
 Ansible will install and configure the back office, the front office and the
 reverse proxy. Consequently the configuration server should be able to contact
@@ -117,8 +120,10 @@ these servers through SSH.
 Adding/removing an attribute for the ansible inventory can be done with the
 script ``update.sh`` via cron as the user 'ansible'.
 
-    ansible@CFG:~$ crontal -l
-    /home/ansible/ansible-ubuntu/playbook/update.sh /home/ansible/ansible-ubuntu/playbook/ $BO_ADDRESS `which ansible-playbook`
+```bash
+ansible@CFG:~$ crontal -l
+/home/ansible/ansible-ubuntu/playbook/update.sh /home/ansible/ansible-ubuntu/playbook/ $BO_ADDRESS `which ansible-playbook`
+```
 
 Optionally as a fourth argument you can specify the Python executable (environment) to use.
 
@@ -136,8 +141,9 @@ You can use `list_inventory.py` to check all the current clients in the
 inventory of Ansible. If you want to check the connectivity between the
 configuration server and the front office servers:
 
-    ansible@CFG:~$ ./list_inventory.py ../inventory/ | cut -f 1 -d ' ' | uniq | xargs -n 1 ping -w 1
-
+```bash
+ansible@CFG:~$ ./list_inventory.py ../inventory/ | cut -f 1 -d ' ' | uniq | xargs -n 1 ping -w 1
+```
 
 ### Inventory migrations
 
@@ -145,8 +151,9 @@ configuration server and the front office servers:
 
 This migration adds a Stats Service token (`statsToken`) to the clients without this token.
 
-    ansible@CFG:~/ansible-ubuntu/inventory/migrations$ ./001-add_stats_token_to_inventory.py ../
-
+```bash
+ansible@CFG:~/ansible-ubuntu/inventory/migrations$ ./001-add_stats_token_to_inventory.py ../
+```
 
 
 ### TLS certificate
@@ -155,7 +162,9 @@ This migration adds a Stats Service token (`statsToken`) to the clients without 
 
 Generation of the certificate:
 
-``sudo openssl req -x509 -nodes -days 1000 -newkey rsa:2048 -keyout /etc/sslkeys/monarc.key -out /etc/sslkeys/monarc.crt``
+```bash
+# openssl req -x509 -nodes -days 1000 -newkey rsa:2048 -keyout /etc/sslkeys/monarc.key -out /etc/sslkeys/monarc.crt
+```
 
 Then provide the address of the certificate (here monarc.crt) and the address
 of the certificate key in the configuration file (_inventory/hosts_).
@@ -165,7 +174,9 @@ You can generally set _certificatechain_ to the empty string.
 
 Generation of the certificate:
 
-``sudo -E letsencrypt certonly --agree-tos -m <your-email> --webroot -d <clientDomain> -w /var/www/letsencrypt/``
+```bash
+# certbot certonly --agree-tos -m <your-email> --webroot -d <clientDomain> -w /var/www/letsencrypt/
+```
 
 Then simply set the value of _certificate_ to _letsencrypt_.   
 And set the values of _certificatekey_ and _certificatechain_ to the empty
@@ -175,17 +186,6 @@ string.
 
 Installation of Postfix on the BO and the FO is not done by Ansible. You have
 to do it manually.
-
-### Backup
-
-Ansible keep an up-to-date database backup script on each FO server instances.
-This script is located at ``/usr/local/bin/backup_monarc_db.sh`` and is updated
-by Ansible on each client creation/deletion.  
-
-You just have to set a cron rule in order to launch the script periodically.
-
-The database backups will be placed in the folder
-``/var/lib/mysql-backup/monarc/``
 
 
 ## Issues
