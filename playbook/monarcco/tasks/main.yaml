@@ -38,7 +38,7 @@
     state: present
   become: True
 
-- name: Install common Python dependences
+- name: Install common Python dependencies
   pip:
     name: PyMySQL
 

@@ -98,10 +98,15 @@ $ poetry shell
 
 
 
-  The variable *monarc\_sql\_password* is the password for the SQL database
-  on the BO.
+The variable *monarc\_sql\_password* is the password for the SQL database
+on the BO.
 
-* finally, launch Ansible:
+
+In ```monarcco/defaults/main.yaml``` configure the version of NodeJS. It will
+be added in the APT repositories.
+
+
+Finally, launch Ansible:
 
 ```bash
 ansible@CFG:~/ansible-ubuntu/playbook$ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
@@ -110,6 +115,9 @@ ansible@CFG:~/ansible-ubuntu/playbook$ ansible-playbook -i ../inventory/ monarc.
 Ansible will install and configure the back office, the front office and the
 reverse proxy. Consequently the configuration server should be able to contact
 these servers through SSH.
+
+
+
 
 
 
