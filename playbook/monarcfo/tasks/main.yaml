@@ -88,6 +88,8 @@
   with_dict: "{{ clients }}"
   when: clients is defined
   become: True
+  notify:
+    - reload apache
 
 - name: logrotate conf
   template:
@@ -114,8 +116,6 @@
   with_dict: "{{ clients }}"
   when: clients is defined
   become: True
-  notify:
-    - reload apache
 
 - name: create client data dir
   file:
