@@ -1,4 +1,4 @@
-/var/log/apache2/*.log {
+/var/log/apache2/*.log /var/log/apache2/*/*.log {
 	daily
 	missingok
 	rotate 365
@@ -18,33 +18,3 @@
 		fi; \
 	endscript
 }
-
-{% for server in groups['dev'] %}
-{% set hostname = hostvars[server]['inventory_hostname'] %}
-{% if 'clients' in hostvars[server]  %}
-{% for key,client in hostvars[server]['clients'].items() %}
-/var/log/apache2/{{client.name}}/*.log {
-	daily
-	missingok
-	rotate 365
-	compress
-	delaycompress
-	notifempty
-	create 640 root adm
-	sharedscripts
-	postrotate
-                if /etc/init.d/apache2 status > /dev/null ; then \
-                    /etc/init.d/apache2 reload > /dev/null; \
-                fi;
-	endscript
-	prerotate
-		if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
-			run-parts /etc/logrotate.d/httpd-prerotate; \
-		fi; \
-	endscript
-}
-
-
-{% endfor %}
-{% endif %}
-{% endfor %}
