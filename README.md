@@ -6,7 +6,7 @@ the figure below.
 ![MONARC architecture](images/monarc-architecture.png "MONARC architecture")
 
 
-## Ansible roles
+### Ansible roles
 
 There are three roles, described below.
 
@@ -26,12 +26,19 @@ Can be multiple installation per client to balance to the load.
 
 ## Requirements
 
-* Git and Python 3 on all servers (using [poetry](https://python-poetry.org)
-  is recommended);
+* Git and Python 3 on all servers;
 * [Ansible](https://www.ansible.com/) must be installed on the configuration
   server;
 * Postfix on the BO and all FO servers (for the password recovery feature of
   MONARC).
+
+
+Python 3 should be the default on the system. For example:
+
+```bash
+$ python --version
+Python 3.10.0
+```
 
 
 Get the playbook for MONARC and install Ansible on the configuration server:
@@ -43,20 +50,37 @@ $ poetry install
 $ poetry shell
 ```
 
+Poetry is not mandatory but convenient to manage the dependencies. Installation
+is described [here](https://github.com/python-poetry/poetry#installation=).
+
+
 ## Configuration
+
+### SSH
 
 * create a user named *ansible* on each server:
   * ``sudo adduser ansible``
 * generate a SSH key for the user *ansible* on the configuration server:
   * ``ssh-keygen -t rsa -C "your_email@example.com"``
 * from the configuration server: ``ssh-copy-id ansible@BO/FO/RPX``
+
+At that point you can check that it is possible to connect from the
+configuration server to the other servers without having to enter a password.
+
+### Unix groups
+
 * add the user *ansible* in the *sudo* group:
   * ``sudo usermod -aG sudo ansible``
 * add the user *www-data* in the *ansible* group:
   * ``sudo usermod -aG  ansible www-data``
 * give the permission to ansible to use sudo without password:
   * add ``ansible ALL=(ALL:ALL) NOPASSWD:ALL`` in the file */etc/sudoers* with *visudo*
+
+
+### Ansible
+
 * create a configuration file, _inventory/hosts_, for Ansible:
+
 
         [dev]
         FO
@@ -97,9 +121,12 @@ $ poetry shell
         github_auth_token="<your-github-auth-token>"
 
 
+In the section ``[dev]``, ``FO`` should be resolved by the internal DNS. It is
+the internal name of the front office server.
 
 The variable *monarc\_sql\_password* is the password for the SQL database
-on the BO.
+on the BO. Ansible will use it in order to create a new SQL user on the back
+office with the corresponding databases.
 
 
 In ```monarcco/defaults/main.yaml``` configure the version of NodeJS. It will
@@ -154,6 +181,8 @@ ansible@CFG:~$ ./list_inventory.py ../inventory/ | cut -f 1 -d ' ' | uniq | xarg
 ```
 
 ### Inventory migrations
+
+If you have an old installation.
 
 #### 1. Add statsToken
 
