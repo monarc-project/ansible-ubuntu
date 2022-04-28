@@ -270,14 +270,14 @@ You can generally set _certificatechain_ to the empty string.
 Generation of the certificate:
 
 ```bash
-# sudo apt install python3-certbot-apache
-# certbot certonly --agree-tos -m <your-email> --webroot -d <publicHost> -w /var/www/letsencrypt/
+$ sudo apt install python3-certbot-apache
+$ certbot certonly --agree-tos -m <your-email> --webroot -d <publicHost> -w /var/www/letsencrypt/
 ```
 
 Check the generated configuration:
 
 ```bash
-#  cat /etc/letsencrypt/renewal/<publicHost>.conf
+$ cat /etc/letsencrypt/renewal/<publicHost>.conf
 # renew_before_expiry = 30 days
 cert = /etc/letsencrypt/live/<publicHost>/cert.pem
 privkey = /etc/letsencrypt/live/<publicHost>/privkey.pem
