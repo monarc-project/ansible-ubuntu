@@ -62,9 +62,12 @@ is described [here](https://github.com/python-poetry/poetry#installation=).
   * ``sudo adduser ansible``
 * generate a SSH key for the user *ansible* on the configuration server:
   * ``ssh-keygen -t rsa -C "your_email@example.com"``
-* from the configuration server: ``ssh-copy-id ansible@BO/FO/RPX``
+* from the configuration server:
+  * ``ssh-copy-id ansible@BO``
+  * ``ssh-copy-id ansible@FO``
+  * ``ssh-copy-id ansible@RPX``
 
-At that point you can check that it is possible to connect from the
+At that point you must check that it is possible to connect from the
 configuration server to the other servers without having to enter a password.
 
 ### Unix groups
@@ -81,45 +84,45 @@ configuration server to the other servers without having to enter a password.
 
 * create a configuration file, _inventory/hosts_, for Ansible:
 
+```ini
+[dev]
+FO
 
-        [dev]
-        FO
+[dev:vars]
+master= "BO"
+publicHost= "monarc.example.com"
 
-        [dev:vars]
-        master= "BO"
-        publicHost= "monarc.example.com"
+[master]
+BO monarc_sql_password="password"
 
-        [master]
-        BO monarc_sql_password="password"
+[rpx]
+RPX.localhost
 
-        [rpx]
-        RPX.localhost
+[monarc:children]
+rpx
+master
+dev
 
-        [monarc:children]
-        rpx
-        master
-        dev
+[monarc:vars]
+env_prefix=""
+clientDomain="monarc.example.com"
+bourlalias="monarcbo"
+emailFrom="info@example.com"
 
-        [monarc:vars]
-        env_prefix=""
-        clientDomain="monarc.example.com"
-        bourlalias="monarcbo"
-        emailFrom="info@example.com"
-        
-        protocol="https"
-        certificate="sslcert.crt"
-        certificatekey="sslcert.key"
-        certificatechain="sslcert.crt"
-        
-        localDNS="example.com"
-        
-        terms="https://my.monarc.lu/terms.html"
-        
-        stats_service="/var/lib/monarc/stats-service"
-        stats_service_prefix_url="dashboard"
-        
-        github_auth_token="<your-github-auth-token>"
+protocol="https"
+certificate="sslcert.crt"
+certificatekey="sslcert.key"
+certificatechain="sslcert.crt"
 
+localDNS="example.com"
+
+terms="https://my.monarc.lu/terms.html"
+
+stats_service="/var/lib/monarc/stats-service"
+stats_service_prefix_url="dashboard"
+
+github_auth_token="<your-github-auth-token>"
+```
 
 In the section ``[dev]``, ``FO`` should be resolved by the internal DNS. It is
 the internal name of the front office server.
