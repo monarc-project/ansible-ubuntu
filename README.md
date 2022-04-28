@@ -171,12 +171,12 @@ Optionally as a fourth argument you can specify the Python executable
 This is an example. Below is a real world example:
 
 ```bash
-(ansible-ubuntu-EcXl-2U4-py3.8) (prod)ansible@monarc2-conf:~/ansible-ubuntu$ poetry env info
+(ansible-ubuntu-EcXl-2U4-py3.9) (prod)ansible@monarc2-conf:~/ansible-ubuntu$ poetry env info
 
 Virtualenv
-Python:         3.8.10
+Python:         3.9.12
 Implementation: CPython
-Path:           /home/ansible/.cache/pypoetry/virtualenvs/ansible-ubuntu-EcXl-2U4-py3.8
+Path:           /home/ansible/.cache/pypoetry/virtualenvs/ansible-ubuntu-EcXl-2U4-py3.9
 Valid:          True
 
 System
@@ -186,7 +186,7 @@ Python:   /usr
 
 
 
-(ansible-ubuntu-EcXl-2U4-py3.8) (prod)ansible@monarc2-conf:~/ansible-ubuntu$ crontab -l
+(ansible-ubuntu-EcXl-2U4-py3.9) (prod)ansible@monarc2-conf:~/ansible-ubuntu$ crontab -l
 # Edit this file to introduce tasks to be run by cron.
 # 
 # Each task to run has to be defined through a single line
