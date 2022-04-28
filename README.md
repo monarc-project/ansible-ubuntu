@@ -125,7 +125,9 @@ github_auth_token="<your-github-auth-token>"
 ```
 
 In the section ``[dev]``, ``FO`` should be resolved by the internal DNS. It is
-the internal name of the front office server.
+the internal name of the front office server. Same for the other servers. If
+you can not change the internal DNS, it is possible to handle this thanks to
+the file ``/etc/hosts`` of the system.
 
 The variable *monarc\_sql\_password* is the password for the SQL database
 on the BO. Ansible will use it in order to create a new SQL user on the back
