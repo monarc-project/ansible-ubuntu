@@ -128,6 +128,8 @@ The variable *monarc\_sql\_password* is the password for the SQL database
 on the BO. Ansible will use it in order to create a new SQL user on the back
 office with the corresponding databases.
 
+You can have a look at this real [example file](examples/hosts).
+
 
 In ```monarcco/defaults/main.yaml``` configure the version of NodeJS. It will
 be added in the APT repositories.
