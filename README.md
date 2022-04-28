@@ -293,7 +293,7 @@ account = <account-number>
 server = https://acme-v02.api.letsencrypt.org/directory
 ```
 
-Is is convenient to use the _apache_ authenticator.
+It is convenient to use the _apache_ authenticator.
 
 Check if it is possible to renew the certificate in dry run mode:
 
