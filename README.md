@@ -270,12 +270,41 @@ You can generally set _certificatechain_ to the empty string.
 Generation of the certificate:
 
 ```bash
-# certbot certonly --agree-tos -m <your-email> --webroot -d <clientDomain> -w /var/www/letsencrypt/
+# sudo apt install python3-certbot-apache
+# certbot certonly --agree-tos -m <your-email> --webroot -d <publicHost> -w /var/www/letsencrypt/
 ```
 
-Then simply set the value of _certificate_ to _letsencrypt_.   
-And set the values of _certificatekey_ and _certificatechain_ to the empty
-string.
+Check the generated configuration:
+
+```bash
+#  cat /etc/letsencrypt/renewal/<publicHost>.conf
+# renew_before_expiry = 30 days
+cert = /etc/letsencrypt/live/<publicHost>/cert.pem
+privkey = /etc/letsencrypt/live/<publicHost>/privkey.pem
+chain = /etc/letsencrypt/live/<publicHost>/chain.pem
+fullchain = /etc/letsencrypt/live/<publicHost>/fullchain.pem
+version = 0.40.0
+archive_dir = /etc/letsencrypt/archive/<publicHost>
+
+# Options and defaults used in the renewal process
+[renewalparams]
+authenticator = apache
+account = <account-number>
+server = https://acme-v02.api.letsencrypt.org/directory
+```
+
+Is is convenient to use the _apache_ authenticator.
+
+Check if it is possible to renew the certificate in dry run mode:
+
+```bash
+$ sudo certbot renew --dry-run
+```
+
+Then, in the Ansible _inventory/hosts_ file simply set the value of
+_certificate_ to _letsencrypt_. And set the values of _certificatekey_ and
+_certificatechain_ to the empty string.
+
 
 ### Postfix
 
