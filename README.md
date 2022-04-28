@@ -148,9 +148,8 @@ ansible@CFG:~/ansible-ubuntu/playbook$ ansible-playbook -i ../inventory/ monarc.
 
 Ansible will install and configure the back office, the front office and the
 reverse proxy. Consequently the configuration server should be able to contact
-these servers through SSH.
-
-
+these servers through SSH. For more details on how to execute Ansible read the
+next section.
 
 
 
@@ -159,7 +158,7 @@ these servers through SSH.
 
 ### Updating the inventory of Ansible
 
-Adding/removing an attribute for the ansible inventory can be done with the
+Adding/removing a client to/from the Ansible inventory can be done with the
 script ``update.sh`` via cron as the user 'ansible'.
 
 ```bash
@@ -167,7 +166,59 @@ ansible@CFG:~$ crontal -l
 /home/ansible/ansible-ubuntu/playbook/update.sh /home/ansible/ansible-ubuntu/playbook/ $BO_ADDRESS `which ansible-playbook`
 ```
 
-Optionally as a fourth argument you can specify the Python executable (environment) to use.
+Optionally as a fourth argument you can specify the Python executable
+(environment) to use.
+This is an example. Below is a real world example:
+
+```bash
+(ansible-ubuntu-EcXl-2U4-py3.8) (prod)ansible@monarc2-conf:~/ansible-ubuntu$ poetry env info
+
+Virtualenv
+Python:         3.8.10
+Implementation: CPython
+Path:           /home/ansible/.cache/pypoetry/virtualenvs/ansible-ubuntu-EcXl-2U4-py3.8
+Valid:          True
+
+System
+Platform: linux
+OS:       posix
+Python:   /usr
+
+
+
+(ansible-ubuntu-EcXl-2U4-py3.8) (prod)ansible@monarc2-conf:~/ansible-ubuntu$ crontab -l
+# Edit this file to introduce tasks to be run by cron.
+# 
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+# 
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').# 
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+# 
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+# 
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+# 
+# For more information see the manual pages of crontab(5) and cron(8)
+# 
+# m h  dom mon dow   command
+#0 * * * * /home/ansible/ansible-ubuntu/playbook/update.sh /home/ansible/ansible-ubuntu/playbook/ 172.18.13.71 /home/ansible/.cache/pypoetry/virtualenvs/ansible-ubuntu-EcXl-2U4-py3.9/bin/ansible /home/ansible/.cache/pypoetry/virtualenvs/ansible-ubuntu-EcXl-2U4-py3.9/bin/python
+```
+
+Instead of an IP you can use a name of the BO if it resolves internally.  
+As you can see we have used the full path to the ansible executable. This is
+to be sure that the script will use the correct version of Ansible.
+
+The frequency of the task defined by cron is up to you.
+
+
 
 The script ``update.sh`` will:
 
