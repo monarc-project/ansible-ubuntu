@@ -29,6 +29,8 @@ Can be multiple installation per client to balance to the load.
 * Git and Python 3 on all servers;
 * [Ansible](https://www.ansible.com/) must be installed on the configuration
   server;
+* [PyMySQL](https://pypi.org/project/PyMySQL) on the BO and the FO;
+* [composer](https://getcomposer.org) on the BO and the FO;
 * Postfix on the BO and all FO servers (for the password recovery feature of
   MONARC).
 
