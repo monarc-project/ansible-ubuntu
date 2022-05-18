@@ -55,6 +55,8 @@ return array(
     */
     'activeLanguages' => array('fr','en','de','nl'),
 
+    'instanceName' => '{{ clientDomain }}', // will be used for the label of the 2FA QRCode.
+
     'email' => [
         'name' => 'MONARC',
         'from' => '{{ emailFrom if emailFrom else "info@monarc.lu" }}',
