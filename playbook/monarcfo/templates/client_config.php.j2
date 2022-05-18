@@ -70,6 +70,8 @@ return array(
     'checkVersion' => true,
     'appCheckingURL' => 'https://version.monarc.lu/check/MONARC',
 
+    'instanceName' => '{{item.value.name}}', // will be used for the label of the 2FA QRCode.
+
     'email' => [
         'name' => 'MONARC',
         'from' => '{{ emailFrom if emailFrom else "info@monarc.lu" }}',
