@@ -1,5 +1,5 @@
 <VirtualHost *:80>
-	ServerName {{ bourlalias }}{{ '.' + env_prefix if env_prefix else '' }}.{{ clientDomain }}
+	ServerName {{ bourlalias }}{{ '.' + env_prefix if env_prefix else '' }}.{{ publicHost }}
     DocumentRoot /var/lib/monarc/bo/MonarcAppBO/public/
 
     RewriteEngine On

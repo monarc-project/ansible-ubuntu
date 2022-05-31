@@ -10,6 +10,9 @@ if [ $# -lt 3 ]
     exit 1
 fi
 
+# python is sneaky
+export PYTHONUNBUFFERED=1
+
 PLAYBOOK_PATH=$1
 BO_ADDRESS=$2
 ANSIBLE_PATH=$3
@@ -34,7 +37,7 @@ ssh ansible@$BO_ADDRESS sudo -u www-data /usr/local/bin/new_monarc_clients.sh | 
 ssh ansible@$BO_ADDRESS sudo -u www-data /usr/local/bin/del_monarc_clients.sh | $PYTHON_PATH ./del_inventory.py ../inventory/
 
 echo "Running ansible..."
-$ANSIBLE_PATH -i ../inventory/ monarc.yaml --user ansible
+$ANSIBLE_PATH --diff -i ../inventory/ monarc.yaml --user ansible
 
 echo "Synchronizing templates of deliveries..."
 $PYTHON_PATH ./list_inventory.py ../inventory/ | xargs -n2  ./update_deliveries.sh $BO_ADDRESS

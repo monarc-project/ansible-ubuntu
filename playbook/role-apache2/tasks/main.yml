@@ -1,0 +1,259 @@
+- name: only support Debian family systems
+  assert:
+    that: ansible_os_family == "Debian"
+  tags: always
+
+- name: check default server admin email is defined
+  assert:
+    that: apache2_default_server_admin is defined
+  tags: always
+
+- name: install apache2
+  package:
+    name: "apache2"
+    state: present
+
+- name: install apache2 extra packages
+  package:
+    name: "{{ apache2_extra_packages }}"
+    state: present
+
+- name: disabled mods
+  command: "a2dismod -f '{{ item }}'"
+  changed_when: "'disabled.' in _a2dismod.stdout"
+  register: _a2dismod
+  loop:
+    "{{ _apache2_disabled_mods }}"
+  notify:
+    - apache2ctl configtest
+    - restart apache2
+
+- name: enabled mods
+  command: "a2enmod '{{ item }}'"
+  changed_when: "'Enabling module' in _a2enmod.stdout"
+  register: _a2enmod
+  loop:
+    "{{ _apache2_enabled_mods }}"
+  notify:
+    - apache2ctl configtest
+    - restart apache2
+
+- name: installing and enabling itk
+  block:
+  - name: install apache2 mpm itk
+    package:
+      name: "{{ apache2_mpm_itk_package }}"
+      state: present
+  - name: disabling mpm_event
+    command: "a2dismod -f mpm_event"
+    changed_when: "'disabled.' in _a2dismod.stdout"
+    register: _a2dismod
+    notify:
+      - apache2ctl configtest
+      - restart apache2
+  - name: ensuring mpm_itk mod is enabled
+    command: "a2enmod mpm_itk"
+    changed_when: "'Enabling module' in _a2enmod.stdout"
+    register: _a2enmod
+    notify:
+      - apache2ctl configtest
+      - restart apache2
+  when: apache2_use_itk | bool
+
+- name: check if certificate is already available
+  tags: always
+  stat:
+    path: "{{ SSLCertificateFile }}"
+  loop:
+    "{{ apache2_vhosts }}"
+  loop_control:
+    label: "{{ SSLCertificateFile }}"
+  when: ssl_enabled
+  vars:
+    _default_certfile: "{{ '/etc/letsencrypt/live/' + item.ServerName + '/fullchain.pem' if certbot_enabled else False }}"
+    SSLCertificateFile:        "{{ item['SSLCertificateFile'] | default(_default_certfile) }}"
+    certbot_enabled:           "{{ item['certbot_enabled'] | default(false)  }}"
+    ssl_enabled:               "{{ item['ssl_enabled'] | default(certbot_enabled) }}"
+  register: _certificate_available
+
+- name: creating ITK groups
+  group:
+    name: "{{ GroupID }}"
+    state: present
+  loop_control:
+    label: "group {{ GroupID }} for {{ item.ServerName }}"
+  loop:
+    "{{ apache2_vhosts }}"
+  vars:
+    GroupID: "{{ item['GroupID'] | default(item['UserID'] | default(apache2_docroot_group)) }}"
+  when:
+    - apache2_use_itk | bool
+    - apache2_itk_create_users | bool
+
+- name: creating ITK users
+  user:
+    name: "{{ UserID }}"
+    comment: "ITK user"
+    state: present
+    group: "{{ GroupID }}"
+  loop_control:
+    label: "user {{ UserID }} in {{ GroupID }} for {{ item.ServerName }}"
+  loop:
+    "{{ apache2_vhosts }}"
+  vars:
+    UserID: "{{ item['UserID'] | default(apache2_docroot_user) }}"
+    GroupID: "{{ item['GroupID'] | default(item['UserID'] | default(apache2_docroot_group)) }}"
+  when:
+    - apache2_use_itk | bool
+    - apache2_itk_create_users | bool
+
+- name: setting up restricted keys for ITK users
+  authorized_key:
+    user: "{{ UserID }}"
+    state: present
+    key: "{{ [ restricted_authorized_keys ] | flatten | join('\n') }}"
+    key_options: "command=\"rsync --server -re.LsfxC --delete --partial . {{ DocumentRoot }}/\""
+  loop_control:
+    label: "restricted authorized_key for {{ UserID }}"
+  loop:
+    "{{ apache2_vhosts }}"
+  vars:
+    UserID: "{{ item['UserID'] | default(apache2_docroot_user) }}"
+    DocumentRoot: "{{ item['DocumentRoot'] | default(apache2_docroot_basedir + item.ServerName) }}"
+    restricted_authorized_keys: "{{ item['restricted_authorized_keys'] }}"
+  when:
+    - apache2_use_itk | bool
+    - apache2_itk_create_users | bool
+    - item['UserID'] is defined
+    - item['restricted_authorized_keys'] is defined
+
+- name: setting up regular keys for ITK users
+  authorized_key:
+    exclusive: yes
+    user: "{{ UserID }}"
+    state: present
+    key: "{{ [ regular_authorized_keys ] | flatten | join('\n') }}"
+  loop_control:
+    label: "regular authorized_key for {{ UserID }}"
+  loop:
+    "{{ apache2_vhosts }}"
+  vars:
+    UserID: "{{ item['UserID'] | default(apache2_docroot_user) }}"
+    DocumentRoot: "{{ item['DocumentRoot'] | default(apache2_docroot_basedir + item.ServerName) }}"
+    regular_authorized_keys: "{{ item['regular_authorized_keys'] }}"
+  when:
+    - apache2_use_itk | bool
+    - apache2_itk_create_users | bool
+    - item['UserID'] is defined
+    - item['regular_authorized_keys'] is defined
+
+- name: creating virtualhosts template conf
+  tags: _config
+  template:
+    src: "apache2_vhost.conf.j2"
+    dest: "/etc/apache2/sites-available/{{ item.ServerName }}.conf"
+  loop:
+    "{{ apache2_vhosts }}"
+  vars:
+    _default_certfile: "{{ '/etc/letsencrypt/live/' + item.ServerName + '/fullchain.pem' if certbot_enabled else False }}"
+    _default_keyfile: "{{ '/etc/letsencrypt/live/' + item.ServerName + '/privkey.pem' if certbot_enabled else False }}"
+    ServerName:                "{{ item.ServerName }}"
+    ServerAlias:               "{{ item.ServerAlias | default([]) }}"
+    certbot_enabled:           "{{ item['certbot_enabled'] | default(false)  }}"
+    ssl_enabled:               "{{ item['ssl_enabled'] | default(certbot_enabled) }}"
+    cert_available:            "{{ ssl_enabled and _certificate_available.results[idx].stat.exists }}"
+    VirtualHost:               "{{ item['VirtualHost'] | default('*:443' if ssl_enabled or certbot_enabled else '*:80') }}"
+    DocumentRoot:              "{{ item['DocumentRoot'] | default(apache2_docroot_basedir + item.ServerName) }}"
+    ServerAdmin:               "{{ item['ServerAdmin'] | default(apache2_default_server_admin) }}"
+    SSLCertificateFile:        "{{ item['SSLCertificateFile'] | default(_default_certfile) }}"
+    SSLCertificateKeyFile:     "{{ item['SSLCertificateKeyFile'] | default(_default_keyfile) }}"
+    SSLCertificateChainFile:   "{{ item['SSLCertificateChainFile'] | default(False) }}"
+    ErrorLog:                  "{{ item['ErrorLog'] | default('${APACHE_LOG_DIR}/' + item.ServerName + '_error.log') }}"
+    CustomLog:                 "{{ item['CustomLog'] | default('${APACHE_LOG_DIR}/' + item.ServerName + '_access.log') }}"
+    CustomLogFormat:           "{{ item['CustomLogFormat'] | default(apache2_default_custom_log_format) }}"
+    main_config:               "{{ item['main_config'] | default('') }}"
+    extra_config:              "{{ item['extra_config'] | default('') }}"
+    http_to_https_redirect:    "{{ item['http_to_https_redirect'] | default(false) }}"
+    HTTPVirtualHost:           "{{ item['HTTPVirtualHost'] | default('*:80') }}"
+    Listen:                    "{{ item['Listen'] | default(false) }}"
+    hsts:                      "{{ ssl_enabled and ( item['hsts'] | default(apache2_enable_hsts)) }}"
+    x_frame_options:           "{{ item['x_frame_options'] | default(apache2_enable_x_frame_options) }}"
+    x_content_type_options:    "{{ item['x_content_type_options'] | default(apache2_enable_x_content_type_options) }}"
+    referrer_policy:           "{{ item['referrer_policy'] | default(apache2_enable_referrer_policy) }}"
+    content_security_policy:   "{{ item['content_security_policy'] | default(apache2_enable_content_security_policy) }}"
+    content_security_policy_enforce: "{{ item['content_security_policy_enforce'] | default(false) }}"
+    UserID: "{{ item['UserID'] | default(apache2_docroot_user) }}"
+    GroupID: "{{ item['GroupID'] | default(item['UserID'] | default(apache2_docroot_group)) }}"
+    _use_itk: "{{ apache2_use_itk }}"
+  loop_control:
+    label: "{{ item.ServerName }}"
+    index_var: idx
+  notify:
+    - apache2ctl configtest
+    - reload apache2
+  when: _certificate_available is defined
+
+- name: enabled vhosts
+  command: "a2ensite '{{ item }}'"
+  changed_when: "'Enabling site' in _a2ensite.stdout"
+  register: _a2ensite
+  loop:
+    "{{ apache2_enabled_vhosts }}"
+  notify:
+    - apache2ctl configtest
+    - reload apache2
+
+- name: disabled vhosts
+  command: "a2dissite '{{ item }}'"
+  changed_when: "'disabled.' in _a2dissite.stdout"
+  register: _a2dissite
+  loop:
+    "{{ apache2_disabled_vhosts }}"
+  notify: reload apache2
+
+- name: creating DocumentRoot
+  file:
+    path: "{{ DocumentRoot }}"
+    state: directory
+    owner: "{{ UserID }}"
+    group: "{{ GroupID }}"
+    mode: "{{ '0750' if apache2_use_itk | bool else '0755' }}"
+  loop:
+    "{{ apache2_vhosts }}"
+  loop_control:
+    label: "{{ item.ServerName }} - creating {{ DocumentRoot }}"
+  vars:
+    DocumentRoot: "{{ item['DocumentRoot'] | default(apache2_docroot_basedir + item.ServerName) }}"
+    UserID: "{{ item['UserID'] | default(apache2_docroot_user) }}"
+    GroupID: "{{ item['GroupID'] | default(item['UserID'] | default(apache2_docroot_group)) }}"
+
+
+- name: hide server token
+  lineinfile:
+    path: /etc/apache2/conf-enabled/security.conf
+    regexp: '^\s*ServerTokens'
+    line: "ServerTokens Prod"
+  when: apache2_security_mahto | bool
+  notify:
+    - apache2ctl configtest
+    - reload apache2
+
+- name: hide server signature
+  lineinfile:
+    path: /etc/apache2/conf-enabled/security.conf
+    regexp: '^\s*ServerSignature'
+    line: "ServerSignature Off"
+  when: apache2_security_mahto | bool
+  notify:
+    - apache2ctl configtest
+    - reload apache2
+
+- name: apache2ctl configtest
+  command: apache2ctl configtest
+  changed_when: false
+
+- name: enabling and starting apache2
+  service:
+    name: apache2
+    state: started
+    enabled: yes

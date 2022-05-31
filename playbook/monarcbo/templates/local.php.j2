@@ -55,7 +55,7 @@ return array(
     */
     'activeLanguages' => array('fr','en','de','nl'),
 
-    'instanceName' => '{{ clientDomain }}', // will be used for the label of the 2FA QRCode.
+    'instanceName' => '{{ publicHost }}', // will be used for the label of the 2FA QRCode.
 
     'email' => [
         'name' => 'MONARC',
@@ -67,5 +67,5 @@ return array(
         'salt' => '', // private salt for the password
     ),
 
-    'publicHost' => '{{ protocol }}://{{ clientDomain }}/{{bourlalias}}',
+    'publicHost' => '{{ protocol }}://{{ publicHost }}/{{bourlalias}}',
 );

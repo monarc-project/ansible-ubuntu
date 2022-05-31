@@ -1,0 +1,6 @@
+monarcfo_release_url: "https://github.com/remil1000/MonarcAppFO/releases/download/{{ monarcfo_version }}/MonarcAppFO-{{ monarcfo_version }}.tar.gz"
+monarcfo_version: "v2.11.1-p1"
+
+clients: {}
+
+monarcfo_clean_cache: false

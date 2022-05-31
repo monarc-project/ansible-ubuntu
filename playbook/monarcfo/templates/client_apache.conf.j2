@@ -1,5 +1,5 @@
 <VirtualHost *:80>
-	ServerName {{ item.value.name }}{{ '.' + env_prefix if env_prefix else '' }}.{{ clientDomain }}
+	ServerName {{ item.value.name }}{{ '.' + env_prefix if env_prefix else '' }}.{{ publicHost }}
 	DocumentRoot {{ www_directory | default('/var/lib/monarc/fo/')}}/public
 
 	RewriteEngine On

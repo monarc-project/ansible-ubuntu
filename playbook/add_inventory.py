@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Add an attribute for the ansible inventory.
 """
@@ -37,6 +37,7 @@ def run():
         try:
             newdata = json.loads(stdin)
         except ValueError:
+            print("error reading JSON content", file=sys.stderr)
             exit(1)
 
         for new_client in newdata:
@@ -45,10 +46,12 @@ def run():
             path = os.path.join(
                 os.path.abspath(INVENTORY), "host_vars/", new_client["server"]
             )
-            if not os.path.exists(path):
+            if not os.path.isdir(path):
                 os.makedirs(path)
 
             generated_file = os.path.join(path, "generated.yaml")
+            if not os.path.exists(generated_file):
+                open(generated_file, 'a').close()
 
             # Read the yaml file
             with open(generated_file, "r") as stream:
@@ -79,9 +82,9 @@ def run():
                 except yaml.YAMLError as exc:
                     print(exc)
         else:
-            exit(1)
-        exit(0)
+            exit(0)
     else:
+        print("can't read stdin", file=sys.stderr)
         exit(1)
 
 

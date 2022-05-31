@@ -1,0 +1,19 @@
+# ! definition order matters
+# keep this order if you want configtest
+# before anything else in case of multiple notify
+
+- name: apache2ctl configtest
+  command: apache2ctl configtest
+  changed_when: false
+
+- name: restart apache2
+  service:
+    name: apache2
+    state: restarted
+    enabled: yes
+
+- name: reload apache2
+  service:
+    name: apache2
+    state: reloaded
+    enabled: yes

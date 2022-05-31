@@ -1,0 +1,107 @@
+- name: only Debian like systems are supported atm
+  tags: always
+  assert:
+    that:
+      - ansible_os_family == "Debian"
+
+- name: check a default contact is defined
+  tags: always
+  assert:
+    that:
+      - certbot_default_contact is defined
+  
+- name: install certbot
+  package:
+    name: certbot
+    state: present
+
+- name: install certbot apache plugin
+  package:
+    name: "{{ ansible_python.executable | basename }}-certbot-apache"
+    state: present
+  when: ( certbot_config['apache'] | default([])) | length != 0
+
+- name: install certbot nginx plugin
+  package:
+    name: "{{ ansible_python.executable | basename }}-certbot-nginx"
+    state: present
+  when: ( certbot_config['nginx'] | default([])) | length != 0
+
+- name: configure certbot renew cronjob
+  lineinfile:
+    line: |
+      export HTTP_PROXY={{ http_proxy }}
+      export HTTPS_PROXY={{ https_proxy }}
+    state: present
+    insertbefore: 'bin/certbot'
+    path: /etc/cron.d/certbot
+  when:
+    - ansible_service_mgr == "sysvinit"
+    - http_proxy is defined
+    - https_proxy is defined
+
+- block:
+    - name: create systemd unit override directory for certbot
+      file:
+        state: directory
+        path: "/etc/systemd/system/certbot.service.d"
+    - name: configure certbot systemd timer with http_proxy
+      copy:
+        content: |
+          [Service]
+          Environment=HTTP_PROXY={{ http_proxy }}
+          Environment=HTTPS_PROXY={{ https_proxy }}
+
+        dest: "/etc/systemd/system/certbot.service.d/proxy.conf"
+      notify: systemctl daemon-reload
+  when:
+    - ansible_service_mgr == "systemd"
+    - http_proxy is defined
+    - https_proxy is defined
+
+- name: install apache2 for bootstrap
+  package:
+    name: "apache2"
+    state: present
+  when: ( certbot_config['apache'] | default([])) | length != 0
+
+- name: create configuration for apache enabled fqdns
+  command: "certbot -n --agree-tos -m {{ certbot_default_contact }} -d {{ item }} --apache"
+  loop: "{{ certbot_config['apache'] | default([]) }}"
+  args:
+    creates: "/etc/letsencrypt/live/{{ item.split(',') | first }}/privkey.pem"
+  register: _certbot_apache
+  environment:
+    http_proxy: "{{ http_proxy | default('') }}"
+    https_proxy: "{{ https_proxy | default('') }}"
+
+- name: create configuration for nginx enabled fqdns
+  command: "certbot -n --agree-tos -m {{ certbot_default_contact }} -d {{ item }} --nginx"
+  loop: "{{ certbot_config['nginx'] | default([]) }}"
+  args:
+    creates: "/etc/letsencrypt/live/{{ item.split(',') | first }}/privkey.pem"
+  register: _certbot_nginx
+  environment:
+    http_proxy: "{{ http_proxy | default('') }}"
+    https_proxy: "{{ https_proxy | default('') }}"
+
+- name: register renew hooks
+  copy:
+    dest: "/etc/letsencrypt/renewal-hooks/{{ item.key }}-renew.sh"
+    mode: "0755"
+    content: "{{ item.value }}"
+  loop: "{{ certbot_renew_hooks | dict2items }}"
+  loop_control:
+    label: "/etc/letsencrypt/renewal-hooks/{{ item.key }}-renew.sh"
+
+- name: add renew hook in configuration
+  ini_file:
+    path: "{{ renewal_conf }}"
+    section: renewalparams
+    option: renew_hook
+    value: "/etc/letsencrypt/renewal-hooks/{{ item.key }}-renew.sh"
+  loop: "{{ certbot_renew_hooks | dict2items }}"
+  vars:
+    renewal_conf: "/etc/letsencrypt/renewal/{{ item.key }}.conf"
+  loop_control:
+    label: "{{ renewal_conf }}"

@@ -1,57 +1,64 @@
 ---
 
-- name: checkout repository
-  git:
-    repo: https://github.com/monarc-project/MonarcAppFO
-    dest: /var/lib/monarc/fo
-    version: master
-    update: no
-  register: appfo_pull
-
-- name: create module dir
+- name: create monarc directory
   file:
-    path: /var/lib/monarc/fo/module/Monarc
     state: directory
+    path: /var/lib/monarc/
+    owner: ansible
+    group: ansible
+  become: True
 
-- name: create data dir
+- name: create monarc releases directory
   file:
-    path: /var/lib/monarc/fo/data
     state: directory
+    path: /var/lib/monarc/releases/
+
+- name: download release
+  get_url:
+    url: "{{ monarcfo_release_url }}"
+    dest: "/var/lib/monarc/releases/{{ monarcfo_release_url | basename }}"
+    owner: ansible
+    group: ansible
+  environment:
+    http_proxy: "{{ http_proxy | default('') }}"
+    https_proxy: "{{ https_proxy | default('') }}"
+
+- name: create release directory
+  file:
+    state: directory
+    dest: "/var/lib/monarc/releases/{{ monarcfo_release_url | basename | replace('.tar.gz', '') }}"
+
+- name: unarchive release
+  unarchive:
+    remote_src: yes
+    src: "/var/lib/monarc/releases/{{ monarcfo_release_url | basename }}"
+    dest: "/var/lib/monarc/releases/{{ monarcfo_release_url | basename | replace('.tar.gz', '') }}"
+
+- name: create release symlink
+  file:
+    state: link
+    src: "/var/lib/monarc/releases/{{ monarcfo_release_url | basename | replace('.tar.gz', '') }}"
+    dest: "/var/lib/monarc/fo"
+
+- name: create data directory
+  file:
+    state: directory
+    path: "/var/lib/monarc/fo-data"
     owner: "www-data"
   become: True
 
-- name: set github auth token for composer
-  command: composer config -g github-oauth.github.com {{ github_auth_token }}
-
-- name: composer install
-  shell: composer ins -o --no-dev
-  args:
-    chdir: /var/lib/monarc/fo
-  when: appfo_pull.before == None
-
-- name: MonarcCore link
+- name: create data directory symlink
   file:
-    src: /var/lib/monarc/fo/vendor/monarc/core
-    dest: /var/lib/monarc/fo/module/Monarc/Core
     state: link
-
-- name: frontoffice link
-  file:
-    src: /var/lib/monarc/fo/vendor/monarc/frontoffice
-    dest: /var/lib/monarc/fo/module/Monarc/FrontOffice
-    state: link
-
-- name: update-all
-  shell: "scripts/update-all.sh -b"
-  args:
-    chdir: /var/lib/monarc/fo
-  when: appfo_pull.before == None
+    dest: "/var/lib/monarc/fo/data"
+    src: "/var/lib/monarc/fo-data"
 
 - name: apache mod rewrite
   apache2_module:
     name: rewrite
   become: True
   notify:
+    - apache2ctl configtest
     - restart apache
 
 - name: apache log dirs
@@ -60,10 +67,12 @@
     state: directory
     owner: root
     group: adm
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
 
+# TODO - do this in a cleaner way
 - name: disable all apache virtual hosts
   command: find /etc/apache2/sites-enabled/ -type l -exec rm -f "{}" \;
   become: True
@@ -73,38 +82,48 @@
     src: client_apache.conf.j2
     dest: "/etc/apache2/sites-available/{{ item.value.name }}.conf"
     owner: root
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
 
-# - name: deactivates the default virtualhost
-#   command: a2dissite 000-default.conf
-#   become: True
-#   notify:
-#     - reload apache
+- name: deactivates the default virtualhost
+  command: a2dissite 000-default.conf
+  changed_when: "'disabled.' in _a2dissite.stdout"
+  register: _a2dissite
+  notify:
+    - apache2ctl configtest
+    - reload apache
+  become: True
 
 - name: enable apache conf
   command: "/usr/sbin/a2ensite {{item.value.name}}.conf"
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  changed_when: "'Enabling site' in _a2ensite.stdout"
+  register: _a2ensite
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
   notify:
+    - apache2ctl configtest
     - reload apache
 
 - name: logrotate conf
   template:
     src: logrotate_apache.j2
     dest: /etc/logrotate.d/apache2
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
 
 - name: create client dir
   file:
     name: "/var/www/{{item.value.name}}"
     state: directory
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
 
 - name: client config file
@@ -113,8 +132,9 @@
     dest: "/var/www/{{item.value.name}}/local.php"
     owner: www-data
     mode: 0600
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
 
 - name: create client data dir
@@ -122,32 +142,39 @@
     name: "/var/www/{{item.value.name}}/data"
     state: directory
     owner: www-data
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
   
 - name: deleting client cache
   file:
     path: /var/www/{{ item.value.name }}/data/cache
     state: absent
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  when: monarcfo_clean_cache | bool
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
 
 - name: deleting client Doctrine proxy cache
   file:
     path: /var/www/{{ item.value.name }}/data/DoctrineORMModule/
     state: absent
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  when: monarcfo_clean_cache | bool
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
 
 - name: deleting client LazyServices proxy cache
   file:
     path: /var/www/{{ item.value.name }}/data/LazyServices/
     state: absent
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  when: monarcfo_clean_cache | bool
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
 
 - name: create client cache dir
@@ -155,8 +182,9 @@
     name: "/var/www/{{item.value.name}}/data/cache"
     state: directory
     owner: www-data
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
 
 - name: create client Doctrine cache dir
@@ -164,8 +192,9 @@
     name: "/var/www/{{item.value.name}}/data/DoctrineORMModule/Proxy"
     state: directory
     owner: www-data
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
 
 - name: client cache upgrade
@@ -173,8 +202,9 @@
     path: "/var/www/{{ item.value.name }}/data/upgrade"
     owner: www-data
     state: touch
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
 
 - name: create client Proxy dir
@@ -182,38 +212,51 @@
     name: "/var/www/{{item.value.name}}/data/LazyServices/Proxy"
     state: directory
     owner: www-data
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
 
 - name: copy default deliveries templates
   command: cp -nR /var/lib/monarc/fo/deliveries/ /var/www/{{item.value.name}}/
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
+  #tags: dev
+
+- name: copy default deliveries templates
+  synchronize:
+    src: /var/lib/monarc/fo/deliveries
+    dest: "/var/www/{{ item.value.name }}"
+    rsync_opts: 
+      - "--ignore-existing"
+  delegate_to: "{{ inventory_hostname }}"
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  become: True
+  register: _deliveries_synced
 
 - name: set owner of deliveries
   file:
-    path: /var/www/{{item.value.name}}/deliveries
+    path: "/var/www/{{ item.item.value.name }}/deliveries"
     recurse: yes
     owner: www-data
     group: www-data
-  with_dict: "{{ clients }}"
-  when: clients is defined
-  become: True
-
-- name: set appropriate rights for deliveries
-  command: chmod -R go+w /var/www/{{ item.value.name }}/deliveries
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ _deliveries_synced.results }}"
+  loop_control:
+    label: "{{ item.item.key }}"
+  when: item.changed | bool
   become: True
 
 - name: client database creation
   mysql_db:
     name: "{{ item.value.name }}"
     config_file: /etc/mysql/debian.cnf
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
 
 - name: client database user creation
@@ -222,44 +265,32 @@
     password: "{{ item.value.mysql_password }}"
     priv: "{{ item.value.name }}.*:ALL"
     config_file: /etc/mysql/debian.cnf
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
 
 - name: client db migration
   shell: "scripts/client-upgrade-db.sh frontoffice localhost {{ item.value.name }} {{ item.value.mysql_password }} {{ item.value.name }}"
   args:
     chdir: /var/lib/monarc/fo
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
 
 - name: bootstrap file
   template:
     src: client_bootstrap.j2
     dest: "/tmp/bootstrap_{{ item.value.name }}.sql"
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
 
 - name: initialize client db
   shell: "if [ $( echo 'select count(id) from users;' | mysql --defaults-file=/etc/mysql/debian.cnf -N {{ item.value.name }} ) -eq 0  ] ; then mysql --defaults-file=/etc/mysql/debian.cnf {{ item.value.name }} < /tmp/bootstrap_{{ item.value.name }}.sql ;  fi"
   args:
     chdir: /var/lib/monarc/fo
-  with_dict: "{{ clients }}"
-  when: clients is defined
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   become: True
-
-- name: update ./bin/console permissions
-  file:
-    path: "/var/lib/monarc/fo/vendor/monarc/frontoffice/bin/console"
-    owner: www-data
-    group: ansible
-    mode: 0775
-  become: true
-
-- name: update ./scripts/collect-stats-for-all-clients.sh permissions
-  file:
-    path: "/var/lib/monarc/fo/scripts/collect-stats-for-all-clients.sh"
-    owner: www-data
-    group: ansible
-    mode: 0775
-  become: true

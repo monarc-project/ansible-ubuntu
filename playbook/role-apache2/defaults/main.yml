@@ -1,0 +1,51 @@
+apache2_enable_ssl: "{{ true if ( apache2_vhosts | selectattr('certbot_enabled', 'defined') | selectattr('certbot_enabled', 'equalto', true) | list | length > 0 ) else false }}"
+
+apache2_enabled_mods: []
+apache2_disabled_mods: []
+
+apache2_use_itk: false
+apache2_itk_create_users: false
+apache2_mpm_itk_package: "libapache2-mpm-itk"
+
+apache2_snakeoil_cert: "/etc/ssl/certs/ssl-cert-snakeoil.pem"
+apache2_snakeoil_key: "/etc/ssl/private/ssl-cert-snakeoil.key"
+
+apache2_extra_packages: []
+
+apache2_default_disabled_mods:
+  - autoindex
+  - status
+
+apache2_docroot_user: "www-data"
+apache2_docroot_group: "{{ apache2_docroot_user }}"
+
+_apache2_enabled_mods: "{{ ( [ [ 'ssl', 'rewrite' ] if apache2_enable_ssl else Undef ] + [ 'headers' if apache2_default_security_headers else Undef ] + apache2_enabled_mods ) | select('defined') | list | flatten }}"
+_apache2_disabled_mods: "{{ ( apache2_default_disabled_mods + apache2_disabled_mods ) | difference(_apache2_enabled_mods) | list }}"
+
+apache2_vhosts: []
+apache2_docroot_basedir: "/var/www/"
+
+apache2_enabled_vhosts: "{{ apache2_vhosts | map(attribute='ServerName') | list }}"
+apache2_disabled_vhosts: []
+
+apache2_security_mahto: true
+
+apache2_default_security_headers: false
+
+apache2_enable_hsts: "{{ apache2_default_security_headers | default(false) }}"
+apache2_hsts: "max-age=15552000"
+
+apache2_enable_x_frame_options: "{{ apache2_default_security_headers | default(false) }}"
+apache2_x_frame_options: "SAMEORIGIN"
+
+apache2_enable_x_content_type_options: "{{ apache2_default_security_headers | default(false) }}"
+apache2_x_content_type_options: "nosniff"
+
+apache2_enable_referrer_policy: "{{ apache2_default_security_headers | default(false) }}"
+apache2_referrer_policy: "same-origin"
+
+apache2_enable_content_security_policy: "{{ apache2_default_security_headers | default(false) }}"
+apache2_content_security_policy: "default-src 'self';"
+
+apache2_log_virtualhost: false
+apache2_default_custom_log_format: "{{ 'combined_vhost' if ( apache2_log_virtualhost | bool ) else 'combined' }}"

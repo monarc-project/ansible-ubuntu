@@ -1,16 +1,12 @@
 [dev]
-monarc2-fo01
-monarc2-fo02
-
-[dev:vars]
-master= "monarc2-master"
-publicHost= "my.monarc.lu"
+monarc-fo1.internal.monarc.lu
+monarc-fo2.internal.monarc.lu
 
 [master]
-monarc2-master monarc_sql_password="<your-password>"
+monarc-master.internal.monarc.lu monarc_sql_password="<a-strong-password>"
 
 [rpx]
-monarc2-rpx
+monarc-rpx.internal.monarc.lu
 
 [monarc:children]
 rpx
@@ -18,22 +14,17 @@ master
 dev
 
 [monarc:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+master="monarc-master.internal.monarc.lu"
+publicHost="my.monarc.lu"
+
+# comment if you don't need a proxy
+http_proxy="http://fqdn:3128/"
+https_proxy="http://fqdn:3128/"
+
 env_prefix=""
-clientDomain= "my.monarc.lu"
-bourlalias="casesBO"
-
-emailFrom="info@monarc.lu"
-
+clientDomain="my.monarc.lu"
+emailFrom="address@domain.tld"
 protocol="https"
-certificate="letsencrypt"
-certificatekey=""
-certificatechain=""
-
-localDNS="test.monarc.lc1.conostix.com"
-
-terms="https://my.monarc.lu/terms.html"
-
-stats_service="/var/lib/monarc/stats-service"
-stats_service_prefix_url="dashboard"
-
-github_auth_token="<github-auth-token>"
+bourlalias="casesBO"

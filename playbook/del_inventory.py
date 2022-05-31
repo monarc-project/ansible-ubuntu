@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Delete an attribute from the ansible inventory.
 """
@@ -27,6 +27,7 @@ def run():
         try:
             todelete = json.loads(stdin)
         except ValueError:
+            print("error reading JSON content", file=sys.stderr)
             exit(1)
 
         for to_delete in todelete:
@@ -55,9 +56,9 @@ def run():
                 except yaml.YAMLError as exc:
                     print(exc)
         else:
-            exit(1)
-        exit(0)
+            exit(0)
     else:
+        print("can't read stdin", file=sys.stderr)
         exit(1)
 
 

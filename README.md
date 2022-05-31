@@ -8,7 +8,7 @@ the figure below.
 
 ### Ansible roles
 
-There are three roles, described below.
+There are three main roles, described below.
 
 ### monarcco
 
@@ -23,14 +23,17 @@ Common tasks for the front office and the back office.
 [Frontoffice](https://github.com/monarc-project/MonarcAppFO).
 Can be multiple installation per client to balance to the load.
 
+### extra roles
+
+`role-apache2` and `role-certbot` are extra generic utility roles
 
 ## Requirements
 
-* Git and Python 3 on all servers;
+* Python 3 on all servers;
 * [Ansible](https://www.ansible.com/) must be installed on the configuration
   server;
-* [PyMySQL](https://pypi.org/project/PyMySQL) on the BO and the FO;
-* [composer](https://getcomposer.org) on the BO and the FO;
+* [PyMySQL](https://pypi.org/project/PyMySQL) on the BO and the FO; installed
+  through role `monarcco`
 * Postfix on the BO and all FO servers (for the password recovery feature of
   MONARC).
 
@@ -41,20 +44,24 @@ Python 3 should be the default on the system. For example:
 $ python --version
 Python 3.10.0
 ```
-
+These roles have been tested with Ansible 2.9.6 - as shipped by default with
+Ubuntu 20.04; you can use the packaged version or another more recent version
+(from pip, poetry, virtualenv, ...)
 
 Get the playbook for MONARC and install Ansible on the configuration server:
 
 ```bash
 $ git clone https://github.com/monarc-project/ansible-ubuntu.git
 $ cd ansible-ubuntu/
-$ poetry install
-$ poetry shell
 ```
 
 Poetry is not mandatory but convenient to manage the dependencies. Installation
 is described [here](https://github.com/python-poetry/poetry#installation=).
 
+```bash
+$ poetry install
+$ poetry shell
+```
 
 ## Configuration
 
@@ -69,7 +76,7 @@ is described [here](https://github.com/python-poetry/poetry#installation=).
   * ``ssh-copy-id ansible@FO``
   * ``ssh-copy-id ansible@RPX``
 
-At that point you must check that it is possible to connect from the
+At that point you can check that it is possible to connect from the
 configuration server to the other servers without having to enter a password.
 
 ### Unix groups
@@ -88,17 +95,14 @@ configuration server to the other servers without having to enter a password.
 
 ```ini
 [dev]
-FO
-
-[dev:vars]
-master= "BO"
-publicHost= "monarc.example.com"
+monarc-fo1.internal.monarc.lu
+monarc-fo2.internal.monarc.lu
 
 [master]
-BO monarc_sql_password="password"
+monarc-master.internal.monarc.lu monarc_sql_password="<your-password>"
 
 [rpx]
-RPX.localhost
+monarc-rpx.internal.monarc.lu
 
 [monarc:children]
 rpx
@@ -106,49 +110,45 @@ master
 dev
 
 [monarc:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+master="monarc-master.internal.monarc.lu"
+publicHost="my.monarc.lu"
+
+# comment if you don't need a proxy
+http_proxy="http://fqdn:3128/"
+https_proxy="http://fqdn:3128/"
+
 env_prefix=""
-clientDomain="monarc.example.com"
-bourlalias="monarcbo"
-emailFrom="info@example.com"
-
+clientDomain="my.monarc.lu"
+emailFrom="address@domain.tld"
 protocol="https"
-certificate="sslcert.crt"
-certificatekey="sslcert.key"
-certificatechain="sslcert.crt"
-
-localDNS="example.com"
-
-terms="https://my.monarc.lu/terms.html"
-
-stats_service="/var/lib/monarc/stats-service"
-stats_service_prefix_url="dashboard"
-
-github_auth_token="<your-github-auth-token>"
+bourlalias="casesBO"
 ```
 
-In the section ``[dev]``, ``FO`` should be resolved by the internal DNS. It is
-the internal name of the front office server. Same for the other servers. If
-you can not change the internal DNS, it is possible to handle this thanks to
-the file ``/etc/hosts`` of the system.
+A good test for connectivity and Ansible configuration would be to call
+`ansible -m ping`; you should get an answer from all the FrontOffice servers,
+the BackOffice and reverse proxy (rpx).
 
-The variable *monarc\_sql\_password* is the password for the SQL database
-on the BO. Ansible will use it in order to create a new SQL user on the back
+In the section ``[dev]``, ``monarc-fo1.internal.monarc.lu`` should be resolved
+by the internal DNS. It is the internal name of the FrontOffice server. Same
+for the other servers. If you can not change the internal DNS, it is possible
+to handle this thanks to the file ``/etc/hosts`` of the system.
+
+The variable `monarc_sql_password` is the password for the SQL database on the
+BackOffice. Ansible will use it in order to create a new SQL user on the back
 office with the corresponding databases.
 
 You can have a look at this real [example file](examples/hosts).
 
 
-In ```monarcco/defaults/main.yaml``` configure the version of NodeJS. It will
-be added in the APT repositories.
-
-
-Finally, launch Ansible:
+Finally, launch Ansible from the `playbook` directory:
 
 ```bash
-ansible@CFG:~/ansible-ubuntu/playbook$ ansible-playbook -i ../inventory/ monarc.yaml --user ansible
+ansible@CFG:~/ansible-ubuntu/playbook$ ansible-playbook --diff monarc.yml
 ```
 
-Ansible will install and configure the back office, the front office and the
+Ansible will install and configure the back office, the front office(s) and the
 reverse proxy. Consequently the configuration server should be able to contact
 these servers through SSH. For more details on how to execute Ansible read the
 next section.
@@ -161,11 +161,11 @@ next section.
 ### Updating the inventory of Ansible
 
 Adding/removing a client to/from the Ansible inventory can be done with the
-script ``update.sh`` via cron as the user 'ansible'.
+script `update.sh` via cron as the user `ansible`.
 
 ```bash
 ansible@CFG:~$ crontal -l
-/home/ansible/ansible-ubuntu/playbook/update.sh /home/ansible/ansible-ubuntu/playbook/ $BO_ADDRESS `which ansible-playbook`
+0 *  * * *  /home/ansible/ansible-ubuntu/playbook/update.sh /home/ansible/ansible-ubuntu/playbook/ $BO_ADDRESS `which ansible-playbook` `which python3`
 ```
 
 Optionally as a fourth argument you can specify the Python executable
@@ -263,56 +263,26 @@ Generation of the certificate:
 # openssl req -x509 -nodes -days 1000 -newkey rsa:2048 -keyout /etc/sslkeys/monarc.key -out /etc/sslkeys/monarc.crt
 ```
 
-Then provide the address of the certificate (here monarc.crt) and the address
-of the certificate key in the configuration file (_inventory/hosts_).
-You can generally set _certificatechain_ to the empty string.
+And then edit `playbook/monarc.yml` to set `SSLCertificateFile:` and
+`SSLCertificateKeyFile:`, you **must** certbot support by setting
+`certbot_enabled: false`
 
 #### Let's Encrypt certificate
 
-Generation of the certificate:
+By default the playbook will attempt to generate a X509 ("https") certificate
+using certbot and Let's Encrypt.
 
-```bash
-$ sudo apt install python3-certbot-apache
-$ certbot certonly --agree-tos -m <your-email> --webroot -d <publicHost> -w /var/www/letsencrypt/
-```
+You don't need to set anything but you reverse proxy need an access to Let's
+Encrypt API servers - if you set up `http_proxy` values in inventory the
+certbot role will perform the right config for the renewal
 
-Check the generated configuration:
-
-```bash
-$ cat /etc/letsencrypt/renewal/<publicHost>.conf
-# renew_before_expiry = 30 days
-cert = /etc/letsencrypt/live/<publicHost>/cert.pem
-privkey = /etc/letsencrypt/live/<publicHost>/privkey.pem
-chain = /etc/letsencrypt/live/<publicHost>/chain.pem
-fullchain = /etc/letsencrypt/live/<publicHost>/fullchain.pem
-version = 0.40.0
-archive_dir = /etc/letsencrypt/archive/<publicHost>
-
-# Options and defaults used in the renewal process
-[renewalparams]
-authenticator = apache
-account = <account-number>
-server = https://acme-v02.api.letsencrypt.org/directory
-```
-
-It is convenient to use the _apache_ authenticator.
-
-Check if it is possible to renew the certificate in dry run mode:
-
-```bash
-$ sudo certbot renew --dry-run
-```
-
-Then, in the Ansible _inventory/hosts_ file simply set the value of
-_certificate_ to _letsencrypt_. And set the values of _certificatekey_ and
-_certificatechain_ to the empty string.
-
+The value of `emailFrom` will be used for the contact email while registering
+the account with Let's Encrypt.
 
 ### Postfix
 
-Installation of Postfix on the BO and the FO is not done by Ansible. You have
-to do it manually.
-
+Installation of Postfix on the BO and the FO is **not done** by Ansible. You
+have to do it manually.
 
 ## Issues
 
