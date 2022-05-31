@@ -1,22 +1,85 @@
 - name: clients
   hosts: dev
-  #strategy: debug
   roles:
-    - monarcfo
+    - role: monarcfo
+      tags: fo
 
 - name: master
   hosts: master
-  #strategy: debug
   roles:
-    - monarcbo
+    - role: monarcbo
+      tags: bo
 
 - name: rpx
   hosts: rpx
-  #strategy: debug
+  become: true
   roles:
-    - monarcrpx
+    - role: role-apache2
+      tags: rpx
+    - role: role-certbot
+      tags: rpx
+  vars:
+    apache2_enable_ssl: true
+    apache2_enabled_mods:
+      - proxy
+      - proxy_http
+      - rewrite
+      - deflate
+      - headers
+    apache2_disabled_vhosts:
+      - 000-default
+    apache2_default_server_admin: "support@conostix.com"
+    certbot_default_contact: "{{ apache2_default_server_admin }}"
+    certbot_config:
+      apache: [ "{{ clientDomain }}" ]
+    apache2_vhosts:
+    - ServerName: "{{ clientDomain }}"
+      DocumentRoot: /var/www/html
+      http_to_https_redirect: true
+      # **either** use certbot_enabled: true and certbot_config:
+      # **or** SSLCertificateFile and SSLCertificateKeyFile
+      certbot_enabled: true
+      # SSLCertificateFile: /etc/path/to/cert.fullchain.pem
+      # SSLCertificateKeyFile: /etc/path/to/cert.key
+      main_config: |
+        RewriteEngine On
+        RewriteCond %{REQUEST_METHOD} !^(GET|POST|PUT|PATCH|DELETE|HEAD)
+        RewriteRule .* - [R=405,L]
 
-- name: all monarc
-  hosts: monarc
-  roles:
-    - sshaccess
+        <IfModule mod_headers.c>
+           Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+           Header always set X-Content-Type-Options nosniff
+           Header always set X-XSS-Protection "1; mode=block"
+           Header always set X-Robots-Tag none
+           Header always set X-Frame-Options SAMEORIGIN
+           Header always set Permissions-Policy: interest-cohort=()
+        </IfModule>
+
+        SSLProxyEngine On
+        SSLProxyVerify none
+        SSLProxyCheckPeerCN off
+        SSLProxyCheckPeerName off
+        SSLProxyCheckPeerExpire off
+        ProxyPreserveHost On
+        ProxyTimeout 1200
+
+        ProxyPass /{{ bourlalias }}{{ '-' + env_prefix if env_prefix else '' }} http://{{ master }}
+        ProxyPassReverse /{{bourlalias }}{{ '-' + env_prefix if env_prefix else '' }} http://{{ master }}
+
+        {% if stats_service_prefix_url is defined %}
+        ProxyPass /{{ stats_service_prefix_url }} http://{{ master }}
+        ProxyPassReverse /{{ stats_service_prefix_url }} http://{{ master }}
+        {% endif %}
+
+        {% for server in groups['dev'] %}
+        {% if 'clients' in hostvars[server] %}
+        {% for key,client in hostvars[server]['clients'].items() %}
+        <Location /{{ client.name }}>
+          RequestHeader set "Host" "{{ client.name }}{{ '.' + hostvars[server].env_prefix if hostvars[server].env_prefix else '' }}.{{ clientDomain }}"
+          ProxyPass http://{{ server }}
+          ProxyPassReverse http://{{ server }}
+        </Location>
+        {% endfor %}
+        {% endif %}
+        {% endfor %}
+

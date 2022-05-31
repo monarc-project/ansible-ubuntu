@@ -8,8 +8,8 @@
 	create 640 root adm
 	sharedscripts
 	postrotate
-                if /etc/init.d/apache2 status > /dev/null ; then \
-                    /etc/init.d/apache2 reload > /dev/null; \
+                if invoke-rc.d apache2 status > /dev/null 2>&1; then \
+                    invoke-rc.d apache2 reload > /dev/null 2>&1; \
                 fi;
 	endscript
 	prerotate

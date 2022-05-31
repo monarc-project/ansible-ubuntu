@@ -1,2 +1,5 @@
 inventory/hosts
+inventory/host_vars
+inventory/group_vars
 *.retry
+secrets

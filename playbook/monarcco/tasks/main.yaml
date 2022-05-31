@@ -1,63 +1,24 @@
 ---
 
-- name: Add Nodesource apt key.
-  apt_key:
-    url: "https://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0x1655A0AB68576280"
-    id: "68576280"
-    state: present
-  become: True
-
-- name: Add NodeSource repositories for Node.js.
-  apt_repository:
-    repo: "{{ item }}"
-    state: present
-  with_items:
-    - "deb https://deb.nodesource.com/node_{{ nodejs_version }} {{ ansible_distribution_release }} main"
-    - "deb-src https://deb.nodesource.com/node_{{ nodejs_version }} {{ ansible_distribution_release }} main"
-  become: True
-
 - name: install php7 and nodejs packages
   apt:
     update_cache: True
     pkg:
-      - apache2
       - git
+      - apache2
       - libapache2-mod-php
       - mariadb-server
+      - python3-pymysql
       - php
       - php-cli
-      - php-mbstring
       - php-bcmath
-      - php-xml
-      - php-mysql
-      - php-intl
-      - php-zip
       - php-imagick
-      - nodejs
+      - php-intl
+      - php-mbstring
+      - php-mysql
+      - php-xml
+      - php-zip
       - gettext
       - jq
     state: present
-  become: True
-
-- name: Install common Python dependencies
-  pip:
-    name: PyMySQL
-
-- name: apache ssl
-  apache2_module:
-    name: ssl
-  become: True
-  notify:
-    - restart apache
-
-- name: monarc directory
-  file:
-    path: /var/lib/monarc
-    state: directory
-    owner: "{{ ansible_user }}"
-    mode: 0755
-  become: True
-
-- name: install grunt
-  command: npm install -g grunt-cli
   become: True

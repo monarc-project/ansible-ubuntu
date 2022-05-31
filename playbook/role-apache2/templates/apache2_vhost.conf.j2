@@ -1,0 +1,94 @@
+# {{ ansible_managed }}
+{% if http_to_https_redirect is defined and http_to_https_redirect | bool %}
+<VirtualHost {{ HTTPVirtualHost }}>
+    ServerAdmin {{ ServerAdmin }}
+    ServerName {{ ServerName }}
+{% if ServerAlias is defined %}
+{% for alias in ServerAlias %}
+    ServerAlias {{ alias }}
+{% endfor %}
+{% endif %}
+{% if _use_itk %}
+    AssignUserID {{ UserID }} {{ GroupID }}
+{% endif %}
+
+    DocumentRoot {{ DocumentRoot }}
+    RewriteEngine on
+    RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+</VirtualHost>
+{% endif %}
+
+{% if Listen %}
+Listen {{ Listen }}
+{% endif -%}
+<VirtualHost {{ VirtualHost }}>
+    ServerAdmin {{ ServerAdmin }}
+{% if _use_itk %}
+    AssignUserID {{ UserID }} {{ GroupID }}
+{% endif %}
+    DocumentRoot {{ DocumentRoot }}
+    ServerName {{ ServerName }}
+{% if ServerAlias is defined %}
+{% for alias in ( [ ServerAlias ] | flatten ) %}
+    ServerAlias {{ alias }}
+{% endfor %}
+{% endif %}
+
+{% if SSLCertificateFile and cert_available %}
+    SSLCertificateFile {{ SSLCertificateFile }}
+{% elif ssl_enabled %}
+    SSLCertificateFile {{ apache2_snakeoil_cert }}
+{% endif %}
+{% if SSLCertificateChainFile and cert_available %}
+    SSLCertificateChainFile {{ SSLCertificateChainFile }}
+{% endif %}
+{% if SSLCertificateKeyFile and cert_available %}
+    SSLCertificateKeyFile {{ SSLCertificateKeyFile }}
+{% elif ssl_enabled %}
+    SSLCertificateKeyFile {{ apache2_snakeoil_key }}
+{% endif %}
+
+    CustomLog {{ CustomLog }} {{ CustomLogFormat }}
+    ErrorLog {{ ErrorLog }}
+
+{% if certbot_enabled is defined and certbot_enabled | bool %}
+    IncludeOptional /etc/letsencrypt/options-ssl-apache.conf
+{% endif %}
+
+    # security related headers
+{% if hsts %}
+{% if hsts | bool %}{% set hsts = apache2_hsts %}{% endif %}
+    Header always set Strict-Transport-Security {{ hsts }}
+{% endif %}
+{% if x_frame_options %}
+{% if x_frame_options | bool %}{% set x_frame_options = apache2_x_frame_options %}{% endif %}
+    Header always set X-Frame-Options "{{ x_frame_options }}"
+{% endif %}
+{% if x_content_type_options %}
+{% if x_content_type_options | bool %}{% set x_content_type_options = apache2_x_content_type_options %}{% endif %}
+    Header always set X-Content-Type-Options "{{ x_content_type_options }}"
+{% endif %}
+{% if referrer_policy %}
+{% if referrer_policy | bool %}{% set referrer_policy = apache2_referrer_policy %}{% endif %}
+    Header always set Referrer-Policy "{{ referrer_policy }}"
+{% endif %}
+{% if content_security_policy %}
+{% if content_security_policy | bool %}{% set content_security_policy = apache2_content_security_policy %}{% endif %}
+{% if content_security_policy_enforce | bool %}
+    Header always set Content-Security-Policy "{{ content_security_policy }}"
+{% else %}
+    Header always set Content-Security-Policy-Report-Only "{{ content_security_policy }}"
+{% endif %}
+{% endif %}
+
+    # main configuration
+    {{ main_config | indent(width=4) }}
+
+    # extra configuration
+    {{ extra_config | indent(width=4) }}
+
+{% if apache2_log_virtualhost %}
+    # extended log format with VirtualHost name
+    LogFormat "%v %h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined_vhost
+{% endif %}
+</VirtualHost>

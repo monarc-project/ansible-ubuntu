@@ -1,4 +1,9 @@
 ---
+- name: apache2ctl configtest
+  command: apache2ctl configtest
+  changed_when: false
+  become: True
+
 - name: reload apache
   service: name=apache2 state=reloaded
   become: True

@@ -1,0 +1,5 @@
+monarcbo_release_url: "https://github.com/remil1000/MonarcAppBO/releases/download/{{ monarcbo_version }}/MonarcAppBO-{{ monarcbo_version }}.tar.gz"
+monarcbo_version: "v2.11.1-p1"
+monarcbo_force_db_init: false
+
+monarcbo_clean_cache: false

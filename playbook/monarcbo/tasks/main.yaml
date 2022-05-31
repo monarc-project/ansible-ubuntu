@@ -1,85 +1,96 @@
 ---
 
-- name: checkout repository
-  git:
-    repo: https://github.com/monarc-project/MonarcAppBO
-    dest: /var/lib/monarc/bo/MonarcAppBO/
-    version: master
-    update: no
-  register: appbo_pull
+- assert:
+    that:
+      - monarc_sql_password is defined
 
-- name: create module dir
+- name: create monarc directory
   file:
-    path: /var/lib/monarc/bo/MonarcAppBO/module/Monarc
     state: directory
+    path: /var/lib/monarc/bo
+    owner: ansible
+    group: ansible
+  become: True
+
+- name: create monarc releases directory
+  file:
+    state: directory
+    path: /var/lib/monarc/releases/
+
+- name: download release
+  get_url:
+    url: "{{ monarcbo_release_url }}"
+    dest: "/var/lib/monarc/releases/{{ monarcbo_release_url | basename }}"
+    owner: ansible
+    group: ansible
+  environment:
+    http_proxy: "{{ http_proxy | default('') }}"
+    https_proxy: "{{ https_proxy | default('') }}"
+
+- name: create release directory
+  file:
+    state: directory
+    dest: "/var/lib/monarc/releases/{{ monarcbo_release_url | basename | replace('.tar.gz', '') }}"
+
+- name: unarchive release
+  unarchive:
+    remote_src: yes
+    src: "/var/lib/monarc/releases/{{ monarcbo_release_url | basename }}"
+    dest: "/var/lib/monarc/releases/{{ monarcbo_release_url | basename | replace('.tar.gz', '') }}"
+
+- name: create release symlink
+  file:
+    state: link
+    src: "/var/lib/monarc/releases/{{ monarcbo_release_url | basename | replace('.tar.gz', '') }}"
+    dest: "/var/lib/monarc/bo/MonarcAppBO"
+
+- name: create data directory
+  file:
+    state: directory
+    path: "/var/lib/monarc/bo-data"
+    owner: "www-data"
+  become: True
+
+- name: create data directory symlink
+  file:
+    state: link
+    dest: "/var/lib/monarc/bo/MonarcAppBO/data"
+    src: "/var/lib/monarc/bo-data"
 
 - name: deleting cache
   file:
-    path: /var/lib/monarc/bo/MonarcAppBO/data/cache/
+    path: "/var/lib/monarc/bo/MonarcAppBO/data/cache"
     state: absent
+  when: monarcbo_clean_cache | bool
   become: True
 
 - name: deleting Doctrine cache
   file:
-    path: /var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule/
+    path: "/var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule"
     state: absent
-  become: True
-
-- name: create data dir
-  file:
-    path: /var/lib/monarc/bo/MonarcAppBO/data
-    state: directory
-    owner: "www-data"
+  when: monarcbo_clean_cache | bool
   become: True
 
 - name: create data/cache dir
   file:
-    path: /var/lib/monarc/bo/MonarcAppBO/data/cache
+    path: "{{ item }}"
     state: directory
     owner: "www-data"
+  loop:
+    - "/var/lib/monarc/bo/MonarcAppBO/data/cache"
+    - "/var/lib/monarc/bo/MonarcAppBO/data/LazyServices/Proxy"
+    - "/var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule/Proxy"
   become: True
-
-- name: create Proxy dir
-  file:
-    name: /var/lib/monarc/bo/MonarcAppBO/data/LazyServices/Proxy
-    state: directory
-    owner: www-data
-  become: True
-
-- name: create Doctrine cache
-  file:
-    path: /var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule/Proxy
-    state: directory
-    owner: "www-data"
-  become: True
-
-- name: set github auth token for composer
-  command: composer config -g github-oauth.github.com {{ github_auth_token }}
-
-- name: composer install
-  shell: composer install
-  args:
-    chdir: /var/lib/monarc/bo/MonarcAppBO/
-  when: appbo_pull.before == None
-
-- name: MonarcCore link
-  file:
-    src: /var/lib/monarc/bo/MonarcAppBO/vendor/monarc/core
-    dest: /var/lib/monarc/bo/MonarcAppBO/module/Monarc/Core
-    state: link
-
-- name: backoffice link
-  file:
-    src: /var/lib/monarc/bo/MonarcAppBO/vendor/monarc/backoffice
-    dest: /var/lib/monarc/bo/MonarcAppBO/module/Monarc/BackOffice
-    state: link
 
 - name: set MariaDB bind-address to 0.0.0.0
-  shell: printf '\n[mysqld]\nbind-address = 0.0.0.0\n' | sudo tee -a /etc/mysql/my.cnf
-  become: True
-  when: appbo_pull.before == None
+  ini_file:
+    path: "/etc/mysql/my.cnf"
+    section: "mysqld"
+    option: "bind-address"
+    value: "0.0.0.0"
   notify:
     - restart mysql
+  become: True
 
 - name: create monarc bo database
   mysql_db:
@@ -91,6 +102,7 @@
   mysql_db:
     name: monarc_common
     config_file: /etc/mysql/debian.cnf
+  register: _monarcbo_db_creation
   become: True
 
 - name: create monarc bo sql user
@@ -102,16 +114,12 @@
   become: True
 
 - name: initializes the database structure
-  shell: mysql -u monarc -p"{{ monarc_sql_password }}" monarc_common < db-bootstrap/monarc_structure.sql
-  args:
-    chdir: /var/lib/monarc/bo/MonarcAppBO/
-  when: appbo_pull.before == None
+  shell: mysql --defaults-file=/etc/mysql/debian.cnf monarc_common < /var/lib/monarc/bo/MonarcAppBO/db-bootstrap/monarc_structure.sql
+  when: _monarcbo_db_creation is changed or monarcbo_force_db_init | bool
 
 - name: populates the database
-  shell: mysql -u monarc -p"{{ monarc_sql_password }}" monarc_common < db-bootstrap/monarc_data.sql
-  args:
-    chdir: /var/lib/monarc/bo/MonarcAppBO/
-  when: appbo_pull.before == None
+  shell: mysql --defaults-file=/etc/mysql/debian.cnf monarc_common < /var/lib/monarc/bo/MonarcAppBO/db-bootstrap/monarc_data.sql
+  when: _monarcbo_db_creation is changed or monarcbo_force_db_init | bool
 
 - name: configuration template
   template:
@@ -119,20 +127,32 @@
     dest: /var/lib/monarc/bo/MonarcAppBO/config/autoload/local.php
     mode: 0440
     owner: ansible
-    group: ansible
+    group: www-data
   become: True
 
 - name: update-all
-  shell: "scripts/update-all.sh"
+  shell: "yes | bash -xe scripts/update-all.sh"
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
-  when: appbo_pull.before == None
+  when: _monarcbo_db_creation is changed
+  environment:
+    http_proxy: "{{ http_proxy | default('') }}"
+    https_proxy: "{{ https_proxy | default('') }}"
+
+- name: run database phinx migration jobs
+  shell: "php ./vendor/robmorgan/phinx/bin/phinx migrate -c ./modules/{{ item }}/migrations/phinx.php"
+  args:
+    chdir: /var/lib/monarc/bo/MonarcAppBO/
+  loop:
+    - "Monarc/Core"
+    - "Monarc/BackOffice"
+  when: _monarcbo_db_creation is changed or monarcbo_force_db_init | bool
 
 - name: create initial admin user
-  shell: php ./vendor/robmorgan/phinx/bin/phinx seed:run -c ./module/MonarcBO/migrations/phinx.php
+  shell: php ./vendor/robmorgan/phinx/bin/phinx seed:run -c ./module/Monarc/BackOffice/migrations/phinx.php
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
-  when: appbo_pull.before == None
+  when: _monarcbo_db_creation is changed or monarcbo_force_db_init | bool
 
 - name: create readonly access to monarc common
   mysql_user:
@@ -142,27 +162,30 @@
     priv: "monarc_common.*:SELECT"
     config_file: /etc/mysql/debian.cnf
   with_dict: "{{ dict(groups['dev'] | map('extract',hostvars,'clients') | map('dictsort') | sum(start=[]) | list) }}"
+  loop_control:
+    label: "{{ item.key }}"
   when: item is defined
   become: True
 
 - name: create spool directory
-  file: name=/var/spool/monarc owner=www-data state=directory
-  become: True
-
-- name: create temp directory for parsing new clients
-  file: name=/var/tmp/monarc/created recurse=True state=directory owner=www-data
-  become: True
-
-- name: create temp directory for parsing deleted clients
-  file: name=/var/tmp/monarc/deleted recurse=True state=directory owner=www-data
+  file: 
+    state: directory
+    name: /var/spool/monarc
+    owner: "www-data"
   become: True
 
 - name: install cat script for new clients
-  copy: src=new_monarc_clients.sh dest=/usr/local/bin/new_monarc_clients.sh mode=0755
+  copy:
+    src: new_monarc_clients.sh
+    dest: /usr/local/bin/new_monarc_clients.sh
+    mode: "0755"
   become: True
 
 - name: install cat script for deleted clients
-  copy: src=del_monarc_clients.sh dest=/usr/local/bin/del_monarc_clients.sh mode=0755
+  copy:
+    src: del_monarc_clients.sh
+    dest: /usr/local/bin/del_monarc_clients.sh
+    mode: "0755"
   become: True
 
 - name: rewrite apache module
@@ -173,29 +196,39 @@
   notify:
     - restart apache
 
+# force apache restart as we may push mod_rewrite config before module is enabled
+- meta: flush_handlers
+
 - name: apache vhost configuration
   template: src=apache_vhost_conf.j2 dest=/etc/apache2/sites-available/{{ ansible_fqdn }}.conf
-  become: True
   notify:
+    - apache2ctl configtest
     - reload apache
+  become: True
 
 - name: deactivates the default virtualhost
   command: a2dissite 000-default.conf
-  become: True
+  changed_when: "'disabled.' in _a2dissite.stdout"
+  register: _a2dissite
   notify:
+    - apache2ctl configtest
     - reload apache
+  become: True
 
 - name: activates the virtualhost
   command: a2ensite {{ ansible_fqdn }}
-  become: True
+  changed_when: "'Enabling site' in _a2ensite.stdout"
+  register: _a2ensite
   notify:
+    - apache2ctl configtest
     - reload apache
+  become: True
 
 # - name: create Stats Service dir
 #   file:
 #     name: {{ stats_service }}
 #     state: directory
-#     owner: www-data
+#     owner: "www-data"
 #   become: True
 #   when: stats_service is defined
 
@@ -205,14 +238,12 @@
 #     chdir: "{{ stats_service }}"
 #     executable: /bin/bash
 #   when: stats_service is defined
-#   become: yes
-#   become_user: ansible
 
 - name: create new client for stats collection
   command: ./contrib/create_client.sh {{item.value.name}} {{item.value.statsToken}}
   with_dict: "{{ dict(groups['dev'] | map('extract',hostvars,'clients') | map('dictsort') | sum(start=[]) | list) }}"
-  become: yes
-  become_user: ansible
+  loop_control:
+    label: "{{ item.key }}"
   args:
     chdir: "{{ stats_service }}"
   when:
