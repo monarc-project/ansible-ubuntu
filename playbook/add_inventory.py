@@ -46,10 +46,12 @@ def run():
             path = os.path.join(
                 os.path.abspath(INVENTORY), "host_vars/", new_client["server"]
             )
-            if not os.path.exists(path):
+            if not os.path.isdir(path):
                 os.makedirs(path)
 
             generated_file = os.path.join(path, "generated.yaml")
+            if not os.path.exists(generated_file):
+                open(generated_file, 'a').close()
 
             # Read the yaml file
             with open(generated_file, "r") as stream:
