@@ -217,28 +217,7 @@
     - reload apache
   become: True
 
-# - name: create Stats Service dir
-#   file:
-#     name: {{ stats_service }}
-#     state: directory
-#     owner: "www-data"
-#   become: True
-#   when: stats_service is defined
-
-# - name: Update Stats Service
-#   shell: "source /home/ansible/.bashrc && ./contrib/update.sh"
-#   args:
-#     chdir: "{{ stats_service }}"
-#     executable: /bin/bash
-#   when: stats_service is defined
-
-- name: create new client for stats collection
-  command: ./contrib/create_client.sh {{item.value.name}} {{item.value.statsToken}}
-  with_dict: "{{ dict(groups['dev'] | map('extract',hostvars,'clients') | map('dictsort') | sum(start=[]) | list) }}"
-  loop_control:
-    label: "{{ item.key }}"
-  args:
-    chdir: "{{ stats_service }}"
+- include_tasks: statsservice.yml
+  tags: [ always, stats ]
   when:
-    - item is defined
-    - stats_service is defined
+    - ( monarc_enable_statsservice | bool ) or ( monarc_statsservice_admin_token is defined )

@@ -28,12 +28,12 @@
       - headers
     apache2_disabled_vhosts:
       - 000-default
-    apache2_default_server_admin: "support@conostix.com"
+    apache2_default_server_admin: "{{ emailFrom }}"
     certbot_default_contact: "{{ apache2_default_server_admin }}"
     certbot_config:
-      apache: [ "{{ clientDomain }}" ]
+      apache: [ "{{ publicHost }}" ]
     apache2_vhosts:
-    - ServerName: "{{ clientDomain }}"
+    - ServerName: "{{ publicHost }}"
       DocumentRoot: /var/www/html
       http_to_https_redirect: true
       # **either** use certbot_enabled: true and certbot_config:
@@ -66,16 +66,24 @@
         ProxyPass /{{ bourlalias }}{{ '-' + env_prefix if env_prefix else '' }} http://{{ master }}
         ProxyPassReverse /{{bourlalias }}{{ '-' + env_prefix if env_prefix else '' }} http://{{ master }}
 
-        {% if stats_service_prefix_url is defined %}
-        ProxyPass /{{ stats_service_prefix_url }} http://{{ master }}
-        ProxyPassReverse /{{ stats_service_prefix_url }} http://{{ master }}
+        {% if monarc_statsservice_url is defined %}
+        # MONARC is dumb and eats path for lunch
+        RewriteEngine On
+        RewriteCond %{HTTP_USER_AGENT} ^MONARC/[0-9].*$
+        RewriteCond %{REQUEST_URI} !{{ monarc_statsservice_url | urlsplit('path') }}/
+        RewriteRule /(.*) {{ monarc_statsservice_url | urlsplit('path') }}/$1 [R,L]
+
+        <Location {{ monarc_statsservice_url | urlsplit('path') }}>
+          ProxyPass http://{{ master }}:{{ monarc_statsservice_port | default('5000')}}{{ monarc_statsservice_url | urlsplit('path') }}
+          ProxyPassReverse http://{{ master }}:{{ monarc_statsservice_port | default('5000') }}
+        </Location>
         {% endif %}
 
         {% for server in groups['dev'] %}
         {% if 'clients' in hostvars[server] %}
         {% for key,client in hostvars[server]['clients'].items() %}
         <Location /{{ client.name }}>
-          RequestHeader set "Host" "{{ client.name }}{{ '.' + hostvars[server].env_prefix if hostvars[server].env_prefix else '' }}.{{ clientDomain }}"
+          RequestHeader set "Host" "{{ client.name }}{{ '.' + hostvars[server].env_prefix if hostvars[server].env_prefix else '' }}.{{ publicHost }}"
           ProxyPass http://{{ server }}
           ProxyPassReverse http://{{ server }}
         </Location>

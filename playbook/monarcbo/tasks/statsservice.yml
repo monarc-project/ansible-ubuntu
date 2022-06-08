@@ -1,0 +1,97 @@
+- assert:
+    that:
+      - monarc_statsservice_secret_key is defined
+  tags: always
+
+- include_role:
+    name: role-docker
+    apply:
+      tags: docker
+      become: True
+  tags: always
+
+- name: create statsservice docker network
+  docker_network:
+    name: "statsservice"
+    ipam_config:
+    - subnet: "{{ monarc_statsservice_network }}"
+  become: True
+  tags: stats
+
+- name: start statsservice database
+  docker_container:
+    hostname: "statsservice-db"
+    name: "statsservice-db"
+    image: "postgres:14"
+    env:
+      POSTGRES_USER: "statsservice"
+      POSTGRES_PASSWORD: "statsservice"
+      POSTGRES_DB: "statsservice"
+    networks:
+      - name: "statsservice"
+    volumes:
+      - "/var/lib/monarc/statsservice-db:/var/lib/postgresql/data"
+    state: started
+    purge_networks: yes
+    restart_policy: always
+  become: True
+  tags: stats
+
+- name: start statsservice container
+  docker_container:
+    hostname: "statsservice"
+    name: "statsservice"
+    image: "{{ monarc_statsservice_image }}"
+    env:
+      DB_HOSTNAME: "statsservice-db"
+      ADMIN_EMAIL: "{{ emailFrom }}"
+      ARMIN_URL: "https://{{ publicHost }}"
+      SECRET_KEY: "{{ monarc_statsservice_secret_key }}"
+      ADMIN_TOKEN: "{{ monarc_statsservice_admin_token | default(omit) }}"
+      DEBUG: "0"
+      ENVIRONMENT: "production"
+      INSTANCE_URL: "{{ monarc_statsservice_url }}"
+      SCRIPT_NAME: "{{ monarc_statsservice_url | urlsplit('path') }}"
+    networks:
+      - name: "statsservice"
+    ports:
+      - "0.0.0.0:{{ monarc_statsservice_port }}:5000"
+    volumes:
+      - "/var/lib/monarc/statsservice-var:/app/var"
+    state: started
+    purge_networks: yes
+    restart_policy: always
+  become: True
+  tags: stats
+
+# ./contrib/create_client.sh {{item.value.name}} {{item.value.statsToken}}
+- name: create new client for stats collection
+  delegate_to: "{{ master }}"
+  run_once: true
+  uri:
+    url: "http://{{ master }}:{{ monarc_statsservice_port }}/{{ monarc_statsservice_url | urlsplit('path') }}/api/v1/client/"
+    method: POST
+    headers:
+      X-API-KEY: "{{ monarc_statsservice_admin_token }}"
+    body_format: json
+    body:
+      name: "{{ item.value.name }}"
+      is_sharing_enabled: true
+      token: "{{ item.value.statsToken }}"
+    force_basic_auth: yes
+    status_code: [ 201, 304 ] # 201 created, 304 already exists
+  with_dict: "{{ dict(groups['dev'] | map('extract',hostvars,'clients') | map('dictsort') | sum(start=[]) | list) }}"
+  loop_control:
+    label: "{{ item.value.name }}"
+  # retry 12 times over 60 seconds, waiting for container to start
+  register: _api_new_client
+  until: _api_new_client.status in [ 201, 304 ] # 201 created, 304 already exists
+  retries: 12
+  delay: 5
+  when:
+    - item is defined
+    - item.value is defined
+    - item.value.name is defined
+    - item.value.statsToken is defined
+  become: True
+  tags: stats

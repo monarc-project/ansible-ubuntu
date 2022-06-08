@@ -1,0 +1,68 @@
+- name: create etc docker directory
+  file:
+    state: directory
+    path: /etc/docker/
+    owner: root
+    group: root
+
+- name: generate docker daemon.json config
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart docker
+
+- name: install docker package
+  package:
+    name: docker.io
+    state: present
+
+- name: install docker-py package for ansible
+  package:
+    name: "{{ ansible_python.executable | basename }}-docker"
+    state: present
+
+- fail:
+    msg: "TODO: implement proxy config with init system other than systemd"
+  when:
+    - ansible_service_mgr != "systemd"
+    - docker_config_proxy is defined or docker_config_noproxy is defined
+
+- block:
+    - name: create systemd unit override directory for docker
+      file:
+        state: directory
+        path: "/etc/systemd/system/docker.service.d"
+    - name: configure docker systemd unit with http_proxy
+      copy:
+        content: |
+          [Service]
+          {% if docker_config_proxy is defined %}
+          Environment=HTTP_PROXY={{ docker_config_proxy }}
+          Environment=HTTPS_PROXY={{ docker_config_proxy }}
+          {% endif %}
+          {% if docker_config_noproxy is defined %}
+          Environment=NO_PROXY={{ docker_config_noproxy | default("") }}
+          {% endif %}
+
+        dest: "/etc/systemd/system/docker.service.d/proxy.conf"
+      notify:
+        - systemctl daemon-reload
+        - restart docker
+  when:
+    - ansible_service_mgr == "systemd"
+    - docker_config_proxy is defined or docker_config_noproxy is defined
+
+- name: start and enable docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: install docker-compose
+  package:
+    name: docker-compose
+    state: present
+  when: docker_install_compose | bool

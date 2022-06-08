@@ -1,0 +1,11 @@
+docker_config_bip: "172.17.0.1/16"
+
+_docker_default_daemon_config:
+  bip: "{{ docker_config_bip }}"
+
+docker_daemon_config: "{{ _docker_default_daemon_config }}"
+
+#docker_config_proxy:
+#docker_config_noproxy:
+#
+docker_install_compose: false
