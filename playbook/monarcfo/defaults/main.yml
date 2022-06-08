@@ -4,3 +4,5 @@ monarcfo_version: "v2.11.1-p1"
 clients: {}
 
 monarcfo_clean_cache: false
+
+monarc_enable_statsservice: false

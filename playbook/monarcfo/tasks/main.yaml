@@ -39,6 +39,7 @@
     state: link
     src: "/var/lib/monarc/releases/{{ monarcfo_release_url | basename | replace('.tar.gz', '') }}"
     dest: "/var/lib/monarc/fo"
+  register: _updated_release_symlink
 
 - name: create data directory
   file:
@@ -72,10 +73,30 @@
     label: "{{ item.key }}"
   become: True
 
-# TODO - do this in a cleaner way
-- name: disable all apache virtual hosts
-  command: find /etc/apache2/sites-enabled/ -type l -exec rm -f "{}" \;
+- name: list currently enabled vhosts
+  find:
+    paths:
+      - /etc/apache2/sites-enabled/
+    depth: 2
+    patterns: "*.conf"
+    file_type: link
+  register: _enabled_vhosts
+  tags: always
+
+- name: deactivates extra not needed virtualhosts
+  command: a2dissite "{{ item }}"
+  changed_when: "'disabled.' in _a2dissite.stdout"
+  register: _a2dissite
+  loop: "{{ _enabled_clients_vhosts | difference( clients.keys() ) }}"
+  loop_control:
+    label: "disabling {{ item }}"
+  vars:
+    _enabled_clients_vhosts: |
+      {{ _enabled_vhosts.files | map(attribute='path') | map('basename') | map('regex_replace', '\.conf$', '') | sort | list }}
   become: True
+  notify:
+    - apache2ctl configtest
+    - reload apache
 
 - name: client apache configuration
   template:
@@ -85,15 +106,6 @@
   loop: "{{ clients | dict2items }}"
   loop_control:
     label: "{{ item.key }}"
-  become: True
-
-- name: deactivates the default virtualhost
-  command: a2dissite 000-default.conf
-  changed_when: "'disabled.' in _a2dissite.stdout"
-  register: _a2dissite
-  notify:
-    - apache2ctl configtest
-    - reload apache
   become: True
 
 - name: enable apache conf
@@ -146,12 +158,12 @@
   loop_control:
     label: "{{ item.key }}"
   become: True
-  
+
 - name: deleting client cache
   file:
     path: /var/www/{{ item.value.name }}/data/cache
     state: absent
-  when: monarcfo_clean_cache | bool
+  when: ( monarcfo_clean_cache | bool ) or ( _updated_release_symlink is changed )
   loop: "{{ clients | dict2items }}"
   loop_control:
     label: "{{ item.key }}"
@@ -161,7 +173,7 @@
   file:
     path: /var/www/{{ item.value.name }}/data/DoctrineORMModule/
     state: absent
-  when: monarcfo_clean_cache | bool
+  when: ( monarcfo_clean_cache | bool ) or ( _updated_release_symlink is changed )
   loop: "{{ clients | dict2items }}"
   loop_control:
     label: "{{ item.key }}"
@@ -171,7 +183,7 @@
   file:
     path: /var/www/{{ item.value.name }}/data/LazyServices/
     state: absent
-  when: monarcfo_clean_cache | bool
+  when: ( monarcfo_clean_cache | bool ) or ( _updated_release_symlink is changed )
   loop: "{{ clients | dict2items }}"
   loop_control:
     label: "{{ item.key }}"
@@ -202,6 +214,7 @@
     path: "/var/www/{{ item.value.name }}/data/upgrade"
     owner: www-data
     state: touch
+  when: ( monarcfo_clean_cache | bool ) or ( _updated_release_symlink is changed )
   loop: "{{ clients | dict2items }}"
   loop_control:
     label: "{{ item.key }}"
@@ -218,19 +231,16 @@
   become: True
 
 - name: copy default deliveries templates
-  command: cp -nR /var/lib/monarc/fo/deliveries/ /var/www/{{item.value.name}}/
-  loop: "{{ clients | dict2items }}"
-  loop_control:
-    label: "{{ item.key }}"
-  become: True
-  #tags: dev
-
-- name: copy default deliveries templates
   synchronize:
     src: /var/lib/monarc/fo/deliveries
     dest: "/var/www/{{ item.value.name }}"
-    rsync_opts: 
+    # keep existing file modified by client/user
+    rsync_opts:
       - "--ignore-existing"
+    owner: no # owner set is done right after
+    archive: no # do not keep owner (default for archive opt)
+    recursive: yes # disabling archive also disabled recursive flag
+    times: yes # keep file mtime
   delegate_to: "{{ inventory_hostname }}"
   loop: "{{ clients | dict2items }}"
   loop_control:
@@ -275,22 +285,24 @@
   args:
     chdir: /var/lib/monarc/fo
   loop: "{{ clients | dict2items }}"
-  loop_control:
-    label: "{{ item.key }}"
-
-- name: bootstrap file
-  template:
-    src: client_bootstrap.j2
-    dest: "/tmp/bootstrap_{{ item.value.name }}.sql"
-  loop: "{{ clients | dict2items }}"
+  register: _client_upgrade
+  changed_when: "{{ 'migrating' in _client_upgrade.stdout }}"
   loop_control:
     label: "{{ item.key }}"
 
 - name: initialize client db
-  shell: "if [ $( echo 'select count(id) from users;' | mysql --defaults-file=/etc/mysql/debian.cnf -N {{ item.value.name }} ) -eq 0  ] ; then mysql --defaults-file=/etc/mysql/debian.cnf {{ item.value.name }} < /tmp/bootstrap_{{ item.value.name }}.sql ;  fi"
+  command: "mysql --defaults-file=/etc/mysql/debian.cnf {{ item.value.name }}"
   args:
+    stdin: "{{ item.value.sql_bootstrap }}"
     chdir: /var/lib/monarc/fo
   loop: "{{ clients | dict2items }}"
+  register: _client_init
+  changed_when:
+    - _client_init.stdout == ""
+    - _client_init.rc == 0
+  failed_when:
+    - _client_init.rc != 0
+    - not "Duplicate entry '1' for key 'PRIMARY'" in _client_init.stderr
   loop_control:
     label: "{{ item.key }}"
   become: True
