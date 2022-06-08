@@ -89,6 +89,7 @@
   retries: 12
   delay: 5
   when:
+    - not ansible_check_mode # ignore until in check mode
     - item is defined
     - item.value is defined
     - item.value.name is defined
