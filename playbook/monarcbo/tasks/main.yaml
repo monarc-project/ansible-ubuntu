@@ -43,6 +43,8 @@
     state: link
     src: "/var/lib/monarc/releases/{{ monarcbo_release_url | basename | replace('.tar.gz', '') }}"
     dest: "/var/lib/monarc/bo/MonarcAppBO"
+  register: _updated_release_symlink
+  tags: always
 
 - name: create data directory
   file:
@@ -61,14 +63,14 @@
   file:
     path: "/var/lib/monarc/bo/MonarcAppBO/data/cache"
     state: absent
-  when: monarcbo_clean_cache | bool
+  when: ( monarcbo_clean_cache | bool ) or ( _updated_release_symlink is changed )
   become: True
 
 - name: deleting Doctrine cache
   file:
     path: "/var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule"
     state: absent
-  when: monarcbo_clean_cache | bool
+  when: ( monarcbo_clean_cache | bool ) or ( _updated_release_symlink is changed )
   become: True
 
 - name: create data/cache dir
@@ -94,15 +96,12 @@
 
 - name: create monarc bo database
   mysql_db:
-    name: monarc_master
-    config_file: /etc/mysql/debian.cnf
-  become: True
-
-- name: create monarc common database
-  mysql_db:
-    name: monarc_common
+    name: "{{ item }}"
     config_file: /etc/mysql/debian.cnf
   register: _monarcbo_db_creation
+  loop:
+    - monarc_master
+    - monarc_common
   become: True
 
 - name: create monarc bo sql user
@@ -115,10 +114,12 @@
 
 - name: initializes the database structure
   shell: mysql --defaults-file=/etc/mysql/debian.cnf monarc_common < /var/lib/monarc/bo/MonarcAppBO/db-bootstrap/monarc_structure.sql
+  become: True
   when: _monarcbo_db_creation is changed or monarcbo_force_db_init | bool
 
 - name: populates the database
   shell: mysql --defaults-file=/etc/mysql/debian.cnf monarc_common < /var/lib/monarc/bo/MonarcAppBO/db-bootstrap/monarc_data.sql
+  become: True
   when: _monarcbo_db_creation is changed or monarcbo_force_db_init | bool
 
 - name: configuration template
@@ -130,23 +131,15 @@
     group: www-data
   become: True
 
-- name: update-all
-  shell: "yes | bash -xe scripts/update-all.sh"
-  args:
-    chdir: /var/lib/monarc/bo/MonarcAppBO/
-  when: _monarcbo_db_creation is changed
-  environment:
-    http_proxy: "{{ http_proxy | default('') }}"
-    https_proxy: "{{ https_proxy | default('') }}"
-
 - name: run database phinx migration jobs
-  shell: "php ./vendor/robmorgan/phinx/bin/phinx migrate -c ./modules/{{ item }}/migrations/phinx.php"
+  shell: "php ./vendor/robmorgan/phinx/bin/phinx migrate -c ./module/{{ item }}/migrations/phinx.php"
   args:
     chdir: /var/lib/monarc/bo/MonarcAppBO/
   loop:
     - "Monarc/Core"
     - "Monarc/BackOffice"
-  when: _monarcbo_db_creation is changed or monarcbo_force_db_init | bool
+  register: _phinx_migrate
+  changed_when: "{{ 'migrating' in _phinx_migrate.stdout }}"
 
 - name: create initial admin user
   shell: php ./vendor/robmorgan/phinx/bin/phinx seed:run -c ./module/Monarc/BackOffice/migrations/phinx.php
@@ -168,7 +161,7 @@
   become: True
 
 - name: create spool directory
-  file: 
+  file:
     state: directory
     name: /var/spool/monarc
     owner: "www-data"
