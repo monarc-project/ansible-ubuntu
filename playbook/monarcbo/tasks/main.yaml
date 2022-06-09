@@ -46,17 +46,6 @@
   register: _updated_release_symlink
   tags: always
 
-- name: create data/cache dir
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: "www-data"
-  loop:
-    - "/var/lib/monarc/bo/MonarcAppBO/data/cache"
-    - "/var/lib/monarc/bo/MonarcAppBO/data/LazyServices/Proxy"
-    - "/var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule/Proxy"
-  become: True
-
 - name: configuration template
   template:
     src: local.php.j2
@@ -92,6 +81,17 @@
     path: "/var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule"
     state: absent
   when: ( monarcbo_clean_cache | bool ) or ( _updated_release_symlink is changed )
+  become: True
+
+- name: create data/cache dir
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "www-data"
+  loop:
+    - "/var/lib/monarc/bo/MonarcAppBO/data/cache"
+    - "/var/lib/monarc/bo/MonarcAppBO/data/LazyServices/Proxy"
+    - "/var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule/Proxy"
   become: True
 
 - name: set MariaDB bind-address to 0.0.0.0
