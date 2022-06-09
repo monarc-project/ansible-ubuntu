@@ -144,6 +144,7 @@
     dest: "/var/www/{{item.value.name}}/local.php"
     owner: www-data
     mode: 0600
+  register: _client_config
   loop: "{{ clients | dict2items }}"
   loop_control:
     label: "{{ item.key }}"
@@ -163,7 +164,8 @@
   file:
     path: /var/www/{{ item.value.name }}/data/cache
     state: absent
-  when: ( monarcfo_clean_cache | bool ) or ( _updated_release_symlink is changed )
+  # local.php config is also cached
+  when: ( monarcfo_clean_cache | bool ) or ( _updated_release_symlink is changed ) or ( _client_config is defined and _client_config is changed )
   loop: "{{ clients | dict2items }}"
   loop_control:
     label: "{{ item.key }}"

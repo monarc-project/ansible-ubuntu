@@ -46,6 +46,27 @@
   register: _updated_release_symlink
   tags: always
 
+- name: create data/cache dir
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "www-data"
+  loop:
+    - "/var/lib/monarc/bo/MonarcAppBO/data/cache"
+    - "/var/lib/monarc/bo/MonarcAppBO/data/LazyServices/Proxy"
+    - "/var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule/Proxy"
+  become: True
+
+- name: configuration template
+  template:
+    src: local.php.j2
+    dest: /var/lib/monarc/bo/MonarcAppBO/config/autoload/local.php
+    mode: 0440
+    owner: ansible
+    group: www-data
+  become: True
+  register: _bo_config
+
 - name: create data directory
   file:
     state: directory
@@ -63,7 +84,7 @@
   file:
     path: "/var/lib/monarc/bo/MonarcAppBO/data/cache"
     state: absent
-  when: ( monarcbo_clean_cache | bool ) or ( _updated_release_symlink is changed )
+  when: ( monarcbo_clean_cache | bool ) or ( _updated_release_symlink is changed ) or ( _bo_config is defined and _bo_config is changed )
   become: True
 
 - name: deleting Doctrine cache
@@ -71,17 +92,6 @@
     path: "/var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule"
     state: absent
   when: ( monarcbo_clean_cache | bool ) or ( _updated_release_symlink is changed )
-  become: True
-
-- name: create data/cache dir
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: "www-data"
-  loop:
-    - "/var/lib/monarc/bo/MonarcAppBO/data/cache"
-    - "/var/lib/monarc/bo/MonarcAppBO/data/LazyServices/Proxy"
-    - "/var/lib/monarc/bo/MonarcAppBO/data/DoctrineORMModule/Proxy"
   become: True
 
 - name: set MariaDB bind-address to 0.0.0.0
@@ -121,15 +131,6 @@
   shell: mysql --defaults-file=/etc/mysql/debian.cnf monarc_common < /var/lib/monarc/bo/MonarcAppBO/db-bootstrap/monarc_data.sql
   become: True
   when: _monarcbo_db_creation is changed or monarcbo_force_db_init | bool
-
-- name: configuration template
-  template:
-    src: local.php.j2
-    dest: /var/lib/monarc/bo/MonarcAppBO/config/autoload/local.php
-    mode: 0440
-    owner: ansible
-    group: www-data
-  become: True
 
 - name: run database phinx migration jobs
   shell: "php ./vendor/robmorgan/phinx/bin/phinx migrate -c ./module/{{ item }}/migrations/phinx.php"
