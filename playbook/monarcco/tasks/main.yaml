@@ -22,3 +22,21 @@
       - jq
     state: present
   become: True
+
+- find:
+    path: /etc/apache2/mods-enabled/
+    pattern: "php*.conf"
+    file_type: link
+  register: _mod_php_conf_path
+  tags: always
+
+- ini_file:
+    path: "/etc/php/{{ _php_version }}/apache2/php.ini"
+    section: PHP
+    option: "{{ item.key }}"
+    value: "{{ item.value }}"
+  loop: "{{ monarc_php_config | dict2items }}"
+  vars:
+    _php_version: "{{ _mod_php_conf_path.files[0].path | basename | splitext | first | regex_replace('^php', '') }}"
+  notify: restart apache
+  become: True
