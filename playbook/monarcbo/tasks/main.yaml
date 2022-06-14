@@ -59,8 +59,11 @@
 - name: create data directory
   file:
     state: directory
-    path: "/var/lib/monarc/bo-data"
+    path: "{{ item }}"
     owner: "www-data"
+  loop:
+    - "/var/lib/monarc/bo-data"
+    - "/var/lib/monarc/bo-data/monarc/models"
   become: True
 
 - name: create data directory symlink
