@@ -82,7 +82,7 @@
     status_code: [ 201, 304 ] # 201 created, 304 already exists
   with_dict: "{{ dict(groups['dev'] | map('extract',hostvars,'clients') | map('dictsort') | sum(start=[]) | list) }}"
   loop_control:
-    label: "{{ item.value.name }}"
+    label: "{{ item.value.name | default('NA') }}"
   # retry 12 times over 60 seconds, waiting for container to start
   register: _api_new_client
   until: _api_new_client.status in [ 201, 304 ] # 201 created, 304 already exists
