@@ -55,6 +55,9 @@
     - ansible_service_mgr == "systemd"
     - docker_config_proxy is defined or docker_config_noproxy is defined
 
+- name: Flush handlers
+  meta: flush_handlers
+
 - name: start and enable docker service
   service:
     name: docker
