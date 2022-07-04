@@ -83,24 +83,47 @@ configuration server to the other servers without having to enter a password.
 
 * add the user *ansible* in the *sudo* group:
   * ``sudo usermod -aG sudo ansible``
-* add the user *www-data* in the *ansible* group:
-  * ``sudo usermod -aG  ansible www-data``
 * give the permission to ansible to use sudo without password:
   * add ``ansible ALL=(ALL:ALL) NOPASSWD:ALL`` in the file */etc/sudoers* with *visudo*
 
 
 ### Ansible
 
-* create a configuration file, _inventory/hosts_, for Ansible:
+* create a configuration file, _inventory/hosts_ with your own configuration:
 
 ```ini
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+# comment if you don't need a proxy
+http_proxy="http://fqdn:3128/"
+https_proxy="http://fqdn:3128/"
+# docker config for statsservice
+docker_config_bip="100.100.0.1/22"
+docker_config_proxy="{{ http_proxy }}"
+
+[monarc:vars]
+env_prefix=""
+publicHost="my.monarc.lu"
+master="monarc-master.internal.monarc.lu"
+monarc_statsservice_admin_token="<secret>"
+monarc_statsservice_secret_key="<secret>"
+monarc_statsservice_url="https://{{ publicHost }}/dashboard"
+
+emailFrom="no-reply@{{ publicHost }}"
+protocol="https"
+bourlalias="monarcbo"
+
+# front office systems
 [dev]
 monarc-fo1.internal.monarc.lu
 monarc-fo2.internal.monarc.lu
 
+# master / back office
 [master]
-monarc-master.internal.monarc.lu monarc_sql_password="<your-password>"
+monarc-master.internal.monarc.lu monarc_sql_password="<secret>"
 
+# public facing reverse proxy
 [rpx]
 monarc-rpx.internal.monarc.lu
 
@@ -109,21 +132,6 @@ rpx
 master
 dev
 
-[monarc:vars]
-ansible_python_interpreter=/usr/bin/python3
-
-master="monarc-master.internal.monarc.lu"
-publicHost="my.monarc.lu"
-
-# comment if you don't need a proxy
-http_proxy="http://fqdn:3128/"
-https_proxy="http://fqdn:3128/"
-
-env_prefix=""
-clientDomain="my.monarc.lu"
-emailFrom="address@domain.tld"
-protocol="https"
-bourlalias="casesBO"
 ```
 
 A good test for connectivity and Ansible configuration would be to call
@@ -138,9 +146,6 @@ to handle this thanks to the file ``/etc/hosts`` of the system.
 The variable `monarc_sql_password` is the password for the SQL database on the
 BackOffice. Ansible will use it in order to create a new SQL user on the back
 office with the corresponding databases.
-
-You can have a look at this real [example file](examples/hosts).
-
 
 Finally, launch Ansible from the `playbook` directory:
 
@@ -173,7 +178,7 @@ Optionally as a fourth argument you can specify the Python executable
 This is an example. Below is a real world example:
 
 ```bash
-(ansible-ubuntu-EcXl-2U4-py3.9) (prod)ansible@monarc2-conf:~/ansible-ubuntu$ poetry env info
+ansible@monarc2-conf:~/ansible-ubuntu$ poetry env info
 
 Virtualenv
 Python:         3.9.12
@@ -188,7 +193,7 @@ Python:   /usr
 
 
 
-(ansible-ubuntu-EcXl-2U4-py3.9) (prod)ansible@monarc2-conf:~/ansible-ubuntu$ crontab -l
+ansible@monarc2-conf:~/ansible-ubuntu$ crontab -l
 # Edit this file to introduce tasks to be run by cron.
 # 
 # Each task to run has to be defined through a single line
