@@ -1,5 +1,6 @@
-monarcbo_release_url: "https://github.com/remil1000/MonarcAppBO/releases/download/{{ monarcbo_version }}/MonarcAppBO-{{ monarcbo_version }}.tar.gz"
-monarcbo_version: "v2.11.1-p1"
+monarcbo_release_url: "https://github.com/monarc-project/MonarcAppBO/releases/download/{{ monarcbo_version }}/MonarcAppBO-{{ monarcbo_version }}.tar.gz"
+monarcbo_version: "v2.12.1"
+
 monarcbo_force_db_init: false
 
 monarcbo_clean_cache: false
@@ -9,8 +10,8 @@ monarc_enable_statsservice: false
 #
 monarc_statsservice_network: "100.100.12.1/24"
 
-monarc_statsservice_version:  "ci-releases"
-monarc_statsservice_image: "ghcr.io/remil1000/monarc-stats-service:{{ monarc_statsservice_version }}"
+monarc_statsservice_version: "v0.5.1"
+monarc_statsservice_image: "ghcr.io/monarc-project/stats-service:{{ monarc_statsservice_version }}"
 
 # monarc_statsservice_secret_key: "secret"
 # monarc_statsservice_admin_token: "secret"
