@@ -10,7 +10,7 @@ monarc_enable_statsservice: false
 #
 monarc_statsservice_network: "100.100.12.1/24"
 
-monarc_statsservice_version: "v0.5.1"
+monarc_statsservice_version: "v0.5.2"
 monarc_statsservice_image: "ghcr.io/monarc-project/stats-service:{{ monarc_statsservice_version }}"
 
 # monarc_statsservice_secret_key: "secret"
