@@ -245,17 +245,6 @@ configuration server and the front office servers:
 ansible@CFG:~$ ./list_inventory.py ../inventory/ | cut -f 1 -d ' ' | uniq | xargs -n 1 ping -w 1
 ```
 
-### Inventory migrations
-
-If you have an old installation.
-
-#### 1. Add statsToken
-
-This migration adds a Stats Service token (`statsToken`) to the clients without this token.
-
-```bash
-ansible@CFG:~/ansible-ubuntu/inventory/migrations$ ./001-add_stats_token_to_inventory.py ../
-```
 
 
 ### TLS certificate
