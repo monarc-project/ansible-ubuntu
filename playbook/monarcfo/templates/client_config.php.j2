@@ -70,6 +70,12 @@ return array(
     'checkVersion' => true,
     'appCheckingURL' => 'https://version.monarc.lu/check/MONARC',
 
+    {% if item.value.twoFactorAuthEnforced is defined %}
+    'twoFactorAuthEnforced' => {{ item.value.twoFactorAuthEnforced }},
+    {% else %}
+    'twoFactorAuthEnforced' => {{ twoFactorAuthEnforced | bool if twoFactorAuthEnforced is defined else "false" | bool }},
+    {% endif %}
+
     'instanceName' => '{{item.value.name}}', // will be used for the label of the 2FA QRCode.
 
     'email' => [

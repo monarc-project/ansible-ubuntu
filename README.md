@@ -110,6 +110,8 @@ monarc_statsservice_admin_token="<secret>"
 monarc_statsservice_secret_key="<secret>"
 monarc_statsservice_url="https://{{ publicHost }}/dashboard"
 
+twoFactorAuthEnforced="true"
+
 emailFrom="no-reply@{{ publicHost }}"
 protocol="https"
 bourlalias="monarcbo"
