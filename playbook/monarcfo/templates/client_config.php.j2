@@ -67,6 +67,8 @@ return array(
 
     'appVersion' => $package_json['version'],
 
+    'twoFactorAuthEnforced' => {{ twoFactorAuthEnforced | bool if twoFactorAuthEnforced is defined else "false" | bool }},
+
     'checkVersion' => true,
     'appCheckingURL' => 'https://version.monarc.lu/check/MONARC',
 

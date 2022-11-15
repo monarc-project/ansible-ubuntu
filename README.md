@@ -111,6 +111,8 @@ clientDomain="monarc.example.com"
 bourlalias="monarcbo"
 emailFrom="info@example.com"
 
+twoFactorAuthEnforced="true"
+
 protocol="https"
 certificate="sslcert.crt"
 certificatekey="sslcert.key"
