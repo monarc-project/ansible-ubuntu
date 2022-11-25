@@ -61,7 +61,7 @@
         SSLProxyCheckPeerName off
         SSLProxyCheckPeerExpire off
         ProxyPreserveHost On
-        ProxyTimeout 1200
+        ProxyTimeout 1800
 
         ProxyPass /{{ bourlalias }}{{ '-' + env_prefix if env_prefix else '' }} http://{{ master }}
         ProxyPassReverse /{{bourlalias }}{{ '-' + env_prefix if env_prefix else '' }} http://{{ master }}
