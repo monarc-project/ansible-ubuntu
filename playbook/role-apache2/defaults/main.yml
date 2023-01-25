@@ -13,7 +13,6 @@ apache2_snakeoil_key: "/etc/ssl/private/ssl-cert-snakeoil.key"
 apache2_extra_packages: []
 
 apache2_default_disabled_mods:
-  - autoindex
   - status
 
 apache2_docroot_user: "www-data"
