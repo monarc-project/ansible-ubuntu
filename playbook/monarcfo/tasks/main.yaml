@@ -232,6 +232,16 @@
     label: "{{ item.key }}"
   become: True
 
+- name: create client file import directty
+  file:
+    name: "/var/www/{{item.value.name}}/import/files"
+    state: directory
+    owner: www-data
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  become: True
+
 - name: copy default deliveries templates
   synchronize:
     src: /var/lib/monarc/fo/deliveries

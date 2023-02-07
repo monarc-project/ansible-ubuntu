@@ -12,34 +12,33 @@
  */
 
  $appdir = getenv('APP_DIR') ? getenv('APP_DIR') : '/var/lib/monarc/fo';
- $string = file_get_contents($appdir.'/package.json');
- if($string === FALSE) {
+ $string = file_get_contents($appdir . '/package.json');
+ if ($string === false) {
      $string = file_get_contents('./package.json');
  }
  $package_json = json_decode($string, true);
 
-return array(
-    'doctrine' => array(
-	 'connection' => array(
-            'orm_default' => array(
-                'params' => array(
+return [
+    'doctrine' => [
+        'connection' => [
+            'orm_default' => [
+                'params' => [
                     'host' => '{{ master }}',
                     'user' => '{{ item.value.name }}',
                     'password' => '{{ item.value.mysql_password }}',
                     'dbname' => 'monarc_common',
-                ),
-            ),
-            'orm_cli' => array(
-                'params' => array(
+                ],
+            ],
+            'orm_cli' => [
+                'params' => [
                     'host' => 'localhost',
                     'user' => '{{ item.value.name }}',
                     'password' => '{{ item.value.mysql_password }}',
                     'dbname' => '{{ item.value.name }}',
-                ),
-            ),
-        ),
-    ),
-
+                ],
+            ],
+        ],
+    ],
 
     'languages' => [
         'fr' => [
@@ -60,10 +59,9 @@ return array(
         ],
     ],
 
-
     'defaultLanguageIndex' => 1,
 
-    'activeLanguages' => array('fr','en','de','nl','es','ro','it','pl','pt','ja'),
+    'activeLanguages' => ['fr','en','de','nl','es','ro','it','pl','pt','ja'],
 
     'appVersion' => $package_json['version'],
 
@@ -99,4 +97,16 @@ return array(
     ],
 
     'publicHost' => '{{ protocol }}://{{ publicHost }}/{{item.value.name}}{{ '-' + env_prefix if env_prefix else '' }}',
-);
+
+    {% if item.value.isBackgroundProcessActive is defined %}
+    'import' => [
+        'uploadFolder' => '/var/www/{{item.value.name}}/import/files',
+        'isBackgroundProcessActive' => {{ item.value.isBackgroundProcessActive }},
+    ],
+    {% else %}
+    'import' => [
+        'uploadFolder' => '/var/www/{{item.value.name}}/import/files',
+        'isBackgroundProcessActive' => {{ isBackgroundProcessActive | bool if isBackgroundProcessActive is defined else "false" | bool }},
+    ],
+    {% endif %}
+];
