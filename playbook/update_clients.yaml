@@ -1,0 +1,5 @@
+- name: clients
+  hosts: dev
+  roles:
+    - role: monarcfo-update
+      tags: fo

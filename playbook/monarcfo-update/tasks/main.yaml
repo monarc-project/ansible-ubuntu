@@ -1,0 +1,51 @@
+---
+
+- name: client config file
+  template:
+    src: client_config.php.j2
+    dest: "/var/www/{{item.value.name}}/local.php"
+    owner: www-data
+    mode: 0600
+  register: _client_config
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  become: True
+
+- name: deleting client cache
+  file:
+    path: /var/www/{{ item.value.name }}/data/cache
+    state: absent
+  # local.php config is also cached
+  when: ( monarcfo_clean_cache | bool ) or ( _client_config is defined and _client_config is changed )
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  become: True
+
+- name: create client cache dir
+  file:
+    name: "/var/www/{{item.value.name}}/data/cache"
+    state: directory
+    owner: www-data
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  become: True
+
+- name: update client db
+  command: "mysql --defaults-file=/etc/mysql/debian.cnf {{ item.value.name }}"
+  args:
+    stdin: "{{ item.value.sql_update }}"
+    chdir: /var/lib/monarc/fo
+  loop: "{{ clients | dict2items }}"
+  register: _client_update
+  changed_when:
+    - _client_update.stdout == ""
+    - _client_update.rc == 0
+  failed_when:
+    - _client_update.rc != 0
+  loop_control:
+    label: "{{ item.key }}"
+  become: True
+    - restart apache

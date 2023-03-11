@@ -1,24 +1,26 @@
 ---
 
-- name: install php7 and nodejs packages
+- name: install php8.1 and nodejs packages
   apt:
     update_cache: True
     pkg:
       - git
       - apache2
-      - libapache2-mod-php
+      - libapache2-mod-php8.1
       - mariadb-server
       - python3-pymysql
-      - php
-      - php-cli
-      - php-bcmath
-      - php-imagick
-      - php-gd
-      - php-intl
-      - php-mbstring
-      - php-mysql
-      - php-xml
-      - php-zip
+      - php8.1
+      - php8.1-cli
+      - php8.1-bcmath
+      - php8.1-imagick
+      - php8.1-gd
+      - php8.1-intl
+      - php8.1-mbstring
+      - php8.1-mysql
+      - php8.1-xml
+      - php8.1-zip
+      - php8.1-dom
+      - php8.1-curl
       - gettext
       - jq
     state: present
