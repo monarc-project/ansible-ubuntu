@@ -60,20 +60,23 @@ def run():
                     ymldata = {}
                     ymldata["clients"] = {}
 
+            areClientsChanged = False
             if client_name in ymldata["clients"]:
                 # Update the client.
                 if "isBackgroundProcessActive" in update_client:
                     ymldata["clients"][client_name]
                     ["isBackgroundProcessActive"] = update_client["isBackgroundProcessActive"]
+                    areClientsChanged = True
                 if "twoFactorAuthEnforced" in update_client:
                     ymldata["clients"][client_name]["twoFactorAuthEnforced"] = update_client["twoFactorAuthEnforced"]
-                ymldata["clients"][client_name]["sql_bootstrap"] = update_client["sql_bootstrap"]
+                    areClientsChanged = True
 
-            with open(generated_file, "w") as stream:
-                try:
-                    yaml.dump(ymldata, stream)
-                except yaml.YAMLError as exc:
-                    print(exc)
+            if areClientsChanged:
+                with open(generated_file, "w") as stream:
+                    try:
+                        yaml.dump(ymldata, stream)
+                    except yaml.YAMLError as exc:
+                        print(exc)
         else:
             exit(0)
     else:
