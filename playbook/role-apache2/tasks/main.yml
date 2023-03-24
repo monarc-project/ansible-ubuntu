@@ -210,6 +210,7 @@
   loop:
     "{{ apache2_disabled_vhosts }}"
   notify: reload apache2
+  when: apache2_disabled_vhosts|length > 0
 
 - name: creating DocumentRoot
   file:
