@@ -64,8 +64,9 @@ def run():
             if client_name in ymldata["clients"]:
                 # Update the client.
                 if "isBackgroundProcessActive" in update_client:
-                    ymldata["clients"][client_name]
-                    ["isBackgroundProcessActive"] = update_client["isBackgroundProcessActive"]
+                    ymldata["clients"][client_name]["isBackgroundProcessActive"] = update_client[
+                        "isBackgroundProcessActive"
+                    ]
                     areClientsChanged = True
                 if "twoFactorAuthEnforced" in update_client:
                     ymldata["clients"][client_name]["twoFactorAuthEnforced"] = update_client["twoFactorAuthEnforced"]
