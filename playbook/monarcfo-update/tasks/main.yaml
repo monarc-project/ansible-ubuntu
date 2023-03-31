@@ -42,4 +42,6 @@
   loop_control:
     label: "{{ item.key }}"
   become: True
-    - restart apache
+  notify:
+    - apache2ctl configtest
+    - reload apache
