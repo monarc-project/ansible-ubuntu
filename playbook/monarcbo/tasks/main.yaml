@@ -185,6 +185,13 @@
     mode: "0755"
   become: True
 
+- name: install cat script for update clients
+  copy:
+    src: update_monarc_clients.sh
+    dest: /usr/local/bin/update_monarc_clients.sh
+    mode: "0755"
+  become: True
+
 - name: rewrite apache module
   apache2_module:
     state: present
