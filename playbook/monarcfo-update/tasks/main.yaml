@@ -41,7 +41,7 @@
   loop: "{{ clients | dict2items }}"
   when:
     - item.value is defined
-    - item.value.sql_bootstrap is defined
+    - item.value.sql_update is defined
   loop_control:
     label: "{{ item.key }}"
   become: True
