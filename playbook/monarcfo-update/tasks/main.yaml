@@ -39,6 +39,9 @@
     stdin: "{{ item.value.sql_update }}"
     chdir: /var/lib/monarc/fo
   loop: "{{ clients | dict2items }}"
+  when:
+    - item.value is defined
+    - item.value.sql_bootstrap is defined
   loop_control:
     label: "{{ item.key }}"
   become: True

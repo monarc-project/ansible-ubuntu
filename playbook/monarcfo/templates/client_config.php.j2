@@ -98,15 +98,15 @@ return [
 
     'publicHost' => '{{ protocol }}://{{ publicHost }}/{{item.value.name}}{{ '-' + env_prefix if env_prefix else '' }}',
 
-    {% if item.value.isBackgroundProcessActive is defined %}
+    {% if item.value.isBackgroundImportActive is defined %}
     'import' => [
         'uploadFolder' => '/var/www/{{item.value.name}}/import/files',
-        'isBackgroundProcessActive' => {{ item.value.isBackgroundProcessActive }},
+        'isBackgroundProcessActive' => {{ item.value.isBackgroundImportActive }},
     ],
     {% else %}
     'import' => [
         'uploadFolder' => '/var/www/{{item.value.name}}/import/files',
-        'isBackgroundProcessActive' => {{ isBackgroundProcessActive | bool if isBackgroundProcessActive is defined else "false" | bool }},
+        'isBackgroundProcessActive' => {{ isBackgroundImportActive | bool if isBackgroundImportActive is defined else "false" | bool }},
     ],
     {% endif %}
 ];

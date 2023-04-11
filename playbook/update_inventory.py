@@ -63,13 +63,16 @@ def run():
             areClientsChanged = False
             if client_name in ymldata["clients"]:
                 # Update the client.
-                if "isBackgroundProcessActive" in update_client:
-                    ymldata["clients"][client_name]["isBackgroundProcessActive"] = update_client[
-                        "isBackgroundProcessActive"
+                if "isBackgroundImportActive" in update_client:
+                    ymldata["clients"][client_name]["isBackgroundImportActive"] = update_client[
+                        "isBackgroundImportActive"
                     ]
                     areClientsChanged = True
                 if "twoFactorAuthEnforced" in update_client:
                     ymldata["clients"][client_name]["twoFactorAuthEnforced"] = update_client["twoFactorAuthEnforced"]
+                    areClientsChanged = True
+                if "sql_update" in update_client:
+                    ymldata["clients"][client_name]["sql_update"] = update_client["sql_update"]
                     areClientsChanged = True
 
             if areClientsChanged:

@@ -33,5 +33,8 @@ echo "Executes ansible inventory migrations..."
 echo "Updating ansible inventory..."
 ssh ansible@$BO_ADDRESS sudo -u www-data /usr/local/bin/update_monarc_clients.sh | $PYTHON_PATH ./update_inventory.py ../inventory/
 
+echo "Clean up the inventory, remove sql_update"
+find ../inventory/host_vars -type f -name 'generated.yaml' -exec sed -i '/sql_update/d' {} +
+
 echo "Running ansible..."
 $ANSIBLE_PATH --diff -i ../inventory/ update_clients.yaml --user ansible
