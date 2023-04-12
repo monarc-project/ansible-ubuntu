@@ -72,7 +72,8 @@ def run():
                     ymldata["clients"][client_name]["twoFactorAuthEnforced"] = update_client["twoFactorAuthEnforced"]
                     areClientsChanged = True
                 if "sql_update" in update_client:
-                    ymldata["clients"][client_name]["sql_update"] = update_client["sql_update"]
+                    current_sql_update = ymldata["clients"][client_name].get("sql_update", "")
+                    ymldata["clients"][client_name]["sql_update"] = current_sql_update.join(update_client["sql_update"])
                     areClientsChanged = True
 
             if areClientsChanged:
