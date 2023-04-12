@@ -73,7 +73,7 @@ def run():
                     areClientsChanged = True
                 if "sql_update" in update_client:
                     current_sql_update = ymldata["clients"][client_name].get("sql_update", "")
-                    ymldata["clients"][client_name]["sql_update"] = current_sql_update.join(update_client["sql_update"])
+                    ymldata["clients"][client_name]["sql_update"] = current_sql_update + update_client["sql_update"]
                     areClientsChanged = True
 
             if areClientsChanged:
