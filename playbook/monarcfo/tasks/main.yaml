@@ -22,6 +22,9 @@
   environment:
     http_proxy: "{{ http_proxy | default('') }}"
     https_proxy: "{{ https_proxy | default('') }}"
+  when:
+    - http_proxy is defined
+    - https_proxy is defined
 
 - name: create release directory
   file:
