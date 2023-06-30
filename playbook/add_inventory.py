@@ -72,6 +72,12 @@ def run():
             client_list["clients"][new_client_name]["mysql_password"] = get_rnd_string(16)
             client_list["clients"][new_client_name]["salt"] = get_rnd_string(64)
             client_list["clients"][new_client_name]["sql_bootstrap"] = new_client["sql_bootstrap"]
+            if "isBackgroundImportActive" in new_client:
+                client_list["clients"][new_client_name]["isBackgroundImportActive"] = new_client[
+                    "isBackgroundImportActive"
+                ]
+            if "twoFactorAuthEnforced" in new_client:
+                client_list["clients"][new_client_name]["twoFactorAuthEnforced"] = new_client["twoFactorAuthEnforced"]
 
             # Update
             ymldata.update(client_list)
