@@ -36,16 +36,15 @@ def run(INVENTORY):
                 continue
 
             areClientsChanged = False
-            clients_list = ymldata["clients"]
-            for client in clients_list:
-                if "sql_update" in clients_list[client]:
-                    clients_list[client]['sql_update'] = ""
+            for client in ymldata["clients"]:
+                if "sql_update" in ymldata["clients"][client]:
+                    ymldata["clients"][client]['sql_update'] = ""
                     areClientsChanged = True
 
             if areClientsChanged:
                 with open(yaml_file, "w") as stream:
                     try:
-                        yaml.dump(clients_list, stream)
+                        yaml.dump(ymldata, stream)
                     except yaml.YAMLError as exc:
                         print(exc)
 
