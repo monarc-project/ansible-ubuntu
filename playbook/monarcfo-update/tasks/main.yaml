@@ -42,6 +42,7 @@
   when:
     - item.value is defined
     - item.value.sql_update is defined
+    - item.value.sql_update | length > 0
   loop_control:
     label: "{{ item.key }}"
   become: True

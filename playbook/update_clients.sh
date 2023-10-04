@@ -36,5 +36,5 @@ ssh ansible@$BO_ADDRESS sudo -u www-data /usr/local/bin/update_monarc_clients.sh
 echo "Running ansible..."
 $ANSIBLE_PATH --diff -i ../inventory/ update_clients.yaml --user ansible
 
-echo "Clean up the inventory, remove sql_update"
-find ../inventory/host_vars -type f -name 'generated.yaml' -exec sed -i '/sql_update/d' {} +
+echo "Clean up the inventory (set an empty string to the 'sql_update' property)"
+$PYTHON_PATH ./update_clients_cleanup_inventory.py ../inventory
