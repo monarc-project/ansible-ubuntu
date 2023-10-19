@@ -1,0 +1,32 @@
+---
+
+- name: deleting of client dedicated folder
+  file:
+    path: /var/www/{{ item.value.name }}/
+    state: absent
+  when: not item.value.isProcessed
+  loop: "{{ clients | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  become: True
+
+- name: client database removal
+  mysql_db:
+    name: "{{ item.value.name }}"
+    config_file: /etc/mysql/debian.cnf
+    state: absent
+  loop: "{{ clients | dict2items }}"
+  when: not item.value.isProcessed
+  loop_control:
+    label: "{{ item.key }}"
+  become: True
+
+- name: database user removal
+  mysql_user:
+    config_file: /etc/mysql/debian.cnf
+    state: absent
+  loop: "{{ clients | dict2items }}"
+  when: not item.value.isProcessed
+  loop_control:
+    label: "{{ item.key }}"
+  become: True
