@@ -11,27 +11,29 @@
  * credentials from accidentally being committed into version control.
  */
 
-return array(
-    'doctrine' => array(
-        'connection' => array(
-            'orm_default' => array(
-                'params' => array(
+package_json = json_decode(file_get_contents('./package.json'), true);
+
+return [
+    'doctrine' => [
+        'connection' => [
+            'orm_default' => [
+                'params' => [
                     'host' => 'localhost',
                     'user' => 'monarc',
                     'password' => '{{ monarc_sql_password }}',
                     'dbname' => 'monarc_common',
-                ),
-            ),
-            'orm_cli' => array(
-                'params' => array(
+                ],
+            ],
+            'orm_cli' => [
+                'params' => [
                     'host' => 'localhost',
                     'user' => 'monarc',
                     'password' => '{{ monarc_sql_password }}',
                     'dbname' => 'monarc_master',
-                ),
-            ),
-        ),
-    ),
+                ],
+            ],
+        ],
+    ],
 
     /* Link with (ModuleCore)
     config['languages'] = [
@@ -53,7 +55,9 @@ return array(
         ),
     ]
     */
-    'activeLanguages' => array('fr','en','de','nl'),
+    'activeLanguages' => ['fr','en','de','nl'],
+
+    'appVersion' => $package_json['version'],
 
     'instanceName' => '{{ publicHost }}', // will be used for the label of the 2FA QRCode.
 
