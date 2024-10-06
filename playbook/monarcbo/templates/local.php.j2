@@ -64,10 +64,10 @@ return [
         'from' => '{{ emailFrom if emailFrom else "info@monarc.lu" }}',
     ],
 
-    'monarc' => array(
+    'monarc' => [
         'ttl' => 20, // timeout
         'salt' => '', // private salt for the password
-    ),
+    ],
 
     'publicHost' => '{{ protocol }}://{{ publicHost }}/{{bourlalias}}',
-);
+];
