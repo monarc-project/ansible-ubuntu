@@ -11,8 +11,6 @@
  * credentials from accidentally being committed into version control.
  */
 
-package_json = json_decode(file_get_contents('./package.json'), true);
-
 return [
     'doctrine' => [
         'connection' => [
@@ -57,7 +55,7 @@ return [
     */
     'activeLanguages' => ['fr','en','de','nl'],
 
-    'appVersion' => $package_json['version'],
+    'appVersion' => json_decode(file_get_contents('./package.json'), true)['version'],
 
     'instanceName' => '{{ publicHost }}', // will be used for the label of the 2FA QRCode.
 
