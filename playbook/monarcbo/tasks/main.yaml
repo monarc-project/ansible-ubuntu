@@ -89,6 +89,13 @@
   when: ( monarcbo_clean_cache | bool ) or ( _updated_release_symlink is changed )
   become: True
 
+- name: deleting Lazy Service cache
+  file:
+    path: "/var/lib/monarc/bo/MonarcAppBO/data/LazyServices"
+    state: absent
+  when: ( monarcbo_clean_cache | bool ) or ( _updated_release_symlink is changed )
+  become: True
+
 - name: create data/cache dir
   file:
     path: "{{ item }}"
