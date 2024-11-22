@@ -39,5 +39,11 @@ ssh ansible@$BO_ADDRESS sudo -u www-data /usr/local/bin/del_monarc_clients.sh | 
 echo "Running ansible..."
 $ANSIBLE_PATH --diff -i ../inventory/ monarc.yaml --user ansible
 
+echo "Running ansible cleanup..."
+$ANSIBLE_PATH --diff -i ../inventory/cleanup/ monarc-cleanup.yaml --user ansible
+
+echo "Update the deleted clients if necessary..."
+$PYTHON_PATH ./update_cleanup_inventory.py ../inventory/cleanup/
+
 echo "Synchronizing templates of deliveries..."
 $PYTHON_PATH ./list_inventory.py ../inventory/ | xargs -n2  ./update_deliveries.sh $BO_ADDRESS
