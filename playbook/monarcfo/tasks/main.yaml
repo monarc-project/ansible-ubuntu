@@ -267,6 +267,7 @@
   file:
     path: "/var/www/{{ item.item.value.name }}/deliveries"
     recurse: yes
+    mode: 0755
     owner: www-data
     group: www-data
   loop: "{{ _deliveries_synced.results }}"
