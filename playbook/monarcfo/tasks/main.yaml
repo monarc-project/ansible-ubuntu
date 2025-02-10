@@ -49,20 +49,10 @@
     state: directory
     path: "/var/lib/monarc/releases/{{ monarcfo_release_url | basename | replace('.tar.gz', '') }}/public/captcha"
     owner: "www-data"
+    group: "www-data"
+    mode: "0775"
+    recurse: yes
   become: True
-
-- name: create data directory
-  file:
-    state: directory
-    path: "/var/lib/monarc/fo-data"
-    owner: "www-data"
-  become: True
-
-- name: create data directory symlink
-  file:
-    state: link
-    dest: "/var/lib/monarc/fo/data"
-    src: "/var/lib/monarc/fo-data"
 
 - name: apache mod rewrite
   apache2_module:
