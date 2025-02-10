@@ -109,8 +109,13 @@ master="monarc-master.internal.monarc.lu"
 monarc_statsservice_admin_token="<secret>"
 monarc_statsservice_secret_key="<secret>"
 monarc_statsservice_url="https://{{ publicHost }}/dashboard"
+monarc_statsservice_port=5005
 
 twoFactorAuthEnforced="true"
+
+isDefaultExportWithAssessments="false"
+isCaptchaEnabled="true"
+captchaFailedLoginAttempts=3
 
 emailFrom="no-reply@{{ publicHost }}"
 protocol="https"

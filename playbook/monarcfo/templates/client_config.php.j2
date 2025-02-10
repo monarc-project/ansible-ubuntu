@@ -109,4 +109,23 @@ return [
         'isBackgroundProcessActive' => {{ isBackgroundImportActive | bool if isBackgroundImportActive is defined else "false" | bool }},
     ],
     {% endif %}
+
+    'export' => [
+        'defaultWithEval' => {% if isDefaultExportWithAssessments is defined %}{{ isDefaultExportWithAssessments }}{% else %}false{% endif %},
+    ],
+
+    'captcha' => [
+        'enabled' => {% if isCaptchaEnabled is defined %}{{ isCaptchaEnabled }}{% else %}false{% endif %},
+        'failedLoginAttempts' => {% if captchaFailedLoginAttempts is defined %}{{ captchaFailedLoginAttempts }}{% else %}3{% endif %},
+        'params' => [
+            'name' => 'MonarcCaptcha',
+            'font' => $appdir . '/data/fonts/arial.ttf',
+            'fontSize' => 30,
+            'height' => 60,
+            'wordLen' => 6,
+            'timeout' => 300,
+            'imgDir' => $appdir . '/public/captcha',
+            'imgUrl' => '/captcha/',
+        ],
+    ],
 ];
