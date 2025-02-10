@@ -48,8 +48,6 @@
   file:
     state: directory
     path: "/var/lib/monarc/releases/{{ monarcfo_release_url | basename | replace('.tar.gz', '') }}/public/captcha"
-    owner: "www-data"
-    group: "www-data"
     mode: "0775"
     recurse: yes
   become: True
@@ -232,7 +230,7 @@
     label: "{{ item.key }}"
   become: True
 
-- name: create client file import directty
+- name: create client file import directly
   file:
     name: "/var/www/{{item.value.name}}/import/files"
     state: directory
