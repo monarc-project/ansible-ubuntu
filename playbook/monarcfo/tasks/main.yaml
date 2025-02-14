@@ -44,7 +44,7 @@
     dest: "/var/lib/monarc/fo"
   register: _updated_release_symlink
 
-- name: set captcha directory ownership to www-data
+- name: set captcha directory permissions
   file:
     state: directory
     path: "/var/lib/monarc/releases/{{ monarcfo_release_url | basename | replace('.tar.gz', '') }}/public/captcha"
