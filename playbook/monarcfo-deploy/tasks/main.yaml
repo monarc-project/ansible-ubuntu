@@ -1,0 +1,133 @@
+---
+
+- name: checkout repository
+  git:
+    repo: https://github.com/monarc-project/MonarcAppFO
+    dest: /var/lib/monarc/release/{{ release_hash }}
+    version: {{ release_version }}
+    update: no
+  register: gitresult
+
+# composer ins -o
+
+#- name: frontoffice link
+#  file:
+#    src: /var/lib/monarc/fo
+#    dest: /var/lib/monarc/release/
+#    state: link
+
+#- name: create new release dir
+#  file:
+#    path: /var/lib/monarc/release/{{ FO_RELEASE_HASH }}
+#    state: directory
+#
+#- name: checkout repository
+#  git:
+#    repo: https://github.com/monarc-project/MonarcAppFO
+#    dest: /var/lib/monarc/fo
+#    version: master
+#    update: no
+#  register: appfo_pull
+#
+#- name: create module dir
+#  file:
+#    path: /var/lib/monarc/fo/module/Monarc
+#    state: directory
+#
+#- name: composer install
+#  shell: composer ins -o
+#  args:
+#    chdir: /var/lib/monarc/fo
+#
+#- name: MonarcCore link
+#  file:
+#    src: /var/lib/monarc/fo/vendor/monarc/core
+#    dest: /var/lib/monarc/fo/module/Monarc/Core
+#    state: link
+#
+#- name: frontoffice link
+#  file:
+#    src: /var/lib/monarc/fo/vendor/monarc/frontoffice
+#    dest: /var/lib/monarc/fo/module/Monarc/FrontOffice
+#    state: link
+#
+#- name: update-all
+#  shell: "scripts/update-all.sh -b"
+#  args:
+#    chdir: /var/lib/monarc/fo
+#
+#--- not sure if we need next 5 steps ???
+#- name: copy default deliveries templates
+#  command: cp -nR /var/lib/monarc/fo/deliveries/ /var/www/{{item.value.name}}/
+#  with_dict: "{{ clients }}"
+#  when: clients is defined
+#  become: True
+#
+#- name: set owner of deliveries
+#  file:
+#    path: /var/www/{{item.value.name}}/deliveries
+#    recurse: yes
+#    owner: www-data
+#    group: www-data
+#  with_dict: "{{ clients }}"
+#  when: clients is defined
+#  become: True
+#
+#- name: set appropriate rights for deliveries
+#  command: chmod -R go+w /var/www/{{ item.value.name }}/deliveries
+#  with_dict: "{{ clients }}"
+#  when: clients is defined
+#  become: True
+#
+#- name: client cache upgrade
+#  file:
+#    path: "/var/www/{{ item.value.name }}/data/upgrade"
+#    owner: www-data
+#    state: touch
+#  with_dict: "{{ clients }}"
+#  when: clients is defined
+#  become: True
+#
+#- name: deleting the cache
+#  file:
+#    path: /var/www/{{ item.value.name }}/data/cache/
+#    state: absent
+#  with_dict: "{{ clients }}"
+#  when: clients is defined
+#  become: True
+#
+#- name: Delete Doctrine cache for every client
+#  file:
+#    path: /var/www/{{ item.value.name }}/data/DoctrineORMModule/
+#    state: absent
+#  with_dict: "{{ clients }}"
+#  when: clients is defined
+#  become: True
+#
+#- name: Execute the migration for every client
+#  shell: "scripts/client-upgrade-db.sh frontoffice localhost {{ item.value.name }} {{ item.value.mysql_password }} {{ item.value.name }}"
+#  args:
+#    chdir: /var/lib/monarc/fo
+#  with_dict: "{{ clients }}"
+#  when: clients is defined
+#
+#--- what is that?
+#- name: bootstrap file
+#  template:
+#    src: client_bootstrap.j2
+#    dest: "/tmp/bootstrap_{{ item.value.name }}.sql"
+#  with_dict: "{{ clients }}"
+#  when: clients is defined
+#
+#--- do we need to make the backup and if yes on which step
+#- name: database backup script
+#  template:
+#    src: backup_db.j2
+#    dest: "/usr/local/bin/backup_monarc_db.sh"
+#    mode: 0755
+#    owner: root
+#  with_dict: "{{ clients }}"
+#  when: clients is defined
+#  become: true
+#
+#--- replace symlinks to point the lates version to the release
