@@ -13,6 +13,13 @@
     name: "apache2"
     state: present
 
+- name: Install Apache security modules
+  apt:
+    name:
+      - libapache2-mod-security2
+      - libapache2-mod-evasive
+    state: present
+
 - name: install apache2 extra packages
   package:
     name: "{{ apache2_extra_packages }}"
@@ -37,6 +44,32 @@
   notify:
     - apache2ctl configtest
     - restart apache2
+
+- name: Enable necessary Apache modules
+  apache2_module:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - security2
+    - evasive
+
+- name: Configure ModSecurity
+  template:
+    src: modsecurity.conf.j2
+    dest: /etc/modsecurity/modsecurity.conf
+  notify: reload apache2
+
+- name: Deploy mod_evasive config
+  copy:
+    src: evasive.conf
+    dest: /etc/apache2/mods-available/evasive.conf
+  notify: reload apache2
+
+- name: Harden SSL settings
+  template:
+    src: ssl-params.conf.j2
+    dest: /etc/apache2/conf-available/ssl-params.conf
+  notify: reload apache2
 
 - name: installing and enabling itk
   block:
