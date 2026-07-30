@@ -23,6 +23,7 @@
       - php8.1-curl
       - gettext
       - jq
+      - libreoffice-writer
     state: present
   become: True
 
