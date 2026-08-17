@@ -11,6 +11,9 @@
  * credentials from accidentally being committed into version control.
  */
 
+$appdir = getenv('APP_DIR') ?: '/var/lib/monarc/bo/MonarcAppBO';
+$packageJson = json_decode(file_get_contents($appdir . '/package.json'), true);
+
 return [
     'doctrine' => [
         'connection' => [
@@ -46,7 +49,7 @@ return [
     // Languages available for the user interface.
     'activeLanguages' => ['fr', 'en', 'de', 'nl', 'es', 'ro', 'it', 'ja', 'pl', 'pt', 'zh'],
 
-    'appVersion' => json_decode(file_get_contents('./package.json'), true)['version'],
+    'appVersion' => $packageJson['version'] ?? '',
 
     'instanceName' => '{{ publicHost }}', // will be used for the label of the 2FA QRCode.
 
