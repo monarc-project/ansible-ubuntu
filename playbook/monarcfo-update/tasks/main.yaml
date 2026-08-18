@@ -1,5 +1,12 @@
 ---
 
+- name: install LibreOffice Writer for PDF deliverable generation
+  apt:
+    update_cache: true
+    pkg: libreoffice-writer
+    state: present
+  become: true
+
 - name: client config file
   template:
     src: client_config.php.j2
