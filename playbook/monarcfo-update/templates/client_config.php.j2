@@ -1,22 +1,8 @@
 <?php
-/**
- * Local Configuration Override
- *
- * This configuration override file is for overriding environment-specific and
- * security-sensitive configuration information. Copy this file without the
- * .dist extension at the end and populate values as needed.
- *
- * @NOTE: This file is ignored from Git by default with the .gitignore included
- * in ZendSkeletonApplication. This is a good practice, as it prevents sensitive
- * credentials from accidentally being committed into version control.
- */
 
- $appdir = getenv('APP_DIR') ? getenv('APP_DIR') : '/var/lib/monarc/fo';
- $string = file_get_contents($appdir . '/package.json');
- if ($string === false) {
-     $string = file_get_contents('./package.json');
- }
- $package_json = json_decode($string, true);
+$appdir = getenv('APP_DIR') ?: '/var/lib/monarc/fo';
+$packageJson = json_decode(file_get_contents($appdir . '/package.json'), true);
+
 
 return [
     'doctrine' => [
@@ -40,30 +26,20 @@ return [
         ],
     ],
 
-    'languages' => [
-        'fr' => [
-            'index' => 1,
-            'label' => 'Français',
-        ],
-        'en' => [
-            'index' => 2,
-            'label' => 'English',
-        ],
-        'de' => [
-            'index' => 3,
-            'label' => 'Deutsch',
-        ],
-        'nl' => [
-            'index' => 4,
-            'label' => 'Nederlands',
-        ],
-    ],
-
     'defaultLanguageIndex' => 1,
 
-    'activeLanguages' => ['fr','en','de','nl','es','ro','it','pl','pt','ja'],
+    // Languages available for the analysis / DB data.
+    'languages' => [
+        'fr' => ['index' => 1, 'label' => 'Français'],
+        'en' => ['index' => 2, 'label' => 'English'],
+        'de' => ['index' => 3, 'label' => 'Deutsch'],
+        'nl' => ['index' => 4, 'label' => 'Dutch'],
+    ],
 
-    'appVersion' => $package_json['version'],
+    // Languages available for the user interface.
+    'activeLanguages' => ['fr', 'en', 'de', 'nl', 'es', 'ro', 'it', 'ja', 'pl', 'pt', 'zh'],
+
+    'appVersion' => $packageJson['version'],
 
     'checkVersion' => true,
     'appCheckingURL' => 'https://version.monarc.lu/check/MONARC',

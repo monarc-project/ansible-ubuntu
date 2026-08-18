@@ -1,5 +1,5 @@
 monarcbo_release_url: "https://github.com/monarc-project/MonarcAppBO/releases/download/{{ monarcbo_version }}/MonarcAppBO-{{ monarcbo_version }}.tar.gz"
-monarcbo_version: "v2.12.1"
+monarcbo_version: "v2.14.1"
 
 monarcbo_force_db_init: false
 
