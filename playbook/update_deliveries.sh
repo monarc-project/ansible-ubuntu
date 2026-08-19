@@ -33,4 +33,5 @@ rsync -az --existing --ignore-times "$BO_ADDRESS:$DELIVERIES_MODELS_DIR" "$DELIV
 # Update the resolved defaults without deleting client-only templates or
 # replacing a newer client-side file.
 rsync -az --update --no-perms --no-owner --no-group --omit-dir-times \
+    --rsync-path="sudo -n rsync" --chown=www-data:www-data \
     "$DELIVERIES_TEMP_DIR/" "$FO_ADDRESS:/var/www/$CLIENT_NAME/deliveries/cases/"
